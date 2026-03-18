@@ -1,25 +1,19 @@
 <!DOCTYPE html>
-<html lang="ka">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ენების სწავლა</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <style>
-        body { font-family: sans-serif; text-align: center; padding: 20px; 
-               background-color: var(--tg-theme-bg-color); color: var(--tg-theme-text-color); }
-        button { padding: 10px 20px; background: #2481cc; color: white; border: none; border-radius: 5px; cursor: pointer; }
-    </style>
+  <meta charset="UTF-8">
+  <title>Language App</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    body { font-family: Arial; text-align:center; padding:20px; }
+    button { padding:10px; margin:10px; }
+  </style>
 </head>
 <body>
-    <h1>მოგესალმები, <span id="username">სტუმარო</span>!</h1>
-    <p>ეს შენი ენების სწავლის მინიაპია 🇬🇪 🇬🇧 🇩🇪</p>
-    <button onclick="Telegram.WebApp.close()">დახურვა</button>
-    <script>
-        const webapp = window.Telegram.WebApp;
-        webapp.ready();
-        const user = webapp.initDataUnsafe?.user;
-        if (user) { document.getElementById('username').innerText = user.first_name; }
-    </script>
+  <h1>Learn English</h1>
+  <div id="word"></div>
+  <button onclick="nextWord()">Next</button>
+
+  <script src="app.js"></script>
 </body>
 </html>
