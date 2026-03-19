@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>German Learning App</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+</head>
+
+<body class="bg-gray-900 text-white">
+<div id="root"></div>
+
+<script>
+const { useState, useEffect } = React;
+
+function speak(text){
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = "de-DE";
+  speechSynthesis.speak(u);
+}
+
+function App(){
+
+  const [words,setWords]=useState([]);
+  const [search,setSearch]=useState("");
+  const [tab,setTab]=useState("dict");
+  const [word,setWord]=useState(null);
+  const [answer,setAnswer]=useState("");
+
+  useEffect(()=>{
+    fetch("dictionary.json")
+      .then(r=>r.json())
+      .then(d=>{
+        setWords(d);
+        setWord(d[Math.floor(Math.random()*d.length)]);
+      });
+
+    if(window.Telegram?.WebApp){
+      Telegram.WebApp.expand();
+    }
+  },[]);
+
+  const filtered = words.filter(w =>
+    w.de.toLowerCase().includes(search.toLowerCase())
+  ).slice(0,50);
+
+  function check(){
+    if(answer === word.ka){
+      alert("სწორია ✅");
+    }else{
+      alert("❌ სწორი: " + word.ka);
+    }
+  }
+
+  function next(){
+    const w = words[Math.floor(Math.random()*words.length)];
+    setWord(w);
+    setAnswer("");
+  }
+
+  return (
+    React.createElement("div",{className:"p-4"},
+
+      React.createElement("div",{className:"flex justify-around mb-4"},
+        React.createElement("button",{onClick:()=>setTab("dict")},"📚"),
+        React.createElement("button",{onClick:()=>setTab("ex")},"🧠")
+      ),
+
+      tab==="dict" && React.createElement("div",{},
+        React.createElement("input",{
+          className:"w-full p-2 text-black rounded",
+          placeholder:"ძიება...",
+          onChange:e=>setSearch(e.target.value)
+        }),
+
+        filtered.map((w,i)=>
+          React.createElement("div",{key:i,className:"bg-gray-800 p-3 mt-2 rounded"},
+            React.createElement("div",{className:"text-lg"},w.de),
+            React.createElement("div",{className:"text-purple-400"},w.pron),
+            React.createElement("div",{className:"text-green-400"},w.ka),
+            React.createElement("button",{onClick:()=>speak(w.de)},"🔊")
+          )
+        )
+      ),
+
+      tab==="ex" && word && React.createElement("div",{},
+        React.createElement("h2",{className:"text-xl mb-3"},word.de),
+
+        React.createElement("input",{
+          className:"p-2 text-black rounded",
+          value:answer,
+          onChange:e=>setAnswer(e.target.value)
+        }),
+
+        React.createElement("div",{className:"mt-2"},
+          React.createElement("button",{onClick:check},"შემოწმება"),
+          React.createElement("button",{onClick:next,className:"ml-2"},"შემდეგი")
+        )
+      )
+    )
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(App));
+</script>
+
+</body>
+</html>
