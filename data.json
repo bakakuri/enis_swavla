@@ -1,0 +1,25 @@
+{
+  "languages": [
+    {"id": "ka", "name": "ქართული", "flag": "🇬🇪"},
+    {"id": "de", "name": "Deutsch", "flag": "🇩🇪"},
+    {"id": "en", "name": "English", "flag": "🇺🇸"}
+  ],
+  "courses": {
+    "de_ka": [
+      {
+        "level": "A1 - დამწყები",
+        "lessons": [
+          {
+            "title": "მისალმება",
+            "content": [
+              {"word": "Hallo", "phonetic": "ჰალო", "translation": "გამარჯობა"},
+              {"word": "Guten Tag", "phonetic": "გუტენ თაგ", "translation": "გამარჯობათ (დღე მშვიდობისა)"},
+              {"word": "Wie geht es dir?", "phonetic": "ვი გეით ეს დიჰ?", "translation": "როგორ ხარ?"}
+            ],
+            "grammar": "გერმანულში არსებითი სახელი ყოველთვის იწერება დიდი ასოთი."
+          }
+        ]
+      }
+    ]
+  }
+}
