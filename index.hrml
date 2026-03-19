@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>German ენის სწავლა</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <h1>🇩🇪 German ენის შესწავლა</h1>
+
+    <div class="lesson-selector">
+      <label for="lesson">აირჩიე გაკვეთილი:</label>
+      <select id="lesson">
+        <option value="basic">Basic</option>
+        <option value="numbers">Numbers</option>
+        <option value="colors">Colors</option>
+        <option value="phrases">Phrases</option>
+        <option value="verbs">Verbs</option>
+        <option value="travel">Travel</option>
+      </select>
+    </div>
+
+    <div class="flashcard-container">
+      <div id="flashcard" class="flashcard">
+        <div id="front" class="card-front"></div>
+        <div id="pronunciation" class="card-pronunciation"></div>
+        <div id="back" class="card-back"></div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button id="nextBtn">შემდეგი →</button>
+      <div id="progress-container">
+        <div id="progress-bar"></div>
+      </div>
+      <div id="score-display">Score: 0</div>
+    </div>
+
+    <div class="quiz-container">
+      <h2>ქვიზკ</h2>
+      <div id="quiz-question"></div>
+      <div id="quiz-options"></div>
+      <div id="quiz-result"></div>
+      <button id="quiz-nextBtn">შემდეგი შეკითხვა</button>
+    </div>
+  </div>
+
+  <script src="data/german_vocab.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
