@@ -1,0 +1,103 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;450;700&display=swap');
+
+:root {
+    --bg-dark: #080a0f;
+    --card-bg: rgba(20, 25, 35, 0.8);
+    --accent: #00d2ff;
+    --accent-purple: #9d50bb;
+    --text-main: #e2e8f0;
+    --glass-border: rgba(255, 255, 255, 0.08);
+}
+
+body {
+    background: radial-gradient(circle at top right, #1a1c2c, var(--bg-dark));
+    font-family: 'Inter', sans-serif;
+    color: var(--text-main);
+    margin: 0;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* პროგრესის ინდიკატორი */
+.top-nav {
+    position: sticky;
+    top: 0;
+    background: rgba(8, 10, 15, 0.8);
+    backdrop-filter: blur(12px);
+    z-index: 100;
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.progress-track {
+    height: 4px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent-purple));
+    box-shadow: 0 0 10px var(--accent);
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ბარათების დიზაინი */
+.card {
+    background: var(--card-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(10px);
+    border-radius: 24px;
+    padding: 20px;
+    margin-bottom: 16px;
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    border-color: rgba(0, 210, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+/* სიტყვების სტილი */
+.word-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    background: linear-gradient(to right, #fff, #94a3b8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.phonetic {
+    color: var(--accent);
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+}
+
+/* ქვიზის ღილაკები */
+.btn-choice {
+    width: 100%;
+    padding: 16px;
+    margin-top: 10px;
+    border-radius: 16px;
+    border: 1px solid var(--glass-border);
+    background: rgba(255,255,255,0.03);
+    color: white;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-choice:active { transform: scale(0.97); }
+
+.btn-choice.correct {
+    background: rgba(34, 197, 94, 0.2);
+    border-color: #22c55e;
+    color: #4ade80;
+}
+
+.btn-choice.wrong {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: #ef4444;
+}
