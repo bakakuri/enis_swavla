@@ -103,7 +103,6 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("total-bar").style.width = `${(totalLearned / allWords.length) * 100}%`;
     }
 
-    // ღილაკების ივენთები
     document.getElementById("reveal-btn").addEventListener("click", (e) => {
         document.getElementById("translation").classList.remove("hidden");
         e.target.style.display = "none";
@@ -123,7 +122,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // ==========================================
-    // სავარჯიშოების ლოგიკა
+    // სავარჯიშოების ლოგიკა (მხოლოდ არჩევითი)
     // ==========================================
     let exerciseWords = [];
     let currentExIndex = 0;
@@ -135,7 +134,7 @@ document.addEventListener("DOMContentLoaded", () => {
     exerciseBtn.addEventListener("click", () => {
         document.getElementById("learning-area").classList.add("hidden");
         document.getElementById("completion-message").classList.add("hidden");
-        document.getElementById("passed-words-section").classList.add("hidden"); // ვმალავთ სიას სავარჯიშოს დროს
+        document.getElementById("passed-words-section").classList.add("hidden"); 
         
         exerciseArea.classList.remove("hidden");
         
@@ -147,7 +146,8 @@ document.addEventListener("DOMContentLoaded", () => {
     function loadExercise() {
         if (currentExIndex >= exerciseWords.length) {
             exerciseArea.innerHTML = `<div style="text-align:center; padding:30px;">
-                <h2>🎉 იდეალურია!</h2><p>დღევანდელი სავარჯიშოები დასრულებულია.</p>
+                <h2 style="font-size: 32px; margin-bottom: 15px;">🎉 იდეალურია!</h2>
+                <p style="font-size: 18px; color: var(--text-muted);">დღევანდელი სავარჯიშოები წარმატებით დაასრულე.</p>
             </div>`;
             return;
         }
@@ -155,50 +155,39 @@ document.addEventListener("DOMContentLoaded", () => {
         const word = exerciseWords[currentExIndex];
         const questionEl = document.getElementById("exercise-question");
         const mcContainer = document.getElementById("multiple-choice-container");
-        const typeContainer = document.getElementById("typing-container");
         const feedback = document.getElementById("exercise-feedback");
         const nextBtn = document.getElementById("next-exercise-btn");
-        const typingInput = document.getElementById("typing-input");
 
         feedback.innerText = "";
         nextBtn.classList.add("hidden");
-        typingInput.value = "";
-        typingInput.style.borderColor = "#e0e0e0";
 
         document.getElementById("exercise-progress").innerText = `${currentExIndex}/20`;
         document.getElementById("exercise-bar").style.width = `${(currentExIndex / 20) * 100}%`;
 
-        let exerciseType = Math.random() > 0.5 ? "multipleChoice" : "typing";
+        // 50% შანსი: კითხვა იყოს ქართულად ან გერმანულად
+        let isGeoToGer = Math.random() > 0.5;
 
-        if (exerciseType === "multipleChoice") {
-            mcContainer.classList.remove("hidden");
-            typeContainer.classList.add("hidden");
+        questionEl.innerText = isGeoToGer ? word.ka : word.de; 
+        currentCorrectAnswer = isGeoToGer ? word.de : word.ka;
+
+        // 4 ვარიანტის გენერაცია
+        let options = [currentCorrectAnswer];
+        while (options.length < 4) {
+            let randomWord = allWords[Math.floor(Math.random() * allWords.length)];
+            let randomOption = isGeoToGer ? randomWord.de : randomWord.ka;
             
-            questionEl.innerText = word.ka; 
-            currentCorrectAnswer = word.de;
-
-            let options = [word.de];
-            while (options.length < 4) {
-                let randomWord = allWords[Math.floor(Math.random() * allWords.length)].de;
-                if (!options.includes(randomWord)) {
-                    options.push(randomWord);
-                }
+            if (!options.includes(randomOption)) {
+                options.push(randomOption);
             }
-            options.sort(() => Math.random() - 0.5); 
-
-            const optionBtns = document.querySelectorAll(".option-btn");
-            optionBtns.forEach((btn, index) => {
-                btn.innerText = options[index];
-                btn.className = "option-btn"; 
-                btn.onclick = () => checkMultipleChoice(btn, currentCorrectAnswer);
-            });
-        } else {
-            mcContainer.classList.add("hidden");
-            typeContainer.classList.remove("hidden");
-            
-            questionEl.innerText = `როგორ არის გერმანულად: "${word.ka}"?`;
-            currentCorrectAnswer = word.de;
         }
+        options.sort(() => Math.random() - 0.5); // ვარიანტების არევა
+
+        const optionBtns = document.querySelectorAll(".option-btn");
+        optionBtns.forEach((btn, index) => {
+            btn.innerText = options[index];
+            btn.className = "option-btn"; 
+            btn.onclick = () => checkMultipleChoice(btn, currentCorrectAnswer);
+        });
     }
 
     function checkMultipleChoice(selectedBtn, correctText) {
@@ -213,7 +202,7 @@ document.addEventListener("DOMContentLoaded", () => {
             feedback.className = "feedback-text text-success";
         } else {
             selectedBtn.classList.add("wrong");
-            feedback.innerText = `❌ შეცდომაა. სწორი პასუხია: ${correctText}`;
+            feedback.innerText = `❌ შეცდომაა. სწორია: ${correctText}`;
             feedback.className = "feedback-text text-danger";
             
             optionBtns.forEach(btn => {
@@ -223,36 +212,14 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("next-exercise-btn").classList.remove("hidden");
     }
 
-    document.getElementById("check-typing-btn").addEventListener("click", () => {
-        const typingInput = document.getElementById("typing-input");
-        const feedback = document.getElementById("exercise-feedback");
-        let userAnswer = typingInput.value.trim().toLowerCase();
-        let correctAnswer = currentCorrectAnswer.toLowerCase();
-
-        if (userAnswer === correctAnswer) {
-            typingInput.style.borderColor = "#28a745";
-            feedback.innerText = "✅ ზუსტია!";
-            feedback.className = "feedback-text text-success";
-        } else {
-            typingInput.style.borderColor = "#dc3545";
-            feedback.innerText = `❌ არასწორია. სწორია: ${currentCorrectAnswer}`;
-            feedback.className = "feedback-text text-danger";
-        }
-        
-        document.getElementById("check-typing-btn").classList.add("hidden");
-        document.getElementById("next-exercise-btn").classList.remove("hidden");
-    });
-
     document.getElementById("next-exercise-btn").addEventListener("click", () => {
         currentExIndex++;
-        document.getElementById("check-typing-btn").classList.remove("hidden");
         loadExercise();
     });
 
     // ==========================================
-    // სიდებარის ღილაკების ფუნქციები
+    // სიდებარი და სიტყვების სია
     // ==========================================
-    
     document.getElementById("menu-reset").addEventListener("click", () => {
         if(confirm("ნამდვილად გსურთ მთლიანი პროგრესის განულება? წაიშლება თქვენი გავლილი სიტყვები.")) {
             localStorage.clear();
@@ -270,11 +237,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("sidebar").classList.remove("active");
     });
 
-    // ==========================================
-    // გავლილი სიტყვების სიის გამოჩენა
-    // ==========================================
-    
-        function renderPassedWords() {
+    function renderPassedWords() {
         const listContainer = document.getElementById("passed-words-list");
         const section = document.getElementById("passed-words-section");
         
@@ -283,7 +246,6 @@ document.addEventListener("DOMContentLoaded", () => {
         listContainer.innerHTML = ""; 
         
         if (currentIndex > 0) {
-            // აქ მოვხსენით hidden კლასი და პირდაპირ block-ს ვაძლევთ
             section.style.display = "block";
             
             let limit = Math.min(currentIndex, dailyWords.length);
@@ -305,6 +267,5 @@ document.addEventListener("DOMContentLoaded", () => {
             section.style.display = "none";
         }
     }
-
 });
-            
+                
