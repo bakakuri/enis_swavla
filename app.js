@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // 1. ნიკნეიმის მართვა
     let username = localStorage.getItem("app_nickname");
     const modal = document.getElementById("nickname-modal");
     const greeting = document.getElementById("user-greeting");
@@ -19,12 +18,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // 2. სიდებარის მართვა
     const sidebar = document.getElementById("sidebar");
     document.getElementById("menu-btn").addEventListener("click", () => sidebar.classList.add("active"));
     document.getElementById("close-sidebar").addEventListener("click", () => sidebar.classList.remove("active"));
 
-    // 3. აპლიკაციის ლოგიკა და მონაცემების ჩატვირთვა
     let allWords = [];
     let dailyWords = [];
     let currentIndex = 0;
@@ -59,8 +56,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function generateDailyList() {
         let list = [];
-        
-        // 1. ჯერ ვიღებთ გუშინდელ შეცდომებს (review_queue)
         let reviewQueue = JSON.parse(localStorage.getItem("review_queue")) || [];
         let remainingReview = [...reviewQueue];
         
@@ -71,13 +66,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 list.push(w);
             }
         }
-        localStorage.setItem("review_queue", JSON.stringify(remainingReview)); // ვასუფთავებთ აღებულებს
+        localStorage.setItem("review_queue", JSON.stringify(remainingReview)); 
 
-        // 2. ვავსებთ დარჩენილ ადგილებს 20-მდე
         let needed = 20 - list.length;
         if (needed > 0) {
             let oldWordsCount = learnedWords.length >= 3 ? Math.floor(Math.random() * 2) + 2 : learnedWords.length;
-            if (oldWordsCount > needed) oldWordsCount = needed; // თუ ძალიან ცოტა გვაკლია 20-მდე
+            if (oldWordsCount > needed) oldWordsCount = needed; 
             
             let availableOld = allWords.filter(w => learnedWords.includes(w.id) && !list.some(x => x.id === w.id));
             let availableNew = allWords.filter(w => !learnedWords.includes(w.id) && !list.some(x => x.id === w.id));
@@ -93,15 +87,22 @@ document.addEventListener("DOMContentLoaded", () => {
                 list.push(availableNew.splice(rand, 1)[0]);
             }
         }
-        return list.sort(() => Math.random() - 0.5); // ვურევთ სიას
+        return list.sort(() => Math.random() - 0.5); 
     }
 
     function updateUI() {
+        // საერთო პროგრესის ზუსტი კალკულაცია
+        let totalLearned = new Set(learnedWords).size;
+
         if (currentIndex >= dailyWords.length || currentIndex >= 20) {
             document.getElementById("learning-area").classList.add("hidden");
             document.getElementById("completion-message").classList.remove("hidden");
             document.getElementById("daily-progress").innerText = `20/20`;
             document.getElementById("daily-bar").style.width = `100%`;
+            
+            // აქ დაემატა განახლება ბოლო სიტყვისთვის, რომ აღარ გაიჭედოს 19-ზე
+            document.getElementById("total-progress").innerText = `${totalLearned}/${allWords.length}`;
+            document.getElementById("total-bar").style.width = `${(totalLearned / allWords.length) * 100}%`;
             return;
         }
 
@@ -116,7 +117,6 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("daily-progress").innerText = `${currentIndex}/20`;
         document.getElementById("daily-bar").style.width = `${(currentIndex / 20) * 100}%`;
         
-        let totalLearned = new Set([...learnedWords, ...dailyWords.slice(0, currentIndex).map(w=>w.id)]).size;
         document.getElementById("total-progress").innerText = `${totalLearned}/${allWords.length}`;
         document.getElementById("total-bar").style.width = `${(totalLearned / allWords.length) * 100}%`;
     }
@@ -132,20 +132,16 @@ document.addEventListener("DOMContentLoaded", () => {
             learnedWords.push(currentWordId);
             localStorage.setItem("learned_words", JSON.stringify(learnedWords));
         }
-        
         currentIndex++;
         localStorage.setItem("current_index", currentIndex);
         updateUI();
         renderPassedWords(); 
     });
 
-    // ==========================================
     // სავარჯიშოების ლოგიკა და რეზულტატები
-    // ==========================================
     let exerciseWords = [];
     let currentExIndex = 0;
     let currentCorrectAnswer = "";
-    
     let correctAnswersCount = 0;
     let incorrectWordsList = [];
 
@@ -169,7 +165,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function loadExercise() {
         if (currentExIndex >= exerciseWords.length) {
             exerciseArea.classList.add("hidden");
-            showResults();
+            showResults(); 
             return;
         }
 
@@ -210,7 +206,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const optionBtns = document.querySelectorAll(".option-btn");
         const feedback = document.getElementById("exercise-feedback");
         
-        optionBtns.forEach(btn => btn.onclick = null); // ღილაკების დაბლოკვა ერთი დაჭერის მერე
+        optionBtns.forEach(btn => btn.onclick = null); 
 
         if (selectedBtn.innerText === correctText) {
             selectedBtn.classList.add("correct");
@@ -226,7 +222,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (btn.innerText === correctText) btn.classList.add("correct");
             });
             
-            // ვამატებთ შეცდომების სიაში თუ უკვე არაა
             if (!incorrectWordsList.some(w => w.id === currentWordObj.id)) {
                 incorrectWordsList.push(currentWordObj);
             }
@@ -239,6 +234,7 @@ document.addEventListener("DOMContentLoaded", () => {
         loadExercise();
     });
 
+    // რეზულტატების დახატვის ფუნქცია
     function showResults() {
         const resultsSection = document.getElementById("exercise-results");
         resultsSection.classList.remove("hidden");
@@ -253,7 +249,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (incorrectWordsList.length > 0) {
             mistakesContainer.classList.remove("hidden");
             
-            // ვხატავთ შეცდომების სიას
             incorrectWordsList.forEach(word => {
                 mistakesList.innerHTML += `
                     <div class="passed-word-item" style="border-left-color: var(--danger);">
@@ -265,7 +260,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 `;
             });
             
-            // ვინახავთ ლოქალსთორიჯში ხვალისთვის
             let reviewQueue = JSON.parse(localStorage.getItem("review_queue")) || [];
             incorrectWordsList.forEach(w => {
                 if(!reviewQueue.includes(w.id)) reviewQueue.push(w.id);
@@ -278,12 +272,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.getElementById("finish-daily-btn").addEventListener("click", () => {
         alert("დღევანდელი მისია შესრულებულია! 🎉 გელოდებით ხვალ.");
-        location.reload(); // აბრუნებს აპლიკაციას საწყის მდგომარეობაში
+        location.reload(); 
     });
 
-    // ==========================================
-    // სიდებარი და სიტყვების სია
-    // ==========================================
     document.getElementById("menu-reset").addEventListener("click", () => {
         if(confirm("ნამდვილად გსურთ მთლიანი პროგრესის განულება? წაიშლება თქვენი გავლილი სიტყვები.")) {
             localStorage.clear();
@@ -332,4 +323,4 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 });
-        
+    
