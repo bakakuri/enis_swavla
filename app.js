@@ -91,7 +91,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function updateUI() {
-        // საერთო პროგრესის ზუსტი კალკულაცია
         let totalLearned = new Set(learnedWords).size;
 
         if (currentIndex >= dailyWords.length || currentIndex >= 20) {
@@ -100,7 +99,6 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("daily-progress").innerText = `20/20`;
             document.getElementById("daily-bar").style.width = `100%`;
             
-            // აქ დაემატა განახლება ბოლო სიტყვისთვის, რომ აღარ გაიჭედოს 19-ზე
             document.getElementById("total-progress").innerText = `${totalLearned}/${allWords.length}`;
             document.getElementById("total-bar").style.width = `${(totalLearned / allWords.length) * 100}%`;
             return;
@@ -138,7 +136,6 @@ document.addEventListener("DOMContentLoaded", () => {
         renderPassedWords(); 
     });
 
-    // სავარჯიშოების ლოგიკა და რეზულტატები
     let exerciseWords = [];
     let currentExIndex = 0;
     let currentCorrectAnswer = "";
@@ -234,7 +231,6 @@ document.addEventListener("DOMContentLoaded", () => {
         loadExercise();
     });
 
-    // რეზულტატების დახატვის ფუნქცია
     function showResults() {
         const resultsSection = document.getElementById("exercise-results");
         resultsSection.classList.remove("hidden");
@@ -270,8 +266,23 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    // ეს არის შეცვლილი ფუნქცია (დასრულების ღილაკის ლოგიკა)
     document.getElementById("finish-daily-btn").addEventListener("click", () => {
-        alert("დღევანდელი მისია შესრულებულია! 🎉 გელოდებით ხვალ.");
+        let learned = JSON.parse(localStorage.getItem("learned_words")) || [];
+        
+        // 1. ვამოწმებთ, სრული კურსი ხომ არ დაასრულა (200 სიტყვა)
+        if (learned.length >= allWords.length) {
+            alert("🏆 გილოცავთ! თქვენ წარმატებით დაასრულეთ სრული კურსი (" + allWords.length + " სიტყვა). პროგრესი ახლა განულდება და შეგიძლიათ დაიწყოთ თავიდან.");
+            localStorage.clear();
+            location.reload();
+            return;
+        }
+
+        // 2. თუ ჯერ არ დაუსრულებია, ვშლით მიმდინარე გაკვეთილის მეხსიერებას, რომ მაშინვე ახალი მოგვცეს
+        localStorage.removeItem("daily_words");
+        localStorage.removeItem("current_index");
+        localStorage.removeItem("last_date"); 
+        
         location.reload(); 
     });
 
@@ -323,4 +334,4 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 });
-    
+            
