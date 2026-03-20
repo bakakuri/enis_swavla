@@ -20,12 +20,13 @@
     <div id="sidebar" class="sidebar">
         <h3>მენიუ</h3>
         <ul id="category-list">
-            <li>📚 ლექსიკონი</li>
-            <li>⚙️ პარამეტრები</li>
-            <li>🔄 პროგრესის განულება</li>
+            <li id="menu-dict">📚 ლექსიკონი</li>
+            <li id="menu-settings">⚙️ პარამეტრები</li>
+            <li id="menu-reset">🔄 პროგრესის განულება</li>
         </ul>
-        <button id="close-sidebar" class="btn-secondary" style="margin-top:20px;">X დახურვა</button>
+        <button id="close-sidebar" class="btn-secondary" style="width: 100%; margin-top: 20px; padding: 12px; border-radius: 12px; cursor: pointer;">X დახურვა</button>
     </div>
+
 
     <main class="main-content">
         <header>
@@ -88,6 +89,12 @@
             <h2>🎉 გილოცავ!</h2>
             <p>დღევანდელი 20 სიტყვა წარმატებით გაიარე.</p>
         </section>
+                <section id="passed-words-section" style="padding: 0 20px 30px 20px; display: none;">
+            <h3 style="margin-bottom: 15px; color: var(--text-main); font-size: 18px;">დღეს გავლილი სიტყვები:</h3>
+            <div id="passed-words-list" class="words-list">
+                </div>
+                </section>
+        
     </main>
 
     <script src="app.js"></script>
