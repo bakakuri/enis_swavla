@@ -178,25 +178,43 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("exercise-bar").style.width = `${(currentExIndex / 20) * 100}%`;
 
         let isGeoToGer = Math.random() > 0.5;
-        questionEl.innerText = isGeoToGer ? word.ka : word.de; 
-        currentCorrectAnswer = isGeoToGer ? word.de : word.ka;
 
-        let options = [currentCorrectAnswer];
+        // აქ ვამზადებთ 4 სრულყოფილ ობიექტს
+        let options = [word];
         while (options.length < 4) {
             let randomWord = allWords[Math.floor(Math.random() * allWords.length)];
-            let randomOption = isGeoToGer ? randomWord.de : randomWord.ka;
-            if (!options.includes(randomOption)) {
-                options.push(randomOption);
+            // ვამოწმებთ, რომ იდენტური სიტყვა არ ჩაჯდეს
+            if (!options.some(o => o.id === randomWord.id)) {
+                options.push(randomWord);
             }
         }
         options.sort(() => Math.random() - 0.5); 
 
         const optionBtns = document.querySelectorAll(".option-btn");
-        optionBtns.forEach((btn, index) => {
-            btn.innerText = options[index];
-            btn.className = "option-btn"; 
-            btn.onclick = () => checkMultipleChoice(btn, currentCorrectAnswer, word);
-        });
+        
+        if (isGeoToGer) {
+            // კითხვა ქართულად, სავარაუდო პასუხები გერმანულად + ფონეტიკით
+            questionEl.innerHTML = word.ka; 
+            
+            optionBtns.forEach((btn, index) => {
+                let optWord = options[index];
+                btn.innerHTML = `${optWord.de} <br><span style="font-size: 13px; font-weight: normal; color: var(--text-muted); opacity: 0.8; margin-top: 4px; display: inline-block;">${optWord.phonetics}</span>`;
+                btn.className = "option-btn"; 
+                btn.isCorrectOption = (optWord.id === word.id);
+                btn.onclick = () => checkMultipleChoice(btn, word.de, word);
+            });
+        } else {
+            // კითხვა გერმანულად + ფონეტიკით, სავარაუდო პასუხები ქართულად
+            questionEl.innerHTML = `${word.de} <br><span style="font-size: 17px; font-weight: normal; color: var(--text-muted); display: block; margin-top: 6px;">${word.phonetics}</span>`;
+            
+            optionBtns.forEach((btn, index) => {
+                let optWord = options[index];
+                btn.innerHTML = optWord.ka; 
+                btn.className = "option-btn"; 
+                btn.isCorrectOption = (optWord.id === word.id);
+                btn.onclick = () => checkMultipleChoice(btn, word.ka, word);
+            });
+        }
     }
 
     function checkMultipleChoice(selectedBtn, correctText, currentWordObj) {
@@ -205,7 +223,7 @@ document.addEventListener("DOMContentLoaded", () => {
         
         optionBtns.forEach(btn => btn.onclick = null); 
 
-        if (selectedBtn.innerText === correctText) {
+        if (selectedBtn.isCorrectOption) {
             selectedBtn.classList.add("correct");
             feedback.innerText = "✅ სწორია!";
             feedback.className = "feedback-text text-success";
@@ -216,7 +234,7 @@ document.addEventListener("DOMContentLoaded", () => {
             feedback.className = "feedback-text text-danger";
             
             optionBtns.forEach(btn => {
-                if (btn.innerText === correctText) btn.classList.add("correct");
+                if (btn.isCorrectOption) btn.classList.add("correct");
             });
             
             if (!incorrectWordsList.some(w => w.id === currentWordObj.id)) {
@@ -246,7 +264,6 @@ document.addEventListener("DOMContentLoaded", () => {
             mistakesContainer.classList.remove("hidden");
             
             incorrectWordsList.forEach(word => {
-                // აქაც შევცვალეთ კომპაქტურ დიზაინზე რეზულტატების ეკრანისთვის
                 mistakesList.innerHTML += `
                     <div class="passed-word-item" style="border-left-color: var(--danger);">
                         <span class="compact-de">${word.de}</span>
@@ -315,7 +332,6 @@ document.addEventListener("DOMContentLoaded", () => {
             for (let i = 0; i < limit; i++) {
                 let word = dailyWords[i];
                 if(!word) continue;
-                // კომპაქტური დიზაინის გენერაცია
                 let wordHTML = `
                     <div class="passed-word-item">
                         <span class="compact-de">${word.de}</span>
@@ -330,4 +346,4 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 });
-        
+            
