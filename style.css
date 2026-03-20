@@ -1,101 +1,386 @@
+/* =========================================
+   Telegram Mini App - Modern UI Variables
+========================================= */
 :root {
-    --bg-color: #f4f7f6;
-    --primary: #4299e1;
-    --primary-hover: #3182ce;
-    --success: #48bb78;
-    --danger: #e53e3e;
-    --warning: #ed8936;
-    --border-radius: 20px;
+    /* ვიყენებთ Telegram-ის მშობლიურ ფერებს, თუ ხელმისაწვდომია, წინააღმდეგ შემთხვევაში Fallback-ებს */
+    --bg-color: var(--tg-theme-bg-color, #f4f6f9);
+    --text-main: var(--tg-theme-text-color, #2c3e50);
+    --text-muted: var(--tg-theme-hint-color, #7f8c8d);
+    
+    --primary: var(--tg-theme-button-color, #0088cc);
+    --primary-hover: #0077b3;
+    --primary-text: var(--tg-theme-button-text-color, #ffffff);
+    
+    --card-bg: var(--tg-theme-section-bg-color, #ffffff);
+    
+    --success: #28a745;
+    --success-bg: #d4edda;
+    --danger: #dc3545;
+    --danger-bg: #f8d7da;
+    
+    --border-radius-lg: 20px;
+    --border-radius-md: 12px;
+    --transition: 0.2s ease-in-out;
+}
+
+/* =========================================
+   Global Reset & Basic Styles
+========================================= */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    -webkit-tap-highlight-color: transparent; /* აშორებს ლურჯ მოციმციმე ფონს მობილურზე დაჭერისას */
 }
 
 body {
-    font-family: 'Nunito', sans-serif;
-    background-color: var(--tg-theme-bg-color, var(--bg-color));
-    color: var(--tg-theme-text-color, #1f2937);
-    margin: 0;
-    padding: 0;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* =========================================
+   Typography & Headers
+========================================= */
+h1, h2, h3 {
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+header {
     display: flex;
-    height: 100vh;
+    align-items: center;
+    padding: 20px;
+    background: var(--card-bg);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+    border-bottom-left-radius: var(--border-radius-lg);
+    border-bottom-right-radius: var(--border-radius-lg);
+    margin-bottom: 15px;
+}
+
+#user-greeting {
+    font-size: 20px;
+    color: var(--primary);
+    margin: 0;
+}
+
+#menu-btn {
+    font-size: 24px;
+    background: none;
+    border: none;
+    color: var(--text-main);
+    margin-right: 15px;
+    cursor: pointer;
+    transition: transform var(--transition);
+}
+
+#menu-btn:active {
+    transform: scale(0.9);
+}
+
+/* =========================================
+   Modals & Sidebar
+========================================= */
+.modal {
+    display: none; 
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: var(--card-bg);
+    padding: 30px 20px;
+    border-radius: var(--border-radius-lg);
+    text-align: center;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.modal-content input {
+    width: 100%;
+    padding: 15px;
+    margin: 20px 0;
+    border: 2px solid #e1e8ed;
+    border-radius: var(--border-radius-md);
+    font-size: 16px;
+    text-align: center;
+    outline: none;
+    transition: border-color var(--transition);
+}
+
+.modal-content input:focus {
+    border-color: var(--primary);
+}
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: -280px;
+    width: 260px;
+    height: 100%;
+    background: var(--card-bg);
+    box-shadow: 4px 0 15px rgba(0,0,0,0.05);
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 30px 20px;
+    z-index: 500;
+}
+
+.sidebar.active {
+    left: 0;
+}
+
+.sidebar h3 {
+    margin-bottom: 20px;
+    color: var(--primary);
+    font-size: 22px;
+}
+
+#category-list {
+    list-style: none;
+    margin-bottom: 30px;
+}
+
+#category-list li {
+    padding: 15px 0;
+    border-bottom: 1px solid #f0f2f5;
+    font-size: 16px;
+    cursor: pointer;
+    color: var(--text-main);
+}
+
+/* =========================================
+   Progress Bars
+========================================= */
+.progress-section {
+    padding: 10px 20px;
+}
+
+.progress-section p {
+    font-size: 14px;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-bottom: 5px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 12px;
+    background: #e1e8ed;
+    border-radius: 10px;
+    margin-bottom: 20px;
     overflow: hidden;
 }
 
-/* --- Sidebar --- */
-.sidebar {
-    position: fixed; left: -280px; top: 0; width: 260px; height: 100%;
-    background: #ffffff; color: #1f2937; z-index: 1000;
-    transition: left 0.3s ease; box-shadow: 2px 0 10px rgba(0,0,0,0.1);
-    padding: 20px; box-sizing: border-box; display: flex; flex-direction: column;
-}
-.sidebar.open { left: 0; }
-.overlay {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.5); z-index: 999; display: none;
-}
-.overlay.show { display: block; }
-
-.cat-btn {
-    background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px;
-    border-radius: 12px; margin-bottom: 10px; font-weight: 700;
-    color: #4a5568; cursor: pointer; text-align: left; transition: 0.2s;
-}
-.cat-btn.active { background: #ebf8ff; border-color: var(--primary); color: var(--primary); }
-
-/* --- Main UI --- */
-.screen {
-    display: none; flex-direction: column; height: 100%; width: 100%;
-    padding: 24px; box-sizing: border-box; overflow-y: auto;
-}
-.screen.active { display: flex; animation: fadeIn 0.3s ease; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-
-.card {
-    background: #ffffff; border-radius: var(--border-radius); padding: 24px;
-    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); margin-bottom: 20px;
-    border: 1px solid #e2e8f0; color: #1f2937; 
-}
-.card h3, .card p, .card h2 { color: #1f2937; margin: 0; }
-
-.stats-badge {
-    background: #ffffff; padding: 8px 16px; border-radius: 100px;
-    font-weight: 700; border: 1px solid #e2e8f0; color: #1f2937;
-    display: flex; gap: 12px; align-items: center;
+.fill {
+    height: 100%;
+    background: linear-gradient(90deg, #00c6ff 0%, var(--primary) 100%);
+    border-radius: 10px;
+    width: 0%;
+    transition: width 0.4s ease-in-out;
 }
 
-.btn {
-    background-color: var(--primary); color: white; border: none;
-    padding: 16px; border-radius: 16px; font-size: 18px; font-weight: 800;
-    cursor: pointer; width: 100%; transition: 0.2s;
-    box-shadow: 0 6px 0 var(--primary-hover); margin-top: auto;
+/* =========================================
+   Cards (Learning & Exercises)
+========================================= */
+.learning-area, #exercise-area {
+    padding: 0 20px 30px 20px;
+    animation: fadeIn 0.4s ease-in;
 }
-.btn:active { transform: translateY(6px); box-shadow: 0 0 0 var(--primary-hover); }
-.btn-success { background-color: var(--success); box-shadow: 0 6px 0 #38a169; }
 
-.progress-wrap { background: #edf2f7; border-radius: 10px; height: 14px; width: 100%; margin-top: 10px; }
-.progress-fill { height: 100%; background: var(--success); border-radius: 10px; width: 0%; transition: width 0.5s ease; }
-
-/* --- Flashcard --- */
-.flashcard {
-    background: var(--primary); color: white; border-radius: var(--border-radius);
-    padding: 40px 20px; text-align: center; min-height: 240px;
-    display: flex; flex-direction: column; justify-content: center;
-    box-shadow: 0 10px 20px rgba(66, 153, 225, 0.3); margin-bottom: 30px; cursor: pointer;
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
-.fc-german { font-size: 34px; font-weight: 800; margin-bottom: 5px; }
-.fc-phonetic { font-size: 20px; color: #ebf8ff; font-style: italic; font-weight: 600; margin-bottom: 15px; }
 
-.fc-details { display: none; padding-top: 20px; border-top: 2px dashed rgba(255,255,255,0.4); }
-.fc-details.show { display: block; animation: fadeIn 0.3s ease; }
-.fc-georgian { font-size: 24px; font-weight: 700; color: #fff; }
-
-/* --- Options --- */
-.options-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 20px; }
-.option {
-    background: #f8fafc; border: 2px solid #e2e8f0; color: #1f2937; 
-    padding: 16px; border-radius: 16px; font-size: 18px; font-weight: 700;
-    text-align: center; cursor: pointer; transition: 0.2s;
+.word-card {
+    background: var(--card-bg);
+    padding: 40px 20px;
+    border-radius: var(--border-radius-lg);
+    text-align: center;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.04);
+    margin-bottom: 25px;
+    border: 1px solid rgba(0,0,0,0.02);
 }
-.option.correct { background: #c6f6d5; border-color: var(--success); color: #22543d; }
-.option.wrong { background: #fed7d7; border-color: var(--danger); color: #742a2a; }
-               
+
+#german-word {
+    font-size: 32px;
+    color: var(--primary);
+    margin-bottom: 5px;
+}
+
+.phonetics {
+    color: var(--text-muted);
+    font-size: 18px;
+    margin-bottom: 25px;
+    letter-spacing: 1px;
+}
+
+.translation {
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 2px dashed #f0f2f5;
+    animation: fadeIn 0.3s ease;
+}
+
+#georgian-word {
+    font-size: 26px;
+    color: var(--text-main);
+}
+
+/* =========================================
+   Buttons & Actions
+========================================= */
+.reveal-btn {
+    background: #f0f4f8;
+    color: var(--primary);
+    border: 2px solid #e1e8ed;
+    padding: 12px 25px;
+    border-radius: var(--border-radius-md);
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.reveal-btn:active {
+    background: #e1e8ed;
+    transform: scale(0.96);
+}
+
+.action-buttons button {
+    width: 100%;
+    padding: 18px;
+    border: none;
+    border-radius: var(--border-radius-md);
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    cursor: pointer;
+    transition: transform 0.1s, background-color 0.2s;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.action-buttons button:active {
+    transform: scale(0.96); /* უზრუნველყოფს დაჭერის შეგრძნებას */
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: var(--primary-text);
+}
+
+.btn-primary:active {
+    background: var(--primary-hover);
+}
+
+.btn-secondary {
+    background: #ffffff;
+    color: var(--text-main);
+    border: 2px solid #e1e8ed;
+}
+
+.btn-secondary:active {
+    background: #f4f6f9;
+}
+
+/* =========================================
+   Exercises Specific Styles
+========================================= */
+#exercise-question {
+    font-size: 22px;
+    color: var(--text-main);
+    margin-bottom: 25px;
+}
+
+.options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.option-btn {
+    padding: 18px 10px;
+    border: 2px solid #e1e8ed;
+    background: var(--card-bg);
+    border-radius: var(--border-radius-md);
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-main);
+    transition: all var(--transition);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+}
+
+.option-btn:active {
+    transform: scale(0.95);
+    background: #f8f9fa;
+}
+
+.option-btn.correct {
+    background: var(--success-bg);
+    border-color: var(--success);
+    color: #0f5132;
+    box-shadow: 0 0 10px rgba(40, 167, 69, 0.2);
+}
+
+.option-btn.wrong {
+    background: var(--danger-bg);
+    border-color: var(--danger);
+    color: #842029;
+}
+
+#typing-container {
+    margin-top: 15px;
+}
+
+#typing-input {
+    width: 100%;
+    padding: 18px;
+    border: 2px solid #e1e8ed;
+    border-radius: var(--border-radius-md);
+    font-size: 18px;
+    text-align: center;
+    background: #f8f9fa;
+    color: var(--text-main);
+    transition: all var(--transition);
+    outline: none;
+}
+
+#typing-input:focus {
+    border-color: var(--primary);
+    background: var(--card-bg);
+    box-shadow: 0 0 0 4px rgba(0, 136, 204, 0.1);
+}
+
+.feedback-text {
+    margin-top: 20px;
+    font-weight: 700;
+    font-size: 18px;
+    min-height: 27px; /* რათა ტექსტის გამოჩენამ დიზაინი არ აათამაშოს */
+    animation: fadeIn 0.3s;
+}
+
+.text-success { color: var(--success); }
+.text-danger { color: var(--danger); }
+    
