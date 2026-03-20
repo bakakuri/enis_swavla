@@ -1,12 +1,23 @@
 document.addEventListener("DOMContentLoaded", () => {
+    // ვაინიციალიზებთ Telegram Web App API-ს
+    const tg = window.Telegram.WebApp;
+    tg.expand(); // აპლიკაციას შლის მთელ ეკრანზე
+
     let username = localStorage.getItem("app_nickname");
     const modal = document.getElementById("nickname-modal");
     const greeting = document.getElementById("user-greeting");
     
+    // 1. ავტომატური სახელის წამოღება ტელეგრამიდან
+    if (tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.first_name) {
+        username = tg.initDataUnsafe.user.first_name;
+        localStorage.setItem("app_nickname", username);
+    }
+
     if (!username) {
         modal.style.display = "flex";
     } else {
         greeting.innerText = `გამარჯობა, ${username}!`;
+        modal.style.display = "none"; // მოდალს აღარ ვაჩვენებთ
     }
 
     document.getElementById("save-nickname-btn").addEventListener("click", () => {
@@ -27,7 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentIndex = 0;
     let learnedWords = JSON.parse(localStorage.getItem("learned_words")) || [];
 
-    fetch('data.json')
+    fetch('data.json?v=' + new Date().getTime())
         .then(response => response.json())
         .then(data => {
             allWords = data;
@@ -116,11 +127,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     document.getElementById("reveal-btn").addEventListener("click", (e) => {
+        if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         document.getElementById("translation").classList.remove("hidden");
         e.target.style.display = "none";
     });
 
     document.getElementById("next-word-btn").addEventListener("click", () => {
+        if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         let currentWordId = dailyWords[currentIndex].id;
         if (!learnedWords.includes(currentWordId)) {
             learnedWords.push(currentWordId);
@@ -151,6 +164,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const questionEl = document.getElementById("exercise-question");
     
     exerciseBtn.addEventListener("click", () => {
+        if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
         document.getElementById("learning-area").classList.add("hidden");
         document.getElementById("completion-message").classList.add("hidden");
         document.getElementById("passed-words-section").style.display = "none"; 
@@ -178,7 +192,6 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("exercise-progress").innerText = `${currentExIndex}/20`;
         document.getElementById("exercise-bar").style.width = `${(currentExIndex / 20) * 100}%`;
 
-        // თუ წინადადება არ აქვს, ვახტებით
         if (exerciseStep === "sentence" && (!word.example_de || !word.example_ka)) {
             exerciseStep = "word";
             currentExIndex++;
@@ -242,6 +255,7 @@ document.addEventListener("DOMContentLoaded", () => {
             btn.className = "sentence-word-btn";
             btn.innerText = w;
             btn.onclick = () => {
+                if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
                 selectedSentenceWords.splice(index, 1);
                 currentSentenceWords.push(w);
                 renderSentenceBuilder();
@@ -254,6 +268,7 @@ document.addEventListener("DOMContentLoaded", () => {
             btn.className = "sentence-word-btn";
             btn.innerText = w;
             btn.onclick = () => {
+                if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
                 currentSentenceWords.splice(index, 1);
                 selectedSentenceWords.push(w);
                 renderSentenceBuilder();
@@ -267,11 +282,13 @@ document.addEventListener("DOMContentLoaded", () => {
         optionBtns.forEach(btn => btn.onclick = null); 
 
         if (selectedBtn.isCorrectOption) {
+            if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success'); // სწორი პასუხის ვიბრაცია
             selectedBtn.classList.add("correct");
             feedback.innerText = "✅ სწორია!";
             feedback.className = "feedback-text text-success";
             correctAnswersCount++;
         } else {
+            if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error'); // შეცდომის ვიბრაცია
             selectedBtn.classList.add("wrong");
             feedback.innerText = `❌ შეცდომაა. სწორია: ${correctText}`;
             feedback.className = "feedback-text text-danger";
@@ -286,9 +303,11 @@ document.addEventListener("DOMContentLoaded", () => {
         let correctSentence = exerciseWords[currentExIndex].example_de;
         
         if (userSentence.trim() === correctSentence.trim()) {
+            if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             feedback.innerText = "✅ ზუსტია!";
             feedback.className = "feedback-text text-success";
         } else {
+            if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
             feedback.innerText = `❌ შეცდომაა. სწორია: ${correctSentence}`;
             feedback.className = "feedback-text text-danger";
             let currentWordObj = exerciseWords[currentExIndex];
@@ -299,6 +318,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     document.getElementById("next-exercise-btn").addEventListener("click", () => {
+        if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         if (exerciseStep === "word") {
             exerciseStep = "sentence"; 
         } else {
@@ -309,6 +329,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     function showResults() {
+        if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
         const resultsSection = document.getElementById("exercise-results");
         resultsSection.classList.remove("hidden");
         document.getElementById("correct-count").innerText = correctAnswersCount;
@@ -350,6 +371,67 @@ document.addEventListener("DOMContentLoaded", () => {
         location.reload(); 
     });
 
+    const dictArea = document.getElementById("dictionary-area");
+    const dictSearch = document.getElementById("dict-search");
+    const dictList = document.getElementById("dict-words-list");
+
+    document.getElementById("menu-dict").addEventListener("click", () => {
+        document.getElementById("sidebar").classList.remove("active");
+        
+        document.getElementById("learning-area").classList.add("hidden");
+        document.getElementById("completion-message").classList.add("hidden");
+        document.getElementById("exercise-area").classList.add("hidden");
+        document.getElementById("exercise-results").classList.add("hidden");
+        document.getElementById("passed-words-section").style.display = "none";
+        document.querySelector(".progress-section").classList.add("hidden");
+        
+        dictArea.classList.remove("hidden");
+        dictSearch.value = ""; 
+        renderDictionary(allWords); 
+    });
+
+    document.getElementById("back-from-dict-btn").addEventListener("click", () => {
+        dictArea.classList.add("hidden");
+        document.querySelector(".progress-section").classList.remove("hidden");
+        
+        if (currentIndex >= 20 || currentIndex >= dailyWords.length) {
+            if (exerciseWords && exerciseWords.length > 0) {
+                if (currentExIndex >= exerciseWords.length) {
+                    document.getElementById("exercise-results").classList.remove("hidden");
+                } else {
+                    document.getElementById("exercise-area").classList.remove("hidden");
+                }
+            } else {
+                document.getElementById("completion-message").classList.remove("hidden");
+            }
+        } else {
+            document.getElementById("learning-area").classList.remove("hidden");
+            if (currentIndex > 0) document.getElementById("passed-words-section").style.display = "block";
+        }
+    });
+
+    function renderDictionary(words) {
+        dictList.innerHTML = "";
+        words.forEach(word => {
+            dictList.innerHTML += `
+                <div class="passed-word-item">
+                    <span class="compact-de">${word.de}</span>
+                    <span class="compact-ph">${word.phonetics}</span>
+                    <span class="compact-ka">${word.ka}</span>
+                </div>
+            `;
+        });
+    }
+
+    dictSearch.addEventListener("input", (e) => {
+        const term = e.target.value.toLowerCase().trim();
+        const filtered = allWords.filter(w => 
+            w.de.toLowerCase().includes(term) || 
+            w.ka.toLowerCase().includes(term)
+        );
+        renderDictionary(filtered);
+    });
+
     document.getElementById("menu-reset").addEventListener("click", () => {
         if(confirm("ნამდვილად გსურთ მთლიანი პროგრესის განულება? წაიშლება თქვენი გავლილი სიტყვები.")) {
             localStorage.clear();
@@ -357,10 +439,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    document.getElementById("menu-dict").addEventListener("click", () => {
-        alert("ლექსიკონის სრული ბაზა მალე დაემატება!");
-        document.getElementById("sidebar").classList.remove("active");
-    });
     document.getElementById("menu-settings").addEventListener("click", () => {
         alert("პარამეტრების განყოფილება მალე დაემატება!");
         document.getElementById("sidebar").classList.remove("active");
