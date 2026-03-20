@@ -58,6 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
             localStorage.setItem("current_index", 0);
         }
         updateUI();
+        renderPassedWords(); // ჩამატებულია: სიის განახლება აპლიკაციის ჩართვისას
     }
 
     function generateDailyList() {
@@ -128,8 +129,10 @@ document.addEventListener("DOMContentLoaded", () => {
         currentIndex++;
         localStorage.setItem("current_index", currentIndex);
         updateUI();
+        renderPassedWords(); // ჩამატებულია: სიის განახლება შემდეგ სიტყვაზე გადასვლისას
     });
-        // ==========================================
+
+    // ==========================================
     // სავარჯიშოების ლოგიკა
     // ==========================================
     let exerciseWords = [];
@@ -151,9 +154,6 @@ document.addEventListener("DOMContentLoaded", () => {
         currentExIndex = 0;
         loadExercise();
     });
-
-    // როცა სწავლის პროცესი მთავრდება, სავარჯიშოს ღილაკს ვაჩენთ updateUI ფუნქციაში
-    // (შეგიძლია updateUI ფუნქციაში ჩაამატო `exerciseBtn.classList.remove("hidden");` როცა `currentIndex >= 20`)
 
     function loadExercise() {
         if (currentExIndex >= exerciseWords.length) {
@@ -270,13 +270,14 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("check-typing-btn").classList.remove("hidden");
         loadExercise();
     });
-            // ==========================================
+
+    // ==========================================
     // სიდებარის ღილაკების ფუნქციები
     // ==========================================
     
     // პროგრესის განულება
     document.getElementById("menu-reset").addEventListener("click", () => {
-        if(confirm("ნამდვილად გსურთ მთლიანი პროგრესის განულება? შეიშლება თქვენი გავლილი სიტყვები.")) {
+        if(confirm("ნამდვილად გსურთ მთლიანი პროგრესის განულება? წაიშლება თქვენი გავლილი სიტყვები.")) {
             localStorage.clear();
             location.reload(); // აპლიკაციის თავიდან ჩატვირთვა
         }
@@ -302,6 +303,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const listContainer = document.getElementById("passed-words-list");
         const section = document.getElementById("passed-words-section");
         
+        if (!listContainer || !section) return; // უსაფრთხოებისთვის, თუ HTML არ ჩაიტვირთა
+        
         listContainer.innerHTML = ""; // ვასუფთავებთ სიას ახლის დასახატად
         
         if (currentIndex > 0) {
@@ -324,3 +327,4 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     
 });
+    
