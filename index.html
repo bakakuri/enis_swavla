@@ -55,6 +55,34 @@
                 <button id="exercise-btn" class="btn-secondary hidden">სავარჯიშო</button>
             </div>
         </section>
+                <section id="exercise-area" class="hidden">
+            <div class="progress-section">
+                <p>სავარჯიშოს პროგრესი: <span id="exercise-progress">0/20</span></p>
+                <div class="progress-bar"><div id="exercise-bar" class="fill"></div></div>
+            </div>
+
+            <div class="word-card">
+                <h2 id="exercise-question">კითხვა</h2>
+                
+                <div id="multiple-choice-container" class="options-grid">
+                    <button class="option-btn"></button>
+                    <button class="option-btn"></button>
+                    <button class="option-btn"></button>
+                    <button class="option-btn"></button>
+                </div>
+
+                <div id="typing-container" class="hidden">
+                    <input type="text" id="typing-input" placeholder="ჩაწერე გერმანულად..." autocomplete="off">
+                    <button id="check-typing-btn" class="btn-primary" style="margin-top: 15px;">შემოწმება</button>
+                </div>
+                
+                <p id="exercise-feedback" class="feedback-text"></p>
+            </div>
+            
+            <div class="action-buttons">
+                 <button id="next-exercise-btn" class="btn-primary hidden">შემდეგი</button>
+            </div>
+                </section>
         
         <section id="completion-message" class="hidden" style="text-align:center; padding: 20px;">
             <h2>🎉 გილოცავ!</h2>
