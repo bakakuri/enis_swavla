@@ -3,28 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>German Learning App</title>
+    <title>Modern German Learning App</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #f3f4f6;
-            --text-color: #1f2937;
-            --primary-color: #3b82f6;
-            --secondary-color: #10b981;
-            --danger-color: #ef4444;
+            --bg-color: #f8fafc;
+            --text-color: #0f172a;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --secondary: #10b981;
+            --danger: #ef4444;
             --card-bg: #ffffff;
+            --border-color: #e2e8f0;
+            --sidebar-width: 250px;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', sans-serif;
             background-color: var(--tg-theme-bg-color, var(--bg-color));
             color: var(--tg-theme-text-color, var(--text-color));
             margin: 0;
             padding: 0;
             display: flex;
-            flex-direction: column;
             height: 100vh;
             overflow: hidden;
+        }
+
+        h1, h2, h3 { margin: 0 0 15px 0; }
+
+        /* --- Sidebar --- */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -100%;
+            width: var(--sidebar-width);
+            height: 100%;
+            background: var(--card-bg);
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            transition: left 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .sidebar.open { left: 0; }
+        
+        .sidebar-header {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .category-btn {
+            background: none;
+            border: none;
+            padding: 12px;
+            text-align: left;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-color);
+            cursor: pointer;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            transition: background 0.2s;
+        }
+
+        .category-btn:hover, .category-btn.active {
+            background: #e0e7ff;
+            color: var(--primary);
+        }
+
+        /* Overlay for Sidebar */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.4);
+            z-index: 999;
+            display: none;
+        }
+        .overlay.show { display: block; }
+
+        /* --- Main Content --- */
+        .main-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            width: 100%;
         }
 
         .screen {
@@ -33,201 +106,261 @@
             height: 100%;
             padding: 20px;
             box-sizing: border-box;
+            overflow-y: auto;
         }
+        .screen.active { display: flex; }
 
-        .screen.active {
-            display: flex;
-        }
-
-        /* Top Bar: Stats */
-        .stats-bar {
+        /* Top Bar */
+        .header-bar {
             display: flex;
             justify-content: space-between;
-            background: var(--card-bg);
-            padding: 15px;
-            border-radius: 12px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
-            font-weight: bold;
-        }
-
-        .stat-item {
-            display: flex;
             align-items: center;
-            gap: 5px;
-        }
-
-        .heart { color: var(--danger-color); }
-        .streak { color: #f59e0b; }
-        .xp { color: var(--primary-color); }
-
-        h1, h2, h3 { text-align: center; margin-top: 0; }
-
-        .btn {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 15px;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 10px;
-            transition: opacity 0.2s;
-            width: 100%;
-        }
-
-        .btn:active { opacity: 0.8; }
-        .btn-secondary { background-color: var(--secondary-color); }
-
-        select, input {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 15px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            font-size: 16px;
-            box-sizing: border-box;
-        }
-
-        /* Exercise UI */
-        .question-box {
-            background: var(--card-bg);
-            padding: 30px 20px;
-            border-radius: 12px;
-            text-align: center;
-            font-size: 20px;
             margin-bottom: 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
 
-        .options-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 10px;
-        }
-
-        .option-btn {
-            background: var(--card-bg);
-            border: 2px solid #e5e7eb;
-            padding: 15px;
-            border-radius: 10px;
-            font-size: 16px;
+        .menu-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
             cursor: pointer;
+            padding: 5px;
+            color: var(--text-color);
         }
 
-        .option-btn.correct { background: var(--secondary-color); color: white; border-color: var(--secondary-color); }
-        .option-btn.wrong { background: var(--danger-color); color: white; border-color: var(--danger-color); }
+        .stats-pill {
+            background: var(--card-bg);
+            padding: 10px 15px;
+            border-radius: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            display: flex;
+            gap: 15px;
+            font-weight: 600;
+            font-size: 14px;
+        }
 
-        /* Progress Bar */
+        /* Cards & UI Elements */
+        .card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+        }
+
         .progress-container {
             width: 100%;
-            background-color: #e5e7eb;
+            background-color: var(--border-color);
             border-radius: 10px;
-            height: 10px;
-            margin-bottom: 20px;
+            height: 12px;
+            margin: 10px 0;
+            overflow: hidden;
         }
         .progress-bar {
             height: 100%;
-            background-color: var(--secondary-color);
+            background-color: var(--primary);
             border-radius: 10px;
             width: 0%;
-            transition: width 0.3s ease;
+            transition: width 0.4s ease;
         }
+        .progress-bar.daily { background-color: var(--secondary); }
+
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.1s, background 0.2s;
+            box-shadow: 0 4px 0 var(--primary-hover);
+        }
+        .btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 var(--primary-hover);
+        }
+        .btn:disabled { background: #94a3b8; box-shadow: 0 4px 0 #64748b; cursor: not-allowed; }
+
+        /* --- Exercise UI --- */
+        .exercise-type { font-size: 14px; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+        .question-text { font-size: 22px; font-weight: 700; margin-bottom: 20px; text-align: center; }
+
+        /* Word Bank (Drag & Drop alternative) */
+        .sentence-builder {
+            min-height: 50px;
+            border-bottom: 2px dashed var(--border-color);
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding-bottom: 10px;
+            align-items: center;
+        }
+        .word-pool {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+        .word-pill {
+            background: white;
+            border: 2px solid var(--border-color);
+            padding: 10px 16px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 2px 0 var(--border-color);
+        }
+        .word-pill:active { transform: translateY(2px); box-shadow: none; }
+        .word-pill.hidden { visibility: hidden; }
+
+        /* Multiple Choice Options */
+        .options-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+        .option-btn {
+            background: white; border: 2px solid var(--border-color);
+            padding: 16px; border-radius: 12px; font-size: 16px; font-weight: 600;
+            cursor: pointer; text-align: left;
+        }
+        .option-btn.correct { background: #d1fae5; border-color: var(--secondary); color: #065f46; }
+        .option-btn.wrong { background: #fee2e2; border-color: var(--danger); color: #991b1b; }
+
     </style>
 </head>
 <body>
 
-    <div id="setupScreen" class="screen">
-        <h2>მოგესალმებით! 👋</h2>
-        <p>აირჩიეთ თქვენი მშობლიური ენა და გერმანულის დონე.</p>
-        
-        <label>მშობლიური ენა:</label>
-        <select id="nativeLanguage">
-            <option value="ka">ქართული</option>
-            <option value="en">English</option>
-        </select>
-
-        <label>გერმანული ენის დონე:</label>
-        <select id="germanLevel">
-            <option value="A1">A1 - დამწყები</option>
-            <option value="A2">A2 - ელემენტარული</option>
-        </select>
-
-        <button class="btn" onclick="saveSetup()">დაწყება</button>
-    </div>
-
-    <div id="dashboardScreen" class="screen">
-        <div class="stats-bar">
-            <div class="stat-item heart">❤️ <span id="livesCount">5</span></div>
-            <div class="stat-item streak">🔥 <span id="streakCount">0</span></div>
-            <div class="stat-item xp">⭐ <span id="xpCount">0</span> XP</div>
-        </div>
-
-        <div style="text-align: center; margin-bottom: 20px;">
-            <h3>დონის პროგრესი (<span id="currentLevelDisplay">A1</span>)</h3>
-            <p>დღიური მიზანი: <span id="dailyProgress">0</span> / 50 XP</p>
-            <div class="progress-container">
-                <div class="progress-bar" id="dailyProgressBar"></div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">კატეგორიები</div>
+        <div id="categoryList">
             </div>
-        </div>
-
-        <div style="flex-grow: 1;"></div> <button class="btn btn-secondary" onclick="startExercise()">▶️ ვარჯიშის დაწყება</button>
-        <button class="btn" style="background:#6b7280; margin-top: 10px;" onclick="resetData()">მონაცემების წაშლა (Debug)</button>
-    </div>
-
-    <div id="exerciseScreen" class="screen">
-        <div class="stats-bar" style="box-shadow: none; padding: 0 0 15px 0; background: transparent;">
-            <div class="stat-item heart">❤️ <span id="exerciseLives">5</span></div>
-            <div class="stat-item" id="exerciseTypeTitle">თარგმნე სიტყვა</div>
-        </div>
-
-        <div class="question-box" id="questionText">
-            Der Hund
-        </div>
-
-        <div class="options-grid" id="optionsContainer">
-            </div>
-        
         <div style="flex-grow: 1;"></div>
-        <button class="btn" id="nextBtn" style="display: none;" onclick="nextQuestion()">შემდეგი</button>
-        <button class="btn" style="background:#6b7280; margin-top: 10px;" onclick="endExercise(false)">შეწყვეტა</button>
+        <button class="category-btn" style="color: var(--danger);" onclick="resetData()">↻ პროგრესის წაშლა</button>
+    </div>
+
+    <div class="main-content">
+        <div id="dashboardScreen" class="screen">
+            <div class="header-bar">
+                <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+                <div class="stats-pill">
+                    <span style="color: var(--danger);">❤️ <span id="livesCount">5</span></span>
+                    <span style="color: #f59e0b;">🔥 <span id="streakCount">0</span></span>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>შენი პროფილი</h3>
+                <p style="margin: 0; color: #64748b;">მიმდინარე კატეგორია: <strong id="activeCategoryName" style="color:var(--text-color)">საწყისი</strong></p>
+                
+                <div style="margin-top: 15px;">
+                    <div style="display: flex; justify-content: space-between; font-size: 14px;">
+                        <strong>დონე <span id="userLevel">1</span></strong>
+                        <span id="xpDisplay">0 / 100 XP</span>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar" id="levelProgressBar"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>დღიური გეგმა 🎯</h3>
+                <div style="display: flex; justify-content: space-between; font-size: 14px;">
+                    <span>პროგრესი</span>
+                    <span id="dailyProgressText">0 / 50 XP</span>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar daily" id="dailyProgressBar"></div>
+                </div>
+            </div>
+            
+            <div style="flex-grow: 1;"></div>
+            <button class="btn" onclick="startExercise()">ვარჯიშის დაწყება</button>
+        </div>
+
+        <div id="exerciseScreen" class="screen">
+            <div class="header-bar">
+                <button class="menu-btn" onclick="endExercise(false)">✕</button>
+                <div class="stats-pill" style="box-shadow:none; border: 1px solid var(--border-color);">
+                    <span style="color: var(--danger);">❤️ <span id="exerciseLives">5</span></span>
+                </div>
+            </div>
+
+            <div id="exerciseContainer" class="card" style="text-align: center; flex-grow: 1; display: flex; flex-direction: column; justify-content: center;">
+                </div>
+
+            <button class="btn" id="checkBtn" onclick="checkWordBankAnswer()" style="display: none; margin-bottom: 10px;">შემოწმება</button>
+            <button class="btn" id="nextBtn" style="display: none; background: var(--secondary); box-shadow: 0 4px 0 #059669;" onclick="nextQuestion()">შემდეგი ➔</button>
+        </div>
     </div>
 
     <script>
-        // --- 1. Telegram Auth & LocalStorage Setup ---
         const tg = window.Telegram.WebApp;
-        tg.expand(); // აპლიკაციის სრულ ეკრანზე გაშლა
+        tg.expand();
+        const userId = tg.initDataUnsafe?.user?.id || 'guest';
+        const storageKey = `german_app_${userId}`;
 
-        // Pseudo-Auth: ვიღებთ Telegram User ID-ს. თუ ბრაუზერში ვტესტავთ, იქნება 'guest'
-        const userId = tg.initDataUnsafe?.user?.id || 'guest_user';
-        const storageKey = `german_app_data_${userId}`;
-
-        // საბაზისო მონაცემების სტრუქტურა
+        // 1. მონაცემების სტრუქტურა და ბაზა
         let userData = {
-            isSetupComplete: false,
-            nativeLanguage: 'ka',
-            level: 'A1',
             xp: 0,
-            streak: 0,
             lives: 5,
+            streak: 0,
+            dailyXp: 0,
             lastPlayedDate: null,
-            dailyXp: 0
+            activeCategory: 'basics'
         };
 
-        // --- 2. მონაცემების ჩატვირთვა/შენახვა ---
-        function loadData() {
-            const savedData = localStorage.getItem(storageKey);
-            if (savedData) {
-                userData = JSON.parse(savedData);
-                checkStreakAndLives();
+        const vocabularyDb = {
+            'basics': [
+                { type: 'choice', q: 'Das Mädchen', options: ['გოგონა', 'ბიჭი', 'კაცი', 'ქალი'], ans: 0 },
+                { type: 'wordbank', q: 'მე ვარ გიორგი', correct: 'Ich bin Giorgi', pool: ['Ich', 'bist', 'bin', 'Giorgi', 'Du', 'heißt'] }
+            ],
+            'transport': [
+                { type: 'choice', q: 'Die Fahrkarte', options: ['მატარებელი', 'ბილეთი', 'სადგური', 'ავტობუსი'], ans: 1 },
+                { type: 'wordbank', q: 'მე მინდა ბილეთი', correct: 'Ich möchte eine Fahrkarte', pool: ['eine', 'Ich', 'der', 'Fahrkarte', 'möchte', 'Auto'] }
+            ],
+            'food': [
+                { type: 'choice', q: 'Der Apfel', options: ['ვაშლი', 'პური', 'წყალი', 'ყველი'], ans: 0 },
+                { type: 'wordbank', q: 'მე ვჭამ პურს', correct: 'Ich esse Brot', pool: ['Brot', 'trinke', 'Ich', 'esse', 'Wasser'] }
+            ]
+        };
+
+        const categoryNames = {
+            'basics': 'საწყისი ეტაპი',
+            'transport': 'ტრანსპორტი და ქალაქი',
+            'food': 'საკვები'
+        };
+
+        // 2. ინიციალიზაცია
+        function initApp() {
+            const saved = localStorage.getItem(storageKey);
+            if (saved) userData = JSON.parse(saved);
+            
+            checkDailyStatus();
+            renderSidebar();
+            updateDashboard();
+            showScreen('dashboardScreen');
+        }
+
+        function checkDailyStatus() {
+            const today = new Date().toDateString();
+            if (userData.lastPlayedDate !== today) {
+                if (userData.lastPlayedDate) {
+                    let y = new Date(); y.setDate(y.getDate() - 1);
+                    if (new Date(userData.lastPlayedDate).toDateString() !== y.toDateString()) userData.streak = 0;
+                }
+                userData.lives = 5;
+                userData.dailyXp = 0;
+                saveData();
             }
-            route();
         }
 
         function saveData() {
             localStorage.setItem(storageKey, JSON.stringify(userData));
-            updateDashboardUI();
+            updateDashboard();
         }
 
         function resetData() {
@@ -235,73 +368,56 @@
             location.reload();
         }
 
-        // ლოგიკა სიცოცხლეების აღდგენისა და სტრიკის (Streak) კონტროლისთვის
-        function checkStreakAndLives() {
-            const today = new Date().toDateString();
-            if (userData.lastPlayedDate !== today) {
-                // ახალი დღეა: აღვადგინოთ სიცოცხლეები და შევამოწმოთ სტრიკი
-                let lastDate = new Date(userData.lastPlayedDate);
-                let yesterday = new Date();
-                yesterday.setDate(yesterday.getDate() - 1);
+        // 3. UI და ნავიგაცია
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('overlay').classList.toggle('show');
+        }
 
-                if (userData.lastPlayedDate && lastDate.toDateString() !== yesterday.toDateString()) {
-                    userData.streak = 0; // სტრიკი დაიკარგა
-                }
-                
-                userData.lives = 5; // გულების აღდგენა
-                userData.dailyXp = 0; // დღიური მიზნის განულება
-                saveData();
+        function renderSidebar() {
+            const list = document.getElementById('categoryList');
+            list.innerHTML = '';
+            for (let key in categoryNames) {
+                const btn = document.createElement('button');
+                btn.className = `category-btn ${userData.activeCategory === key ? 'active' : ''}`;
+                btn.innerText = categoryNames[key];
+                btn.onclick = () => {
+                    userData.activeCategory = key;
+                    saveData();
+                    renderSidebar();
+                    toggleSidebar();
+                };
+                list.appendChild(btn);
             }
         }
 
-        // --- 3. ნავიგაცია (Routing) ---
-        function showScreen(screenId) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(screenId).classList.add('active');
-        }
-
-        function route() {
-            if (!userData.isSetupComplete) {
-                showScreen('setupScreen');
-            } else {
-                updateDashboardUI();
-                showScreen('dashboardScreen');
-            }
-        }
-
-        function saveSetup() {
-            userData.nativeLanguage = document.getElementById('nativeLanguage').value;
-            userData.level = document.getElementById('germanLevel').value;
-            userData.isSetupComplete = true;
-            saveData();
-            route();
-        }
-
-        // --- 4. UI განახლება ---
-        function updateDashboardUI() {
+        function updateDashboard() {
             document.getElementById('livesCount').innerText = userData.lives;
             document.getElementById('streakCount').innerText = userData.streak;
-            document.getElementById('xpCount').innerText = userData.xp;
-            document.getElementById('currentLevelDisplay').innerText = userData.level;
-            
-            // დღიური მიზანი (მაგ. 50 XP)
+            document.getElementById('activeCategoryName').innerText = categoryNames[userData.activeCategory];
+
+            // Level Logic (1 დონე = 100 XP)
+            const level = Math.floor(userData.xp / 100) + 1;
+            const currentLevelXp = userData.xp % 100;
+            document.getElementById('userLevel').innerText = level;
+            document.getElementById('xpDisplay').innerText = `${currentLevelXp} / 100 XP`;
+            document.getElementById('levelProgressBar').style.width = `${currentLevelXp}%`;
+
+            // Daily Logic (მიზანი 50 XP)
             const dailyGoal = 50;
-            document.getElementById('dailyProgress').innerText = userData.dailyXp;
-            let progressPercent = (userData.dailyXp / dailyGoal) * 100;
-            if(progressPercent > 100) progressPercent = 100;
-            document.getElementById('dailyProgressBar').style.width = progressPercent + '%';
+            document.getElementById('dailyProgressText').innerText = `${userData.dailyXp} / ${dailyGoal} XP`;
+            document.getElementById('dailyProgressBar').style.width = `${Math.min((userData.dailyXp / dailyGoal) * 100, 100)}%`;
         }
 
-        // --- 5. სავარჯიშოების ლოგიკა (Multiple Choice / Translation) ---
-        // მომავალში ეს შეგიძლია API-დან ან ცალკე JSON ფაილიდან წამოიღო
-        const mockExercises = [
-            { type: 'translation', question: 'Der Hund', options: ['კატა', 'ძაღლი', 'ჩიტი', 'თაგვი'], correct: 1 },
-            { type: 'translation', question: 'Das Auto', options: ['მანქანა', 'სახლი', 'ხე', 'ქუჩა'], correct: 0 },
-            { type: 'grammar', question: 'Ich ___ aus Georgien.', options: ['bin', 'bist', 'ist', 'sind'], correct: 0 }
-        ];
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
 
-        let currentQuestionIndex = 0;
-        let currentExerciseArr = [];
+        // 4. სავარჯიშოების ლოგიკა
+        let currentExercises = [];
+        let qIndex = 0;
+        let selectedWords = []; // WordBank-ისთვის
 
         function startExercise() {
             if (userData.lives <= 0) {
@@ -309,65 +425,136 @@
                 return;
             }
             
-            // ავურიოთ კითხვები პატარა ვარჯიშისთვის
-            currentExerciseArr = [...mockExercises].sort(() => 0.5 - Math.random()).slice(0, 3);
-            currentQuestionIndex = 0;
+            const catData = vocabularyDb[userData.activeCategory];
+            currentExercises = [...catData].sort(() => 0.5 - Math.random());
+            qIndex = 0;
             
             document.getElementById('exerciseLives').innerText = userData.lives;
             showScreen('exerciseScreen');
-            loadQuestion();
+            renderQuestion();
         }
 
-        function loadQuestion() {
-            const q = currentExerciseArr[currentQuestionIndex];
-            document.getElementById('questionText').innerText = q.question;
-            document.getElementById('exerciseTypeTitle').innerText = q.type === 'grammar' ? 'აირჩიე სწორი ფორმა' : 'თარგმნე სიტყვა';
-            
-            const optionsContainer = document.getElementById('optionsContainer');
-            optionsContainer.innerHTML = '';
+        function renderQuestion() {
+            const container = document.getElementById('exerciseContainer');
+            const q = currentExercises[qIndex];
             document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('checkBtn').style.display = 'none';
+            
+            if (q.type === 'choice') {
+                container.innerHTML = `
+                    <div class="exercise-type">აირჩიე სწორი თარგმანი</div>
+                    <div class="question-text">${q.q}</div>
+                    <div class="options-grid" id="optGrid"></div>
+                `;
+                const grid = document.getElementById('optGrid');
+                q.options.forEach((opt, idx) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.innerText = opt;
+                    btn.onclick = () => checkChoiceAnswer(idx, btn, q.ans);
+                    grid.appendChild(btn);
+                });
+            } else if (q.type === 'wordbank') {
+                selectedWords = [];
+                container.innerHTML = `
+                    <div class="exercise-type">ააწყვე წინადადება</div>
+                    <div class="question-text">${q.q}</div>
+                    <div class="sentence-builder" id="sentenceBuilder"></div>
+                    <div class="word-pool" id="wordPool"></div>
+                `;
+                
+                const pool = document.getElementById('wordPool');
+                // სიტყვების არევა
+                const shuffledPool = [...q.pool].sort(() => 0.5 - Math.random());
+                
+                shuffledPool.forEach((word, idx) => {
+                    const pill = document.createElement('div');
+                    pill.className = 'word-pill';
+                    pill.innerText = word;
+                    pill.id = `pill-${idx}`;
+                    pill.onclick = () => moveWordToBuilder(word, pill.id);
+                    pool.appendChild(pill);
+                });
+                document.getElementById('checkBtn').style.display = 'block';
+            }
+        }
 
-            q.options.forEach((opt, index) => {
-                const btn = document.createElement('button');
-                btn.className = 'option-btn';
-                btn.innerText = opt;
-                btn.onclick = () => checkAnswer(index, btn);
-                optionsContainer.appendChild(btn);
+        // Multiple Choice შემოწმება
+        function checkChoiceAnswer(idx, btn, correctIdx) {
+            document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
+            if (idx === correctIdx) {
+                btn.classList.add('correct');
+                handleSuccess();
+            } else {
+                btn.classList.add('wrong');
+                document.querySelectorAll('.option-btn')[correctIdx].classList.add('correct');
+                handleFail();
+            }
+            document.getElementById('nextBtn').style.display = 'block';
+        }
+
+        // Word Bank ლოგიკა
+        function moveWordToBuilder(word, pillId) {
+            const pillElement = document.getElementById(pillId);
+            pillElement.classList.add('hidden'); // ვმალავთ ქვემოთ
+            
+            selectedWords.push({ word, id: pillId });
+            renderBuilder();
+        }
+
+        function removeWordFromBuilder(index) {
+            const removed = selectedWords.splice(index, 1)[0];
+            document.getElementById(removed.id).classList.remove('hidden'); // ვაჩენთ უკან
+            renderBuilder();
+        }
+
+        function renderBuilder() {
+            const builder = document.getElementById('sentenceBuilder');
+            builder.innerHTML = '';
+            selectedWords.forEach((item, index) => {
+                const pill = document.createElement('div');
+                pill.className = 'word-pill';
+                pill.innerText = item.word;
+                pill.onclick = () => removeWordFromBuilder(index);
+                builder.appendChild(pill);
             });
         }
 
-        function checkAnswer(selectedIndex, btnElement) {
-            // ღილაკების გათიშვა
-            const buttons = document.querySelectorAll('.option-btn');
-            buttons.forEach(b => b.disabled = true);
+        function checkWordBankAnswer() {
+            const q = currentExercises[qIndex];
+            const userAnswer = selectedWords.map(i => i.word).join(' ');
+            document.getElementById('checkBtn').style.display = 'none';
 
-            const q = currentExerciseArr[currentQuestionIndex];
-            
-            if (selectedIndex === q.correct) {
-                btnElement.classList.add('correct');
-                userData.xp += 10;
-                userData.dailyXp += 10;
-                tg.HapticFeedback.notificationOccurred('success');
+            if (userAnswer === q.correct) {
+                handleSuccess();
             } else {
-                btnElement.classList.add('wrong');
-                buttons[q.correct].classList.add('correct');
-                userData.lives -= 1;
-                document.getElementById('exerciseLives').innerText = userData.lives;
-                tg.HapticFeedback.notificationOccurred('error');
+                handleFail();
+                // ვაჩვენებთ სწორ პასუხს
+                document.getElementById('sentenceBuilder').innerHTML = `<div style="color:var(--danger); font-weight:bold; width:100%; text-align:center;">სწორია: ${q.correct}</div>`;
             }
-
             document.getElementById('nextBtn').style.display = 'block';
-            saveData();
+        }
 
-            if (userData.lives <= 0) {
-                setTimeout(() => endExercise(false), 1500);
-            }
+        // საერთო წარმატება/მარცხი
+        function handleSuccess() {
+            userData.xp += 20;
+            userData.dailyXp += 20;
+            tg.HapticFeedback.notificationOccurred('success');
+            saveData();
+        }
+
+        function handleFail() {
+            userData.lives -= 1;
+            document.getElementById('exerciseLives').innerText = userData.lives;
+            tg.HapticFeedback.notificationOccurred('error');
+            saveData();
+            if (userData.lives <= 0) setTimeout(() => endExercise(false), 1500);
         }
 
         function nextQuestion() {
-            currentQuestionIndex++;
-            if (currentQuestionIndex < currentExerciseArr.length) {
-                loadQuestion();
+            qIndex++;
+            if (qIndex < currentExercises.length) {
+                renderQuestion();
             } else {
                 endExercise(true);
             }
@@ -375,7 +562,6 @@
 
         function endExercise(completed) {
             if (completed) {
-                // თუ წარმატებით დაასრულა ვარჯიში, ვაახლებთ თარიღს და ვზრდით სტრიკს
                 const today = new Date().toDateString();
                 if (userData.lastPlayedDate !== today) {
                     userData.streak += 1;
@@ -384,11 +570,11 @@
                 }
                 tg.showAlert('გილოცავ! ვარჯიში დასრულებულია. 🎉');
             }
-            route();
+            showScreen('dashboardScreen');
         }
 
-        // აპლიკაციის გაშვება
-        loadData();
+        // გაშვება
+        initApp();
     </script>
 </body>
 </html>
