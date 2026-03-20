@@ -384,3 +384,38 @@ header {
 .text-success { color: var(--success); }
 .text-danger { color: var(--danger); }
     
+/* Passed Words List Styling */
+.words-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.passed-word-item {
+    background: var(--card-bg);
+    padding: 15px;
+    border-radius: var(--border-radius-md);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+    display: flex;
+    flex-direction: column;
+    border-left: 5px solid var(--primary);
+    animation: fadeIn 0.3s ease;
+}
+
+.passed-word-de {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.passed-word-ph {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin: 4px 0;
+}
+
+.passed-word-ka {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-main);
+}
