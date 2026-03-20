@@ -27,7 +27,6 @@
         <button id="close-sidebar" class="btn-secondary" style="width: 100%; margin-top: 20px; padding: 12px; border-radius: 12px; cursor: pointer;">X დახურვა</button>
     </div>
 
-
     <main class="main-content">
         <header>
             <button id="menu-btn">☰</button>
@@ -53,11 +52,17 @@
             
             <div class="action-buttons">
                 <button id="next-word-btn" class="btn-primary">შემდეგი სიტყვა</button>
-                <button id="exercise-btn" class="btn-secondary hidden">სავარჯიშო</button>
             </div>
         </section>
-                <section id="exercise-area" class="hidden">
-            <div class="progress-section">
+        
+        <section id="completion-message" class="hidden" style="text-align:center; padding: 20px;">
+            <h2 style="font-size: 28px; margin-bottom: 10px;">🎉 გილოცავ!</h2>
+            <p style="font-size: 16px; margin-bottom: 25px;">დღევანდელი 20 სიტყვა წარმატებით გაიარე.</p>
+            <button id="exercise-btn" class="btn-primary">🧠 სავარჯიშოს დაწყება</button>
+        </section>
+
+        <section id="exercise-area" class="hidden" style="padding: 0 20px 30px 20px;">
+            <div class="progress-section" style="padding: 0 0 15px 0;">
                 <p>სავარჯიშოს პროგრესი: <span id="exercise-progress">0/20</span></p>
                 <div class="progress-bar"><div id="exercise-bar" class="fill"></div></div>
             </div>
@@ -83,18 +88,14 @@
             <div class="action-buttons">
                  <button id="next-exercise-btn" class="btn-primary hidden">შემდეგი</button>
             </div>
-                </section>
-        
-        <section id="completion-message" class="hidden" style="text-align:center; padding: 20px;">
-            <h2>🎉 გილოცავ!</h2>
-            <p>დღევანდელი 20 სიტყვა წარმატებით გაიარე.</p>
         </section>
-                <section id="passed-words-section" style="padding: 0 20px 30px 20px; display: none;">
+
+        <section id="passed-words-section" class="hidden" style="padding: 0 20px 30px 20px;">
             <h3 style="margin-bottom: 15px; color: var(--text-main); font-size: 18px;">დღეს გავლილი სიტყვები:</h3>
             <div id="passed-words-list" class="words-list">
                 </div>
-                </section>
-        
+        </section>
+
     </main>
 
     <script src="app.js"></script>
