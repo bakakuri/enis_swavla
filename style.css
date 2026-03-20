@@ -1,37 +1,23 @@
-/* =========================================
-   Telegram Mini App - Modern UI Variables
-========================================= */
 :root {
-    /* ვიყენებთ Telegram-ის მშობლიურ ფერებს, თუ ხელმისაწვდომია, წინააღმდეგ შემთხვევაში Fallback-ებს */
-    --bg-color: var(--tg-theme-bg-color, #f4f6f9);
-    --text-main: var(--tg-theme-text-color, #2c3e50);
-    --text-muted: var(--tg-theme-hint-color, #7f8c8d);
-    
-    --primary: var(--tg-theme-button-color, #0088cc);
-    --primary-hover: #0077b3;
-    --primary-text: var(--tg-theme-button-text-color, #ffffff);
-    
-    --card-bg: var(--tg-theme-section-bg-color, #ffffff);
-    
-    --success: #28a745;
-    --success-bg: #d4edda;
-    --danger: #dc3545;
-    --danger-bg: #f8d7da;
-    
-    --border-radius-lg: 20px;
-    --border-radius-md: 12px;
+    --bg-color: #f4f7f6;
+    --text-main: #2d3436;
+    --text-muted: #636e72;
+    --primary: #0088cc;
+    --primary-gradient: linear-gradient(135deg, #0088cc 0%, #00aaff 100%);
+    --card-bg: #ffffff;
+    --success: #00b894;
+    --danger: #d63031;
+    --border-radius-lg: 24px;
+    --border-radius-md: 16px;
     --transition: 0.2s ease-in-out;
 }
 
-/* =========================================
-   Global Reset & Basic Styles
-========================================= */
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    -webkit-tap-highlight-color: transparent; /* აშორებს ლურჯ მოციმციმე ფონს მობილურზე დაჭერისას */
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    -webkit-tap-highlight-color: transparent;
 }
 
 body {
@@ -41,381 +27,142 @@ body {
     overflow-x: hidden;
 }
 
-.hidden {
-    display: none !important;
-}
+.hidden { display: none !important; }
 
-/* =========================================
-   Typography & Headers
-========================================= */
-h1, h2, h3 {
-    font-weight: 700;
-    margin-bottom: 10px;
-}
+h1, h2, h3 { font-weight: 700; margin-bottom: 10px; }
 
 header {
     display: flex;
     align-items: center;
     padding: 20px;
     background: var(--card-bg);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.04);
     border-bottom-left-radius: var(--border-radius-lg);
     border-bottom-right-radius: var(--border-radius-lg);
-    margin-bottom: 15px;
+    margin-bottom: 20px;
 }
 
-#user-greeting {
-    font-size: 20px;
-    color: var(--primary);
-    margin: 0;
-}
+#user-greeting { font-size: 22px; color: var(--primary); margin: 0; }
 
 #menu-btn {
-    font-size: 24px;
+    font-size: 26px;
     background: none;
     border: none;
     color: var(--text-main);
     margin-right: 15px;
     cursor: pointer;
-    transition: transform var(--transition);
 }
 
-#menu-btn:active {
-    transform: scale(0.9);
-}
-
-/* =========================================
-   Modals & Sidebar
-========================================= */
+/* Modals & Sidebar */
 .modal {
-    display: none; 
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(5px);
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(5px);
+    justify-content: center; align-items: center; z-index: 1000;
 }
 
 .modal-content {
-    background: var(--card-bg);
-    padding: 30px 20px;
-    border-radius: var(--border-radius-lg);
-    text-align: center;
-    width: 90%;
-    max-width: 400px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    animation: slideUp 0.3s ease-out;
-}
-
-@keyframes slideUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    background: var(--card-bg); padding: 30px 25px;
+    border-radius: var(--border-radius-lg); text-align: center; width: 90%; max-width: 400px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
 }
 
 .modal-content input {
-    width: 100%;
-    padding: 15px;
-    margin: 20px 0;
-    border: 2px solid #e1e8ed;
-    border-radius: var(--border-radius-md);
-    font-size: 16px;
-    text-align: center;
-    outline: none;
-    transition: border-color var(--transition);
+    width: 100%; padding: 16px; margin: 20px 0;
+    border: 2px solid #e1e8ed; border-radius: var(--border-radius-md);
+    font-size: 18px; text-align: center; outline: none; transition: 0.3s;
 }
 
-.modal-content input:focus {
-    border-color: var(--primary);
-}
+.modal-content input:focus { border-color: var(--primary); }
 
 .sidebar {
-    position: fixed;
-    top: 0;
-    left: -280px;
-    width: 260px;
-    height: 100%;
-    background: var(--card-bg);
-    box-shadow: 4px 0 15px rgba(0,0,0,0.05);
-    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    padding: 30px 20px;
-    z-index: 500;
+    position: fixed; top: 0; left: -280px; width: 280px; height: 100%;
+    background: var(--card-bg); box-shadow: 4px 0 25px rgba(0,0,0,0.1);
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1); padding: 30px 20px; z-index: 500;
 }
+.sidebar.active { left: 0; }
+.sidebar h3 { color: var(--primary); font-size: 24px; margin-bottom: 25px; }
+#category-list { list-style: none; margin-bottom: 30px; }
+#category-list li { padding: 16px 0; border-bottom: 1px solid #f0f2f5; font-size: 18px; cursor: pointer; }
 
-.sidebar.active {
-    left: 0;
-}
+/* Progress */
+.progress-section { padding: 0 20px 10px 20px; }
+.progress-section p { font-size: 15px; color: var(--text-muted); font-weight: 600; display: flex; justify-content: space-between; margin-bottom: 8px; }
+.progress-bar { width: 100%; height: 14px; background: #e1e8ed; border-radius: 10px; margin-bottom: 20px; overflow: hidden; }
+.fill { height: 100%; background: var(--primary-gradient); border-radius: 10px; width: 0%; transition: width 0.4s ease; }
 
-.sidebar h3 {
-    margin-bottom: 20px;
-    color: var(--primary);
-    font-size: 22px;
-}
-
-#category-list {
-    list-style: none;
-    margin-bottom: 30px;
-}
-
-#category-list li {
-    padding: 15px 0;
-    border-bottom: 1px solid #f0f2f5;
-    font-size: 16px;
-    cursor: pointer;
-    color: var(--text-main);
-}
-
-/* =========================================
-   Progress Bars
-========================================= */
-.progress-section {
-    padding: 10px 20px;
-}
-
-.progress-section p {
-    font-size: 14px;
-    color: var(--text-muted);
-    font-weight: 600;
-    margin-bottom: 5px;
-    display: flex;
-    justify-content: space-between;
-}
-
-.progress-bar {
-    width: 100%;
-    height: 12px;
-    background: #e1e8ed;
-    border-radius: 10px;
-    margin-bottom: 20px;
-    overflow: hidden;
-}
-
-.fill {
-    height: 100%;
-    background: linear-gradient(90deg, #00c6ff 0%, var(--primary) 100%);
-    border-radius: 10px;
-    width: 0%;
-    transition: width 0.4s ease-in-out;
-}
-
-/* =========================================
-   Cards (Learning & Exercises)
-========================================= */
-.learning-area, #exercise-area {
-    padding: 0 20px 30px 20px;
-    animation: fadeIn 0.4s ease-in;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
+/* Cards */
+.learning-area, #exercise-area { padding: 0 20px 20px 20px; }
 .word-card {
-    background: var(--card-bg);
-    padding: 40px 20px;
-    border-radius: var(--border-radius-lg);
-    text-align: center;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.04);
-    margin-bottom: 25px;
-    border: 1px solid rgba(0,0,0,0.02);
+    background: var(--card-bg); padding: 40px 20px;
+    border-radius: var(--border-radius-lg); text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 25px;
 }
+#german-word { font-size: 34px; color: var(--primary); margin-bottom: 5px; }
+.phonetics { color: var(--text-muted); font-size: 20px; margin-bottom: 30px; letter-spacing: 1px; }
 
-#german-word {
-    font-size: 32px;
-    color: var(--primary);
-    margin-bottom: 5px;
-}
+.translation { margin-top: 30px; padding-top: 25px; border-top: 2px dashed #f0f2f5; }
+#georgian-word { font-size: 28px; color: var(--text-main); }
 
-.phonetics {
-    color: var(--text-muted);
-    font-size: 18px;
-    margin-bottom: 25px;
-    letter-spacing: 1px;
-}
-
-.translation {
-    margin-top: 25px;
-    padding-top: 20px;
-    border-top: 2px dashed #f0f2f5;
-    animation: fadeIn 0.3s ease;
-}
-
-#georgian-word {
-    font-size: 26px;
-    color: var(--text-main);
-}
-
-/* =========================================
-   Buttons & Actions
-========================================= */
-.reveal-btn {
-    background: #f0f4f8;
-    color: var(--primary);
-    border: 2px solid #e1e8ed;
-    padding: 12px 25px;
-    border-radius: var(--border-radius-md);
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: var(--transition);
-}
-
-.reveal-btn:active {
-    background: #e1e8ed;
-    transform: scale(0.96);
-}
-
+/* LAMAzi ღილაკები */
 .action-buttons button {
-    width: 100%;
-    padding: 18px;
-    border: none;
-    border-radius: var(--border-radius-md);
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 15px;
-    cursor: pointer;
-    transition: transform 0.1s, background-color 0.2s;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-}
-
-.action-buttons button:active {
-    transform: scale(0.96); /* უზრუნველყოფს დაჭერის შეგრძნებას */
+    width: 100%; padding: 18px; border: none;
+    border-radius: var(--border-radius-md); font-size: 18px; font-weight: 700;
+    cursor: pointer; transition: all 0.2s ease; margin-bottom: 12px;
 }
 
 .btn-primary {
-    background: var(--primary);
-    color: var(--primary-text);
+    background: var(--primary-gradient);
+    color: white;
+    box-shadow: 0 6px 20px rgba(0, 136, 204, 0.35);
 }
-
 .btn-primary:active {
-    background: var(--primary-hover);
+    transform: translateY(2px) scale(0.98);
+    box-shadow: 0 2px 10px rgba(0, 136, 204, 0.2);
 }
 
 .btn-secondary {
-    background: #ffffff;
+    background: #f4f7f6;
     color: var(--text-main);
-    border: 2px solid #e1e8ed;
+    border: 2px solid #dfe6e9;
+}
+.btn-secondary:active { background: #e1e8ed; transform: scale(0.98); }
+
+.reveal-btn {
+    background: #f0f4f8; color: var(--primary); border: 2px solid #e1e8ed;
+    padding: 14px 30px; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer;
 }
 
-.btn-secondary:active {
-    background: #f4f6f9;
-}
-
-/* =========================================
-   Exercises Specific Styles
-========================================= */
-#exercise-question {
-    font-size: 22px;
-    color: var(--text-main);
-    margin-bottom: 25px;
-}
-
-.options-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
-    margin-top: 20px;
-}
-
+/* Exercises */
+#exercise-question { font-size: 24px; color: var(--text-main); margin-bottom: 25px; }
+.options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
 .option-btn {
-    padding: 18px 10px;
-    border: 2px solid #e1e8ed;
-    background: var(--card-bg);
-    border-radius: var(--border-radius-md);
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--text-main);
-    transition: all var(--transition);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+    padding: 20px 10px; border: 2px solid #e1e8ed; background: var(--card-bg);
+    border-radius: var(--border-radius-md); cursor: pointer; font-size: 18px;
+    font-weight: 600; color: var(--text-main); box-shadow: 0 4px 10px rgba(0,0,0,0.02);
 }
-
-.option-btn:active {
-    transform: scale(0.95);
-    background: #f8f9fa;
-}
-
-.option-btn.correct {
-    background: var(--success-bg);
-    border-color: var(--success);
-    color: #0f5132;
-    box-shadow: 0 0 10px rgba(40, 167, 69, 0.2);
-}
-
-.option-btn.wrong {
-    background: var(--danger-bg);
-    border-color: var(--danger);
-    color: #842029;
-}
-
-#typing-container {
-    margin-top: 15px;
-}
+.option-btn.correct { background: #e8f5e9; border-color: var(--success); color: #2e7d32; }
+.option-btn.wrong { background: #ffebee; border-color: var(--danger); color: #c62828; }
 
 #typing-input {
-    width: 100%;
-    padding: 18px;
-    border: 2px solid #e1e8ed;
-    border-radius: var(--border-radius-md);
-    font-size: 18px;
-    text-align: center;
-    background: #f8f9fa;
-    color: var(--text-main);
-    transition: all var(--transition);
-    outline: none;
+    width: 100%; padding: 20px; border: 2px solid #e1e8ed;
+    border-radius: var(--border-radius-md); font-size: 20px; text-align: center;
+    background: #f8f9fa; outline: none; transition: 0.3s;
 }
-
-#typing-input:focus {
-    border-color: var(--primary);
-    background: var(--card-bg);
-    box-shadow: 0 0 0 4px rgba(0, 136, 204, 0.1);
-}
-
-.feedback-text {
-    margin-top: 20px;
-    font-weight: 700;
-    font-size: 18px;
-    min-height: 27px; /* რათა ტექსტის გამოჩენამ დიზაინი არ აათამაშოს */
-    animation: fadeIn 0.3s;
-}
-
+#typing-input:focus { border-color: var(--primary); background: white; box-shadow: 0 0 0 4px rgba(0,136,204,0.1); }
+.feedback-text { margin-top: 25px; font-weight: 700; font-size: 20px; min-height: 30px; }
 .text-success { color: var(--success); }
 .text-danger { color: var(--danger); }
-    
-/* Passed Words List Styling */
-.words-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
 
+/* Passed Words List Premium Design */
+.words-list { display: flex; flex-direction: column; gap: 12px; }
 .passed-word-item {
-    background: var(--card-bg);
-    padding: 15px;
+    background: var(--card-bg); padding: 18px 20px;
     border-radius: var(--border-radius-md);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-    display: flex;
-    flex-direction: column;
-    border-left: 5px solid var(--primary);
-    animation: fadeIn 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+    border-left: 6px solid var(--primary);
+    display: flex; flex-direction: column;
 }
-
-.passed-word-de {
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--primary);
-}
-
-.passed-word-ph {
-    font-size: 14px;
-    color: var(--text-muted);
-    margin: 4px 0;
-}
-
-.passed-word-ka {
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--text-main);
-}
+.word-row { display: flex; justify-content: space-between; align-items: center; }
+.passed-word-de { font-size: 20px; font-weight: 700; color: var(--text-main); }
+.passed-word-ka { font-size: 18px; font-weight: 600; color: var(--primary); }
+.passed-word-ph { font-size: 15px; color: var(--text-muted); margin-top: 5px; }
