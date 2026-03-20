@@ -21,10 +21,12 @@ let defaultUser = {
 
 let user = { ...defaultUser };
 const WORDS_PER_DAY = 20;
+const REVIEW_COUNT = 3; // რამდენი ძველი სიტყვა გავიმეოროთ ყოველდღიურად
 let lessonData = [];
 let wordIndex = 0;
 let quizIndex = 0;
 let currentQuizData = [];
+let newWordsLearnedThisSession = 0; // იმახსოვრებს, რამდენი ახალი სიტყვა იყო ამ სესიაში
 
 // მონაცემების ჩატვირთვა JSON-დან
 async function loadDataAndInit() {
@@ -41,7 +43,7 @@ async function loadDataAndInit() {
 }
 
 function initApp() {
-    const saved = localStorage.getItem('german_app_v11');
+    const saved = localStorage.getItem('german_app_v12');
     if (saved) {
         try {
             let parsed = JSON.parse(saved);
@@ -64,10 +66,10 @@ function initApp() {
     updateUI();
 }
 
-function saveData() { localStorage.setItem('german_app_v11', JSON.stringify(user)); updateUI(); }
+function saveData() { localStorage.setItem('german_app_v12', JSON.stringify(user)); updateUI(); }
 
 function resetProgress() {
-    localStorage.removeItem('german_app_v11');
+    localStorage.removeItem('german_app_v12');
     location.reload();
 }
 
@@ -114,12 +116,11 @@ function updateUI() {
     let totalInCat = wordsDB[user.activeCat].length;
     document.getElementById('catProgressText').innerText = `${currentProg} / ${totalInCat}`;
     
-    // დაცვა ნულზე გაყოფისგან
     let progressPercent = totalInCat > 0 ? (currentProg / totalInCat) * 100 : 0;
     document.getElementById('catProgressBar').style.width = `${progressPercent}%`;
 }
 
-// --- ნაბიჯი 1: სწავლა ---
+// --- ნაბიჯი 1: სწავლა (ინტერვალური გამეორების ლოგიკით) ---
 function startLearning() {
     if (user.lives <= 0) return safeAlert('სიცოცხლეები ამოგეწურა! დაელოდე ხვალამდე.');
 
@@ -130,11 +131,28 @@ function startLearning() {
         return safeAlert('ეს კატეგორია უკვე სრულად ისწავლე! მენიუდან (☰) აირჩიე სხვა.');
     }
 
-    wordIndex = 0;
-    lessonData = catWords.slice(startIdx, startIdx + WORDS_PER_DAY);
+    let learnedWords = catWords.slice(0, startIdx); // უკვე ნასწავლი სიტყვები
+    let unlearnedWords = catWords.slice(startIdx); // ახალი სიტყვები
+
+    // რამდენი ძველი სიტყვა შეგვიძლია გამოვიყენოთ (თუ 3-ზე ნაკლები გვაქვს ნასწავლი, ვიღებთ იმდენს, რამდენიც გვაქვს)
+    let actualReviewCount = Math.min(REVIEW_COUNT, learnedWords.length);
     
-    // თუ კატეგორიაში სიტყვები აღარაა
-    if(lessonData.length === 0) return safeAlert('ამ კატეგორიაში სიტყვები არაა დამატებული.');
+    // ახალი სიტყვების რაოდენობა = 20 მინუს ძველი სიტყვების რაოდენობა
+    let newWordsCount = Math.min(WORDS_PER_DAY - actualReviewCount, unlearnedWords.length);
+
+    // ვირჩევთ შემთხვევით ძველ სიტყვებს გასამეორებლად
+    let reviewWords = [...learnedWords].sort(() => 0.5 - Math.random()).slice(0, actualReviewCount);
+    
+    // ვიღებთ ახალ სიტყვებს
+    let newWords = unlearnedWords.slice(0, newWordsCount);
+
+    // ვაერთიანებთ და ვურევთ ერთმანეთში, რომ არ ვიცოდეთ რომელია ძველი და ახალი
+    lessonData = [...reviewWords, ...newWords].sort(() => 0.5 - Math.random());
+    
+    newWordsLearnedThisSession = newWordsCount; // ვიმახსოვრებთ მხოლოდ ახლების რაოდენობას პროგრესისთვის
+    wordIndex = 0;
+
+    if (lessonData.length === 0) return safeAlert('ამ კატეგორიაში სიტყვები არაა დამატებული.');
 
     showScreen('learningScreen');
     loadWord();
@@ -245,7 +263,8 @@ function nextQuiz() {
     if (quizIndex < currentQuizData.length) {
         loadQuiz();
     } else {
-        user.progress[user.activeCat] += lessonData.length;
+        // ვუმატებთ მხოლოდ ახალი სიტყვების რაოდენობას პროგრესს
+        user.progress[user.activeCat] += newWordsLearnedThisSession;
 
         let today = new Date().toDateString();
         if (user.lastPlayed !== today) {
@@ -254,12 +273,12 @@ function nextQuiz() {
         }
 
         saveData();
-        safeAlert('გილოცავ! სესია წარმატებით დაასრულე 🎉');
+        safeAlert('გილოცავ! დღევანდელი სესია წარმატებით დაასრულე 🎉');
         showScreen('dashboard');
     }
 }
 
-// Event Listeners - ეს ანაცვლებს პირდაპირ HTML onclick-ებს!
+// Event Listeners
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('menuBtn').addEventListener('click', toggleSidebar);
     document.getElementById('overlay').addEventListener('click', toggleSidebar);
@@ -274,6 +293,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('nextQuizBtn').addEventListener('click', nextQuiz);
 
-    // გაშვება - იწყება JSON-ის ჩამოტვირთვით
     loadDataAndInit();
 });
