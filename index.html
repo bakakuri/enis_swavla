@@ -30,20 +30,10 @@
 
         /* --- Sidebar --- */
         .sidebar {
-            position: fixed;
-            left: -280px;
-            top: 0;
-            width: 260px;
-            height: 100%;
-            background: #ffffff;
-            color: #1f2937;
-            z-index: 1000;
-            transition: left 0.3s ease;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
-            padding: 20px;
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
+            position: fixed; left: -280px; top: 0; width: 260px; height: 100%;
+            background: #ffffff; color: #1f2937; z-index: 1000;
+            transition: left 0.3s ease; box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            padding: 20px; box-sizing: border-box; display: flex; flex-direction: column;
         }
         .sidebar.open { left: 0; }
         .overlay {
@@ -69,11 +59,10 @@
 
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
         
-        /* Dark mode text fix for cards */
         .card {
             background: #ffffff; border-radius: var(--border-radius); padding: 24px;
             box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); margin-bottom: 20px;
-            border: 1px solid #e2e8f0; color: #1f2937; /* Force dark text */
+            border: 1px solid #e2e8f0; color: #1f2937; 
         }
         .card h3, .card p, .card h2 { color: #1f2937; margin: 0; }
 
@@ -112,7 +101,7 @@
         /* --- Options --- */
         .options-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 20px; }
         .option {
-            background: #f8fafc; border: 2px solid #e2e8f0; color: #1f2937; /* Force dark text */
+            background: #f8fafc; border: 2px solid #e2e8f0; color: #1f2937; 
             padding: 16px; border-radius: 16px; font-size: 18px; font-weight: 700;
             text-align: center; cursor: pointer; transition: 0.2s;
         }
@@ -132,7 +121,7 @@
 
     <div id="dashboard" class="screen active">
         <div class="header">
-            <button onclick="toggleSidebar()" style="background:none; border:none; font-size:28px; cursor:pointer; color:var(--tg-theme-text-color);">☰</button>
+            <button onclick="toggleSidebar()" style="background:none; border:none; font-size:28px; cursor:pointer; color:var(--tg-theme-text-color, #1f2937);">☰</button>
             <div class="stats-badge">
                 <span style="color: var(--danger);">❤️ <span id="lives">5</span></span>
                 <span style="color: var(--warning);">🔥 <span id="streak">0</span></span>
@@ -162,8 +151,8 @@
 
     <div id="learningScreen" class="screen">
         <div class="header">
-            <h2 style="font-size: 18px; color: var(--tg-theme-text-color);">ნაბიჯი 1: სიტყვები</h2>
-            <button onclick="showScreen('dashboard')" style="background:none; border:none; font-size:24px; cursor:pointer; color:var(--tg-theme-text-color);">✕</button>
+            <h2 style="font-size: 18px; color: var(--tg-theme-text-color, #1f2937);">ნაბიჯი 1: სიტყვები</h2>
+            <button onclick="showScreen('dashboard')" style="background:none; border:none; font-size:24px; cursor:pointer; color:var(--tg-theme-text-color, #1f2937);">✕</button>
         </div>
 
         <div class="flashcard" id="flashcard" onclick="revealTranslation()">
@@ -177,7 +166,7 @@
             </div>
         </div>
 
-        <p style="text-align: center; font-weight: 700; color:var(--tg-theme-text-color);" id="learnProgressText">1 / 20</p>
+        <p style="text-align: center; font-weight: 700; color:var(--tg-theme-text-color, #1f2937);" id="learnProgressText">1 / 20</p>
         
         <button class="btn" id="nextWordBtn" style="display: none;" onclick="nextWord()">შემდეგი ➔</button>
         <button class="btn btn-success" id="startPracticeBtn" style="display: none;" onclick="startPractice()">✍️ სავარჯიშო</button>
@@ -185,7 +174,7 @@
 
     <div id="practiceScreen" class="screen">
         <div class="header">
-            <h2 style="font-size: 18px; color: var(--tg-theme-text-color);">ნაბიჯი 2: პრაქტიკა</h2>
+            <h2 style="font-size: 18px; color: var(--tg-theme-text-color, #1f2937);">ნაბიჯი 2: პრაქტიკა</h2>
             <div class="stats-badge">❤️ <span id="practiceLives">5</span></div>
         </div>
 
@@ -200,10 +189,20 @@
     </div>
 
     <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
+        // უსაფრთხო Telegram-ის ინიციალიზაცია (იმუშავებს ბრაუზერშიც გაჭედვის გარეშე)
+        const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+        if(tg && tg.expand) { tg.expand(); }
 
-        // --- 200 სიტყვა დაყოფილი კატეგორიებად ---
+        const safeAlert = (msg) => {
+            if(tg && tg.showAlert) { tg.showAlert(msg); } else { alert(msg); }
+        };
+
+        const safeHaptic = (type) => {
+            if(tg && tg.HapticFeedback && tg.HapticFeedback.notificationOccurred) {
+                tg.HapticFeedback.notificationOccurred(type);
+            }
+        };
+
         const catNames = {
             'basics': '👋 საბაზისო & ნაცვალსახელები',
             'city': '🚇 ქალაქი & ტრანსპორტი',
@@ -218,137 +217,5 @@
                 { de: "Guten Tag", ph: "[გუტენ თაგ]", ka: "შუადღე მშვიდობისა" }, { de: "Guten Abend", ph: "[გუტენ აბენდ]", ka: "საღამო მშვიდობისა" },
                 { de: "Gute Nacht", ph: "[გუტე ნახტ]", ka: "ღამე მშვიდობისა" }, { de: "Tschüss", ph: "[ჩიუს]", ka: "ნახვამდის (არაფორმალური)" },
                 { de: "Auf Wiedersehen", ph: "[აუფ ვიდერზეენ]", ka: "ნახვამდის (ფორმალური)" }, { de: "Ja", ph: "[ია]", ka: "კი" },
-                { de: "Nein", ph: "[ნაინ]", ka: "არა" }, { de: "Bitte", ph: "[ბიტე]", ka: "გთხოვთ / არაფრის" },
-                { de: "Danke", ph: "[დანქე]", ka: "მადლობა" }, { de: "Entschuldigung", ph: "[ენტშულდიგუნგ]", ka: "ბოდიში" },
-                { de: "Genau", ph: "[გენაუ]", ka: "ზუსტად" }, { de: "Hilfe", ph: "[ჰილფე]", ka: "დახმარება" },
-                { de: "Ich", ph: "[იხ]", ka: "მე" }, { de: "Du", ph: "[დუ]", ka: "შენ" },
-                { de: "Er", ph: "[ერ]", ka: "ის (მამრ.)" }, { de: "Sie", ph: "[ზი]", ka: "ის (მდედრ.) / ისინი" },
-                { de: "Es", ph: "[ეს]", ka: "ის (საშუალო)" }, { de: "Wir", ph: "[ვირ]", ka: "ჩვენ" },
-                { de: "Ihr", ph: "[ირ]", ka: "თქვენ (მრავლ.)" }, { de: "Mein", ph: "[მაინ]", ka: "ჩემი" },
-                { de: "Dein", ph: "[დაინ]", ka: "შენი" }, { de: "Wer?", ph: "[ვერ]", ka: "ვინ?" },
-                { de: "Was?", ph: "[ვას]", ka: "რა?" }, { de: "Wo?", ph: "[ვო]", ka: "სად?" },
-                { de: "Wann?", ph: "[ვან]", ka: "როდის?" }, { de: "Warum?", ph: "[ვარუმ]", ka: "რატომ?" },
-                { de: "Wie?", ph: "[ვი]", ka: "როგორ?" }, { de: "Wie viel?", ph: "[ვი ფილ]", ka: "რამდენი?" }
-            ],
-            'city': [
-                { de: "Die Stadt", ph: "[დი შტადტ]", ka: "ქალაქი" }, { de: "Die Straße", ph: "[დი შტრასე]", ka: "ქუჩა" },
-                { de: "Der Bahnhof", ph: "[დერ ბანჰოფ]", ka: "მატარებლის სადგური" }, { de: "Die Haltestelle", ph: "[დი ჰალტეშტელე]", ka: "გაჩერება" },
-                { de: "Der Flughafen", ph: "[დერ ფლუგჰაფენ]", ka: "აეროპორტი" }, { de: "Die Fahrkarte", ph: "[დი ფარკარტე]", ka: "ბილეთი" },
-                { de: "Der Bus", ph: "[დერ ბუს]", ka: "ავტობუსი" }, { de: "Die U-Bahn", ph: "[დი უ-ბან]", ka: "მეტრო" },
-                { de: "Die S-Bahn", ph: "[დი ეს-ბან]", ka: "ქალაქის მატარებელი" }, { de: "Der Zug", ph: "[დერ ცუგ]", ka: "მატარებელი" },
-                { de: "Das Auto", ph: "[დას აუტო]", ka: "მანქანა" }, { de: "Das Fahrrad", ph: "[დას ფარრად]", ka: "ველოსიპედი" },
-                { de: "Rechts", ph: "[რეხტს]", ka: "მარჯვნივ" }, { de: "Links", ph: "[ლინკს]", ka: "მარცხნივ" },
-                { de: "Geradeaus", ph: "[გერადეაუს]", ka: "პირდაპირ" }, { de: "Das Hotel", ph: "[დას ჰოტელ]", ka: "სასტუმრო" },
-                { de: "Das Restaurant", ph: "[დას რესტორანტ]", ka: "რესტორანი" }, { de: "Der Supermarkt", ph: "[დერ ზუპერმარქტ]", ka: "სუპერმარკეტი" },
-                { de: "Die Apotheke", ph: "[დი აპოთეკე]", ka: "აფთიაქი" }, { de: "Das Geld", ph: "[დას გელდ]", ka: "ფული" },
-                { de: "Der Ausweis", ph: "[დერ აუსვაის]", ka: "პირადობის მოწმობა" }
-            ],
-            'verbs': [
-                { de: "Sein", ph: "[ზაინ]", ka: "ყოფნა" }, { de: "Haben", ph: "[ჰაბენ]", ka: "ქონა" },
-                { de: "Machen", ph: "[მახენ]", ka: "კეთება" }, { de: "Gehen", ph: "[გეენ]", ka: "წასვლა / სიარული" },
-                { de: "Kommen", ph: "[კომენ]", ka: "მოსვლა" }, { de: "Sagen", ph: "[ზაგენ]", ka: "თქმა" },
-                { de: "Sehen", ph: "[ზეენ]", ka: "ყურება" }, { de: "Essen", ph: "[ესენ]", ka: "ჭამა" },
-                { de: "Trinken", ph: "[ტრინკენ]", ka: "სმა" }, { de: "Schlafen", ph: "[შლაფენ]", ka: "ძილი" },
-                { de: "Arbeiten", ph: "[არბაიტენ]", ka: "მუშაობა" }, { de: "Lernen", ph: "[ლერნენ]", ka: "სწავლა" },
-                { de: "Kaufen", ph: "[კაუფენ]", ka: "ყიდვა" }, { de: "Bezahlen", ph: "[ბეცალენ]", ka: "გადახდა" },
-                { de: "Brauchen", ph: "[ბრაუხენ]", ka: "საჭიროება" }, { de: "Suchen", ph: "[ზუხენ]", ka: "ძებნა" },
-                { de: "Finden", ph: "[ფინდენ]", ka: "პოვნა" }, { de: "Sprechen", ph: "[შპრეხენ]", ka: "საუბარი" },
-                { de: "Verstehen", ph: "[ფერშტეენ]", ka: "გაგება" }, { de: "Lesen", ph: "[ლეზენ]", ka: "წაკითხვა" },
-                { de: "Schreiben", ph: "[შრაიბენ]", ka: "დაწერა" }, { de: "Warten", ph: "[ვარტენ]", ka: "ლოდინი" },
-                { de: "Fahren", ph: "[ფარენ]", ka: "მგზავრობა" }, { de: "Fliegen", ph: "[ფლიგენ]", ka: "ფრენა" },
-                { de: "Wohnen", ph: "[ვონენ]", ka: "ცხოვრება (ბინადრობა)" }, { de: "Leben", ph: "[ლებენ]", ka: "სიცოცხლე" },
-                { de: "Fragen", ph: "[ფრაგენ]", ka: "კითხვა" }, { de: "Antworten", ph: "[ანტვორტენ]", ka: "პასუხი" },
-                { de: "Wissen", ph: "[ვისენ]", ka: "ცოდნა" }, { de: "Möchten", ph: "[მიოხტენ]", ka: "სურვილი (მინდა)" }
-            ],
-            'food': [
-                { de: "Das Wasser", ph: "[დას ვასერ]", ka: "წყალი" }, { de: "Das Brot", ph: "[დას ბროტ]", ka: "პური" },
-                { de: "Der Kaffee", ph: "[დერ კაფე]", ka: "ყავა" }, { de: "Der Tee", ph: "[დერ თე]", ka: "ჩაი" },
-                { de: "Die Milch", ph: "[დი მილხ]", ka: "რძე" }, { de: "Der Apfel", ph: "[დერ აპფელ]", ka: "ვაშლი" },
-                { de: "Die Banane", ph: "[დი ბანანე]", ka: "ბანანი" }, { de: "Das Fleisch", ph: "[დას ფლაიშ]", ka: "ხორცი" },
-                { de: "Der Fisch", ph: "[დერ ფიშ]", ka: "თევზი" }, { de: "Der Käse", ph: "[დერ ქეზე]", ka: "ყველი" },
-                { de: "Das Ei", ph: "[დას აი]", ka: "კვერცხი" }, { de: "Das Gemüse", ph: "[დას გემიუზე]", ka: "ბოსტნეული" },
-                { de: "Das Obst", ph: "[დას ობსტ]", ka: "ხილი" }, { de: "Die Kartoffel", ph: "[დი კარტოფელ]", ka: "კარტოფილი" },
-                { de: "Die Tomate", ph: "[დი ტომატე]", ka: "პომიდორი" }, { de: "Die Schokolade", ph: "[დი შოკოლადე]", ka: "შოკოლადი" },
-                { de: "Das Bier", ph: "[დას ბირ]", ka: "ლუდი" }, { de: "Der Wein", ph: "[დერ ვაინ]", ka: "ღვინო" },
-                { de: "Das Frühstück", ph: "[დას ფრიუშტიუკ]", ka: "საუზმე" }, { de: "Das Abendessen", ph: "[დას აბენდესენ]", ka: "ვახშამი" }
-            ],
-            'other': [
-                { de: "Heute", ph: "[ჰოიტე]", ka: "დღეს" }, { de: "Morgen", ph: "[მორგენ]", ka: "ხვალ" },
-                { de: "Gestern", ph: "[გესტერნ]", ka: "გუშინ" }, { de: "Jetzt", ph: "[იეცტ]", ka: "ახლა" },
-                { de: "Später", ph: "[შპეტერ]", ka: "მოგვიანებით" }, { de: "Immer", ph: "[იმერ]", ka: "ყოველთვის" },
-                { de: "Der Tag", ph: "[დერ თაგ]", ka: "დღე" }, { de: "Die Woche", ph: "[დი ვოხე]", ka: "კვირა" },
-                { de: "Das Jahr", ph: "[დას იარ]", ka: "წელი" }, { de: "Gut", ph: "[გუტ]", ka: "კარგი" },
-                { de: "Schlecht", ph: "[შლეხტ]", ka: "ცუდი" }, { de: "Groß", ph: "[გროს]", ka: "დიდი" },
-                { de: "Klein", ph: "[კლაინ]", ka: "პატარა" }, { de: "Neu", ph: "[ნოი]", ka: "ახალი" },
-                { de: "Alt", ph: "[ალტ]", ka: "ძველი" }, { de: "Schön", ph: "[შონ]", ka: "ლამაზი" },
-                { de: "Kalt", ph: "[კალტ]", ka: "ცივი" }, { de: "Warm", ph: "[ვარმ]", ka: "თბილი" },
-                { de: "Heiß", ph: "[ჰაის]", ka: "ცხელი" }, { de: "Teuer", ph: "[ტოიერ]", ka: "ძვირი" },
-                { de: "Billig", ph: "[ბილიგ]", ka: "იაფი" }, { de: "Schnell", ph: "[შნელ]", ka: "სწრაფი" },
-                { de: "Langsam", ph: "[ლანგზამ]", ka: "ნელი" }, { de: "Richtig", ph: "[რიხტიგ]", ka: "სწორი" },
-                { de: "Falsch", ph: "[ფალშ]", ka: "არასწორი" }, { de: "Die Familie", ph: "[დი ფამილიე]", ka: "ოჯახი" },
-                { de: "Die Mutter", ph: "[დი მუტერ]", ka: "დედა" }, { de: "Der Vater", ph: "[დერ ფატერ]", ka: "მამა" },
-                { de: "Das Haus", ph: "[დას ჰაუს]", ka: "სახლი" }, { de: "Das Wetter", ph: "[დას ვეტერ]", ka: "ამინდი" }
-            ]
-        };
-
-        let user = { 
-            xp: 0, 
-            lives: 5, 
-            streak: 0, 
-            lastPlayed: null,
-            activeCat: 'basics',
-            progress: { basics: 0, city: 0, verbs: 0, food: 0, other: 0 }
-        };
+                { de: "Nein", ph: "[ნაინ
         
-        const WORDS_PER_DAY = 20;
-        let lessonData = []; 
-
-        function initApp() {
-            const saved = localStorage.getItem('german_cat_app');
-            if(saved) user = JSON.parse(saved);
-            
-            let today = new Date().toDateString();
-            if(user.lastPlayed !== today) {
-                if(user.lastPlayed) {
-                    let y = new Date(); y.setDate(y.getDate() - 1);
-                    if(new Date(user.lastPlayed).toDateString() !== y.toDateString()) user.streak = 0;
-                }
-                user.lives = 5; 
-            }
-            renderSidebar();
-            updateUI();
-        }
-
-        function saveData() { localStorage.setItem('german_cat_app', JSON.stringify(user)); updateUI(); }
-        function resetProgress() { localStorage.removeItem('german_cat_app'); location.reload(); }
-
-        function showScreen(id) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-        }
-
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('open');
-            document.getElementById('overlay').classList.toggle('show');
-        }
-
-        function renderSidebar() {
-            const list = document.getElementById('catList');
-            list.innerHTML = '';
-            for(let key in catNames) {
-                let btn = document.createElement('div');
-                btn.className = `cat-btn ${user.activeCat === key ? 'active' : ''}`;
-                btn.innerText = catNames[key];
-                btn.onclick = () => {
-                    user.activeCat = key;
-                    saveData();
-                    renderSidebar();
-                    toggleSidebar();
-                };
-                list.appendChild(btn);
-            }
-        }
-
-        function updateUI() {
-            document.getElementById('lives').innerText = user.lives;
-            document.getElementById('streak').innerText = user.stre
