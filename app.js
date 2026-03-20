@@ -87,6 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function updateUI() {
         if (currentIndex >= dailyWords.length || currentIndex >= 20) {
+            document.getElementById("exercise-btn").classList.remove("hidden");
             document.getElementById("learning-area").style.display = "none";
             document.getElementById("completion-message").classList.remove("hidden");
             document.getElementById("daily-progress").innerText = `20/20`;
@@ -128,4 +129,146 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.setItem("current_index", currentIndex);
         updateUI();
     });
+        // ==========================================
+    // სავარჯიშოების ლოგიკა
+    // ==========================================
+    let exerciseWords = [];
+    let currentExIndex = 0;
+    let currentCorrectAnswer = "";
+
+    const exerciseBtn = document.getElementById("exercise-btn");
+    const learningArea = document.getElementById("learning-area");
+    const exerciseArea = document.getElementById("exercise-area");
+    
+    // სავარჯიშოებზე გადასვლის ღილაკი (გამოჩნდება, როცა 20-ვე სიტყვას გაივლის)
+    exerciseBtn.addEventListener("click", () => {
+        learningArea.classList.add("hidden");
+        document.getElementById("completion-message").classList.add("hidden");
+        exerciseArea.classList.remove("hidden");
+        
+        // ვიღებთ დღევანდელ სიტყვებს და ვურევთ
+        exerciseWords = [...dailyWords].sort(() => Math.random() - 0.5);
+        currentExIndex = 0;
+        loadExercise();
+    });
+
+    // როცა სწავლის პროცესი მთავრდება, სავარჯიშოს ღილაკს ვაჩენთ updateUI ფუნქციაში
+    // (შეგიძლია updateUI ფუნქციაში ჩაამატო `exerciseBtn.classList.remove("hidden");` როცა `currentIndex >= 20`)
+
+    function loadExercise() {
+        if (currentExIndex >= exerciseWords.length) {
+            exerciseArea.innerHTML = `<div style="text-align:center; padding:30px;">
+                <h2>🎉 იდეალურია!</h2><p>დღევანდელი სავარჯიშოები დასრულებულია.</p>
+            </div>`;
+            return;
+        }
+
+        const word = exerciseWords[currentExIndex];
+        const questionEl = document.getElementById("exercise-question");
+        const mcContainer = document.getElementById("multiple-choice-container");
+        const typeContainer = document.getElementById("typing-container");
+        const feedback = document.getElementById("exercise-feedback");
+        const nextBtn = document.getElementById("next-exercise-btn");
+        const typingInput = document.getElementById("typing-input");
+
+        // გასუფთავება ძველი მონაცემებისგან
+        feedback.innerText = "";
+        nextBtn.classList.add("hidden");
+        typingInput.value = "";
+        typingInput.style.borderColor = "#e0e0e0";
+
+        // პროგრესის განახლება
+        document.getElementById("exercise-progress").innerText = `${currentExIndex}/20`;
+        document.getElementById("exercise-bar").style.width = `${(currentExIndex / 20) * 100}%`;
+
+        // შემთხვევითად ვირჩევთ სავარჯიშოს ტიპს (0 ან 1)
+        let exerciseType = Math.random() > 0.5 ? "multipleChoice" : "typing";
+
+        if (exerciseType === "multipleChoice") {
+            mcContainer.classList.remove("hidden");
+            typeContainer.classList.add("hidden");
+            
+            questionEl.innerText = word.ka; // ვკითხულობთ ქართულად
+            currentCorrectAnswer = word.de;
+
+            // ვქმნით 4 სავარაუდო პასუხს
+            let options = [word.de];
+            while (options.length < 4) {
+                let randomWord = allWords[Math.floor(Math.random() * allWords.length)].de;
+                if (!options.includes(randomWord)) {
+                    options.push(randomWord);
+                }
+            }
+            options.sort(() => Math.random() - 0.5); // ვურევთ ვარიანტებს
+
+            // ღილაკებზე ვარიანტების მიბმა
+            const optionBtns = document.querySelectorAll(".option-btn");
+            optionBtns.forEach((btn, index) => {
+                btn.innerText = options[index];
+                btn.className = "option-btn"; // კლასების განულება
+                btn.onclick = () => checkMultipleChoice(btn, currentCorrectAnswer);
+            });
+        } else {
+            // ხელით ჩასაწერი
+            mcContainer.classList.add("hidden");
+            typeContainer.classList.remove("hidden");
+            
+            questionEl.innerText = `როგორ არის გერმანულად: "${word.ka}"?`;
+            currentCorrectAnswer = word.de;
+        }
+    }
+
+    // არჩევითი პასუხის შემოწმება
+    function checkMultipleChoice(selectedBtn, correctText) {
+        const optionBtns = document.querySelectorAll(".option-btn");
+        const feedback = document.getElementById("exercise-feedback");
+        
+        // ღილაკების გათიშვა, რომ ორჯერ არ დააჭიროს
+        optionBtns.forEach(btn => btn.onclick = null);
+
+        if (selectedBtn.innerText === correctText) {
+            selectedBtn.classList.add("correct");
+            feedback.innerText = "✅ სწორია!";
+            feedback.className = "feedback-text text-success";
+        } else {
+            selectedBtn.classList.add("wrong");
+            feedback.innerText = `❌ შეცდომაა. სწორი პასუხია: ${correctText}`;
+            feedback.className = "feedback-text text-danger";
+            
+            // სწორი პასუხის გამწვანება
+            optionBtns.forEach(btn => {
+                if (btn.innerText === correctText) btn.classList.add("correct");
+            });
+        }
+        document.getElementById("next-exercise-btn").classList.remove("hidden");
+    }
+
+    // ჩასაწერი პასუხის შემოწმება
+    document.getElementById("check-typing-btn").addEventListener("click", () => {
+        const typingInput = document.getElementById("typing-input");
+        const feedback = document.getElementById("exercise-feedback");
+        let userAnswer = typingInput.value.trim().toLowerCase();
+        let correctAnswer = currentCorrectAnswer.toLowerCase();
+
+        if (userAnswer === correctAnswer) {
+            typingInput.style.borderColor = "#28a745";
+            feedback.innerText = "✅ ზუსტია!";
+            feedback.className = "feedback-text text-success";
+        } else {
+            typingInput.style.borderColor = "#dc3545";
+            feedback.innerText = `❌ არასწორია. სწორია: ${currentCorrectAnswer}`;
+            feedback.className = "feedback-text text-danger";
+        }
+        
+        document.getElementById("check-typing-btn").classList.add("hidden");
+        document.getElementById("next-exercise-btn").classList.remove("hidden");
+    });
+
+    // შემდეგ სავარჯიშოზე გადასვლა
+    document.getElementById("next-exercise-btn").addEventListener("click", () => {
+        currentExIndex++;
+        document.getElementById("check-typing-btn").classList.remove("hidden");
+        loadExercise();
+    });
+        
 });
