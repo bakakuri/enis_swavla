@@ -274,7 +274,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // გავლილი სიტყვების სიის გამოჩენა
     // ==========================================
     
-    function renderPassedWords() {
+        function renderPassedWords() {
         const listContainer = document.getElementById("passed-words-list");
         const section = document.getElementById("passed-words-section");
         
@@ -283,7 +283,7 @@ document.addEventListener("DOMContentLoaded", () => {
         listContainer.innerHTML = ""; 
         
         if (currentIndex > 0) {
-            section.classList.remove("hidden"); 
+            // აქ მოვხსენით hidden კლასი და პირდაპირ block-ს ვაძლევთ
             section.style.display = "block";
             
             let limit = Math.min(currentIndex, dailyWords.length);
@@ -292,17 +292,19 @@ document.addEventListener("DOMContentLoaded", () => {
                 if(!word) continue;
                 let wordHTML = `
                     <div class="passed-word-item">
-                        <span class="passed-word-de">${word.de}</span>
+                        <div class="word-row">
+                            <span class="passed-word-de">${word.de}</span>
+                            <span class="passed-word-ka">${word.ka}</span>
+                        </div>
                         <span class="passed-word-ph">${word.phonetics}</span>
-                        <span class="passed-word-ka">${word.ka}</span>
                     </div>
                 `;
                 listContainer.innerHTML += wordHTML;
             }
         } else {
-            section.classList.add("hidden");
             section.style.display = "none";
         }
     }
+
 });
             
