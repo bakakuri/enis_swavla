@@ -31,7 +31,6 @@
             overflow: hidden;
         }
 
-        /* --- UI Elements --- */
         .screen {
             display: none;
             flex-direction: column;
@@ -86,34 +85,33 @@
         .btn:active { transform: translateY(6px); box-shadow: 0 0 0 var(--primary-hover); }
         .btn-success { background-color: var(--success); box-shadow: 0 6px 0 #38a169; }
         .btn-success:active { box-shadow: 0 0 0 #38a169; }
-        .btn-outline { background-color: transparent; border: 2px solid var(--text-muted); color: var(--text-muted); box-shadow: none; }
+        .btn-outline { background-color: transparent; border: 2px solid var(--text-muted); color: var(--text-muted); box-shadow: none; margin-top: 15px; }
 
-        /* --- Progress Bar --- */
         .progress-wrap { background: #edf2f7; border-radius: 10px; height: 14px; width: 100%; overflow: hidden; margin-top: 10px; }
         .progress-fill { height: 100%; background: var(--success); border-radius: 10px; width: 0%; transition: width 0.5s ease; }
 
-        /* --- Flashcard (Dictionary) UI --- */
         .flashcard {
             background: var(--primary);
             color: white;
             border-radius: var(--border-radius);
             padding: 40px 20px;
             text-align: center;
-            min-height: 200px;
+            min-height: 220px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             box-shadow: 0 10px 20px rgba(66, 153, 225, 0.3);
             margin-bottom: 30px;
             position: relative;
+            cursor: pointer;
         }
-        .fc-german { font-size: 32px; font-weight: 800; margin-bottom: 15px; letter-spacing: 1px; }
-        .fc-details { display: none; margin-top: 15px; padding-top: 15px; border-top: 2px dashed rgba(255,255,255,0.3); animation: fadeIn 0.3s ease; }
+        .fc-german { font-size: 34px; font-weight: 800; margin-bottom: 5px; letter-spacing: 1px; }
+        .fc-phonetic { font-size: 20px; color: #ebf8ff; font-style: italic; margin-bottom: 15px; font-weight: 600; }
+        
+        .fc-details { display: none; margin-top: 15px; padding-top: 20px; border-top: 2px dashed rgba(255,255,255,0.4); animation: fadeIn 0.3s ease; }
         .fc-details.show { display: block; }
-        .fc-phonetic { font-size: 18px; color: #ebf8ff; margin-bottom: 5px; font-style: italic; }
-        .fc-georgian { font-size: 22px; font-weight: 700; color: #fff; }
+        .fc-georgian { font-size: 24px; font-weight: 700; color: #fff; }
 
-        /* --- Exercises UI --- */
         .options-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 20px; }
         .option {
             background: var(--card-bg); border: 2px solid #e2e8f0;
@@ -137,41 +135,43 @@
         </div>
 
         <div class="card">
-            <h3 style="margin-top:0; color:var(--text-main);">დღიური გეგმა</h3>
-            <p style="color:var(--text-muted); margin-bottom: 5px; font-size: 14px;">მიზანი: 50 XP (<span id="dailyXp">0</span>/50)</p>
+            <h3 style="margin-top:0; color:var(--text-main);">კურსის პროგრესი</h3>
+            <p style="color:var(--text-muted); margin-bottom: 5px; font-size: 14px;">შესწავლილია ჯამში: <span id="learnedWordsCount">0</span> / 200</p>
             <div class="progress-wrap">
-                <div class="progress-fill" id="dailyProgress"></div>
+                <div class="progress-fill" id="courseProgress"></div>
             </div>
         </div>
 
         <div class="card">
-            <h3 style="margin-top:0; color:var(--text-main);">საერთო პროგრესი</h3>
+            <h3 style="margin-top:0; color:var(--text-main);">შენი გამოცდილება</h3>
             <p style="color:var(--text-muted); font-size: 14px;">დონე <strong id="level" style="color:var(--primary);">1</strong> (<span id="totalXp">0</span> XP)</p>
         </div>
 
-        <button class="btn" onclick="startLearning()">📚 სიტყვების სწავლა</button>
-        <button class="btn btn-outline" style="margin-top: 15px;" onclick="resetProgress()">პროგრესის წაშლა</button>
+        <button class="btn" onclick="startLearning()">📚 დღევანდელი 20 სიტყვა</button>
+        <button class="btn btn-outline" onclick="resetProgress()">პროგრესის წაშლა (Debug)</button>
     </div>
 
     <div id="learningScreen" class="screen">
         <div class="header">
-            <h2 style="font-size: 18px; color: var(--text-muted);">ნაბიჯი 1: ისწავლე სიტყვები</h2>
+            <h2 style="font-size: 18px; color: var(--text-muted);">ნაბიჯი 1: სიტყვები</h2>
             <button onclick="showScreen('dashboard')" style="background:none; border:none; font-size:24px; cursor:pointer;">✕</button>
         </div>
 
         <div class="flashcard" id="flashcard" onclick="revealTranslation()">
-            <div class="fc-german" id="fcDe">Der Bus</div>
-            <div style="font-size: 14px; opacity: 0.7;" id="tapHint">დააჭირე თარგმანის სანახავად</div>
+            <div class="fc-german" id="fcDe">Wort</div>
+            <div class="fc-phonetic" id="fcPh">[ვორტ]</div>
+            
+            <div style="font-size: 14px; opacity: 0.8; margin-top: 10px;" id="tapHint">დააჭირე თარგმანის სანახავად</div>
+            
             <div class="fc-details" id="fcDetails">
-                <div class="fc-phonetic" id="fcPh">[დერ ბუს]</div>
-                <div class="fc-georgian" id="fcKa">ავტობუსი</div>
+                <div class="fc-georgian" id="fcKa">სიტყვა</div>
             </div>
         </div>
 
-        <p style="text-align: center; color: var(--text-muted); font-weight: 600;" id="learnProgressText">1 / 4</p>
+        <p style="text-align: center; color: var(--text-muted); font-weight: 700;" id="learnProgressText">1 / 20</p>
         
-        <button class="btn" id="nextWordBtn" style="display: none;" onclick="nextWord()">შემდეგი სიტყვა ➔</button>
-        <button class="btn btn-success" id="startPracticeBtn" style="display: none;" onclick="startPractice()">✍️ ახლა გავვარჯიშდეთ</button>
+        <button class="btn" id="nextWordBtn" style="display: none;" onclick="nextWord()">შემდეგი ➔</button>
+        <button class="btn btn-success" id="startPracticeBtn" style="display: none;" onclick="startPractice()">✍️ სავარჯიშოს დაწყება</button>
     </div>
 
     <div id="practiceScreen" class="screen">
@@ -181,11 +181,10 @@
         </div>
 
         <div class="card" style="text-align: center; border: none; box-shadow: none; padding: 10px;">
-            <p style="color: var(--text-muted); font-weight: 700; text-transform: uppercase; font-size: 14px;">რას ნიშნავს ეს სიტყვა?</p>
-            <h2 style="font-size: 28px; margin: 10px 0 30px 0;" id="quizQuestion">Der Bus</h2>
+            <p style="color: var(--text-muted); font-weight: 700; text-transform: uppercase; font-size: 14px;" id="quizInstruction">რას ნიშნავს ეს სიტყვა?</p>
+            <h2 style="font-size: 28px; margin: 10px 0 30px 0;" id="quizQuestion">Frage</h2>
             
-            <div class="options-grid" id="quizOptions">
-                </div>
+            <div class="options-grid" id="quizOptions"></div>
         </div>
 
         <button class="btn btn-success" id="nextQuizBtn" style="display: none;" onclick="nextQuiz()">შემდეგი ➔</button>
@@ -195,162 +194,114 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        // --- მონაცემთა ბაზა ლექსიკონისა და სავარჯიშოებისთვის ---
-        const lessonData = [
-            { de: "Hallo", ph: "[ჰალო]", ka: "გამარჯობა" },
-            { de: "Die Fahrkarte", ph: "[დი ფარკარტე]", ka: "სამგზავრო ბილეთი" },
-            { de: "Ich bin Giorgi", ph: "[იხ ბინ გიორგი]", ka: "მე ვარ გიორგი" },
-            { de: "Danke", ph: "[დანქე]", ka: "მადლობა" }
-        ];
-
-        let user = { xp: 0, dailyXp: 0, lives: 5, streak: 0, lastPlayed: null };
-        
-        // --- ინიციალიზაცია ---
-        function initApp() {
-            const saved = localStorage.getItem('german_v2');
-            if(saved) user = JSON.parse(saved);
-            
-            // დღიური განახლება
-            let today = new Date().toDateString();
-            if(user.lastPlayed !== today) {
-                user.dailyXp = 0;
-                user.lives = 5;
-                user.lastPlayed = today;
-                saveData();
-            }
-            updateUI();
-        }
-
-        function saveData() { localStorage.setItem('german_v2', JSON.stringify(user)); updateUI(); }
-        function resetProgress() { localStorage.removeItem('german_v2'); location.reload(); }
-
-        function showScreen(id) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-        }
-
-        function updateUI() {
-            document.getElementById('lives').innerText = user.lives;
-            document.getElementById('streak').innerText = user.streak;
-            document.getElementById('totalXp').innerText = user.xp;
-            document.getElementById('level').innerText = Math.floor(user.xp / 100) + 1;
-            
-            document.getElementById('dailyXp').innerText = user.dailyXp;
-            document.getElementById('dailyProgress').style.width = Math.min((user.dailyXp / 50) * 100, 100) + '%';
-        }
-
-        // --- ნაბიჯი 1: ლექსიკონი ---
-        let wordIndex = 0;
-        
-        function startLearning() {
-            if(user.lives <= 0) return tg.showAlert('სიცოცხლეები ამოგეწურა!');
-            wordIndex = 0;
-            showScreen('learningScreen');
-            loadWord();
-        }
-
-        function loadWord() {
-            const word = lessonData[wordIndex];
-            document.getElementById('fcDe').innerText = word.de;
-            document.getElementById('fcPh').innerText = word.ph;
-            document.getElementById('fcKa').innerText = word.ka;
-            
-            document.getElementById('fcDetails').classList.remove('show');
-            document.getElementById('tapHint').style.display = 'block';
-            document.getElementById('nextWordBtn').style.display = 'none';
-            document.getElementById('startPracticeBtn').style.display = 'none';
-            
-            document.getElementById('learnProgressText').innerText = `${wordIndex + 1} / ${lessonData.length}`;
-        }
-
-        function revealTranslation() {
-            document.getElementById('fcDetails').classList.add('show');
-            document.getElementById('tapHint').style.display = 'none';
-            
-            if(wordIndex < lessonData.length - 1) {
-                document.getElementById('nextWordBtn').style.display = 'block';
-            } else {
-                document.getElementById('startPracticeBtn').style.display = 'block';
-            }
-        }
-
-        function nextWord() {
-            wordIndex++;
-            loadWord();
-        }
-
-        // --- ნაბიჯი 2: პრაქტიკა (Quiz) ---
-        let quizIndex = 0;
-        let currentQuizData = [];
-
-        function startPractice() {
-            quizIndex = 0;
-            // ვამზადებთ კითხვებს ნასწავლი სიტყვებიდან
-            currentQuizData = lessonData.map(item => {
-                let options = [item.ka];
-                while(options.length < 3) {
-                    let randomItem = lessonData[Math.floor(Math.random() * lessonData.length)].ka;
-                    if(!options.includes(randomItem)) options.push(randomItem);
-                }
-                return { q: item.de, correct: item.ka, options: options.sort(() => Math.random() - 0.5) };
-            }).sort(() => Math.random() - 0.5);
-
-            document.getElementById('practiceLives').innerText = user.lives;
-            showScreen('practiceScreen');
-            loadQuiz();
-        }
-
-        function loadQuiz() {
-            let q = currentQuizData[quizIndex];
-            document.getElementById('quizQuestion').innerText = q.q;
-            document.getElementById('nextQuizBtn').style.display = 'none';
-            
-            const grid = document.getElementById('quizOptions');
-            grid.innerHTML = '';
-            
-            q.options.forEach(opt => {
-                let btn = document.createElement('div');
-                btn.className = 'option';
-                btn.innerText = opt;
-                btn.onclick = () => checkAnswer(btn, opt, q.correct);
-                grid.appendChild(btn);
-            });
-        }
-
-        function checkAnswer(btn, selected, correct) {
-            document.querySelectorAll('.option').forEach(b => b.style.pointerEvents = 'none'); // Disable clicks
-            
-            if(selected === correct) {
-                btn.classList.add('correct');
-                user.xp += 15; user.dailyXp += 15;
-                tg.HapticFeedback.notificationOccurred('success');
-            } else {
-                btn.classList.add('wrong');
-                document.querySelectorAll('.option').forEach(b => {
-                    if(b.innerText === correct) b.classList.add('correct');
-                });
-                user.lives--;
-                document.getElementById('practiceLives').innerText = user.lives;
-                tg.HapticFeedback.notificationOccurred('error');
-            }
-            
-            saveData();
-            document.getElementById('nextQuizBtn').style.display = 'block';
-            
-            if(user.lives <= 0) setTimeout(() => { tg.showAlert('სამწუხაროდ სიცოცხლეები ამოიწურა.'); showScreen('dashboard'); }, 1500);
-        }
-
-        function nextQuiz() {
-            quizIndex++;
-            if(quizIndex < currentQuizData.length) {
-                loadQuiz();
-            } else {
-                tg.showAlert('გილოცავ! გაკვეთილი წარმატებით დაასრულე 🎉');
-                showScreen('dashboard');
-            }
-        }
-
-        initApp();
-    </script>
-</body>
-</html>
+        // სრული 200 სიტყვის ბაზა (A1 დონე)
+        const allWords = [
+            // 1. მისალმება და საბაზისო (1-15)
+            { de: "Hallo", ph: "[ჰალო]", ka: "გამარჯობა" }, { de: "Guten Morgen", ph: "[გუტენ მორგენ]", ka: "დილა მშვიდობისა" },
+            { de: "Guten Tag", ph: "[გუტენ თაგ]", ka: "შუადღე მშვიდობისა" }, { de: "Guten Abend", ph: "[გუტენ აბენდ]", ka: "საღამო მშვიდობისა" },
+            { de: "Gute Nacht", ph: "[გუტე ნახტ]", ka: "ღამე მშვიდობისა" }, { de: "Tschüss", ph: "[ჩიუს]", ka: "ნახვამდის (არაფორმალური)" },
+            { de: "Auf Wiedersehen", ph: "[აუფ ვიდერზეენ]", ka: "ნახვამდის (ფორმალური)" }, { de: "Ja", ph: "[ია]", ka: "კი" },
+            { de: "Nein", ph: "[ნაინ]", ka: "არა" }, { de: "Bitte", ph: "[ბიტე]", ka: "გთხოვთ / არაფრის" },
+            { de: "Danke", ph: "[დანქე]", ka: "მადლობა" }, { de: "Entschuldigung", ph: "[ენტშულდიგუნგ]", ka: "ბოდიში" },
+            { de: "Genau", ph: "[გენაუ]", ka: "ზუსტად" }, { de: "Vielleicht", ph: "[ფილაიხტ]", ka: "ალბათ / შესაძლოა" },
+            { de: "Hilfe", ph: "[ჰილფე]", ka: "დახმარება" },
+            // 2. ნაცვალსახელები (16-24)
+            { de: "Ich", ph: "[იხ]", ka: "მე" }, { de: "Du", ph: "[დუ]", ka: "შენ" },
+            { de: "Er", ph: "[ერ]", ka: "ის (მამრობითი)" }, { de: "Sie", ph: "[ზი]", ka: "ის (მდედრ.) / ისინი / თქვენ(ფორმ.)" },
+            { de: "Es", ph: "[ეს]", ka: "ის (საშუალო)" }, { de: "Wir", ph: "[ვირ]", ka: "ჩვენ" },
+            { de: "Ihr", ph: "[ირ]", ka: "თქვენ (მრავლობითი)" }, { de: "Mein", ph: "[მაინ]", ka: "ჩემი" },
+            { de: "Dein", ph: "[დაინ]", ka: "შენი" },
+            // 3. კითხვითი სიტყვები (25-33)
+            { de: "Wer?", ph: "[ვერ]", ka: "ვინ?" }, { de: "Was?", ph: "[ვას]", ka: "რა?" },
+            { de: "Wo?", ph: "[ვო]", ka: "სად?" }, { de: "Wohin?", ph: "[ვოჰინ]", ka: "საით?" },
+            { de: "Woher?", ph: "[ვოჰერ]", ka: "საიდან?" }, { de: "Wann?", ph: "[ვან]", ka: "როდის?" },
+            { de: "Warum?", ph: "[ვარუმ]", ka: "რატომ?" }, { de: "Wie?", ph: "[ვი]", ka: "როგორ?" },
+            { de: "Wie viel?", ph: "[ვი ფილ]", ka: "რამდენი?" },
+            // 4. ქალაქი, ტრანსპორტი და მიმართულებები (34-58)
+            { de: "Die Stadt", ph: "[დი შტადტ]", ka: "ქალაქი" }, { de: "Die Straße", ph: "[დი შტრასე]", ka: "ქუჩა" },
+            { de: "Der Platz", ph: "[დერ პლაც]", ka: "მოედანი" }, { de: "Der Bahnhof", ph: "[დერ ბანჰოფ]", ka: "მატარებლის სადგური" },
+            { de: "Die Haltestelle", ph: "[დი ჰალტეშტელე]", ka: "გაჩერება" }, { de: "Der Flughafen", ph: "[დერ ფლუგჰაფენ]", ka: "აეროპორტი" },
+            { de: "Der Hafen", ph: "[დერ ჰაფენ]", ka: "პორტი" }, { de: "Die Fahrkarte", ph: "[დი ფარკარტე]", ka: "ბილეთი" },
+            { de: "Der Bus", ph: "[დერ ბუს]", ka: "ავტობუსი" }, { de: "Die U-Bahn", ph: "[დი უ-ბან]", ka: "მეტრო" },
+            { de: "Die S-Bahn", ph: "[დი ეს-ბან]", ka: "ქალაქის მატარებელი" }, { de: "Der Zug", ph: "[დერ ცუგ]", ka: "მატარებელი" },
+            { de: "Das Auto", ph: "[დას აუტო]", ka: "მანქანა" }, { de: "Das Fahrrad", ph: "[დას ფარრად]", ka: "ველოსიპედი" },
+            { de: "Das Flugzeug", ph: "[დას ფლუგცოიგ]", ka: "თვითმფრინავი" }, { de: "Rechts", ph: "[რეხტს]", ka: "მარჯვნივ" },
+            { de: "Links", ph: "[ლინკს]", ka: "მარცხნივ" }, { de: "Geradeaus", ph: "[გერადეაუს]", ka: "პირდაპირ" },
+            { de: "Das Hotel", ph: "[დას ჰოტელ]", ka: "სასტუმრო" }, { de: "Das Restaurant", ph: "[დას რესტორანტ]", ka: "რესტორანი" },
+            { de: "Der Supermarkt", ph: "[დერ ზუპერმარქტ]", ka: "სუპერმარკეტი" }, { de: "Die Apotheke", ph: "[დი აპოთეკე]", ka: "აფთიაქი" },
+            { de: "Das Krankenhaus", ph: "[დას კრანკენჰაუს]", ka: "საავადმყოფო" }, { de: "Das Geld", ph: "[დას გელდ]", ka: "ფული" },
+            { de: "Der Ausweis", ph: "[დერ აუსვაის]", ka: "პირადობის მოწმობა" },
+            // 5. ხშირი ზმნები (59-93)
+            { de: "Sein", ph: "[ზაინ]", ka: "ყოფნა" }, { de: "Haben", ph: "[ჰაბენ]", ka: "ქონა / ყოლა" },
+            { de: "Machen", ph: "[მახენ]", ka: "კეთება" }, { de: "Gehen", ph: "[გეენ]", ka: "წასვლა / სიარული" },
+            { de: "Kommen", ph: "[კომენ]", ka: "მოსვლა" }, { de: "Sagen", ph: "[ზაგენ]", ka: "თქმა" },
+            { de: "Sehen", ph: "[ზეენ]", ka: "დანახვა / ყურება" }, { de: "Essen", ph: "[ესენ]", ka: "ჭამა" },
+            { de: "Trinken", ph: "[ტრინკენ]", ka: "სმა" }, { de: "Schlafen", ph: "[შლაფენ]", ka: "ძილი" },
+            { de: "Arbeiten", ph: "[არბაიტენ]", ka: "მუშაობა" }, { de: "Lernen", ph: "[ლერნენ]", ka: "სწავლა" },
+            { de: "Kaufen", ph: "[კაუფენ]", ka: "ყიდვა" }, { de: "Bezahlen", ph: "[ბეცალენ]", ka: "გადახდა" },
+            { de: "Brauchen", ph: "[ბრაუხენ]", ka: "საჭიროება (მჭირდება)" }, { de: "Suchen", ph: "[ზუხენ]", ka: "ძებნა" },
+            { de: "Finden", ph: "[ფინდენ]", ka: "პოვნა" }, { de: "Sprechen", ph: "[შპრეხენ]", ka: "საუბარი" },
+            { de: "Verstehen", ph: "[ფერშტეენ]", ka: "გაგება" }, { de: "Lesen", ph: "[ლეზენ]", ka: "წაკითხვა" },
+            { de: "Schreiben", ph: "[შრაიბენ]", ka: "დაწერა" }, { de: "Warten", ph: "[ვარტენ]", ka: "ლოდინი" },
+            { de: "Fahren", ph: "[ფარენ]", ka: "მგზავრობა (ტრანსპორტით)" }, { de: "Fliegen", ph: "[ფლიგენ]", ka: "ფრენა" },
+            { de: "Wohnen", ph: "[ვონენ]", ka: "ცხოვრება (ბინადრობა)" }, { de: "Leben", ph: "[ლებენ]", ka: "სიცოცხლე / ცხოვრება" },
+            { de: "Fragen", ph: "[ფრაგენ]", ka: "კითხვა (შეკითხვა)" }, { de: "Antworten", ph: "[ანტვორტენ]", ka: "პასუხის გაცემა" },
+            { de: "Wissen", ph: "[ვისენ]", ka: "ცოდნა" }, { de: "Denken", ph: "[დენკენ]", ka: "ფიქრი" },
+            { de: "Möchten", ph: "[მიოხტენ]", ka: "სურვილი (მინდა)" }, { de: "Hören", ph: "[ჰორენ]", ka: "მოსმენა" },
+            { de: "Spielen", ph: "[შპილენ]", ka: "თამაში" }, { de: "Kochen", ph: "[კოხენ]", ka: "საჭმლის მომზადება" },
+            { de: "Lieben", ph: "[ლიბენ]", ka: "სიყვარული" },
+            // 6. საკვები და სასმელი (94-118)
+            { de: "Das Wasser", ph: "[დას ვასერ]", ka: "წყალი" }, { de: "Das Brot", ph: "[დას ბროტ]", ka: "პური" },
+            { de: "Der Kaffee", ph: "[დერ კაფე]", ka: "ყავა" }, { de: "Der Tee", ph: "[დერ თე]", ka: "ჩაი" },
+            { de: "Die Milch", ph: "[დი მილხ]", ka: "რძე" }, { de: "Der Saft", ph: "[დერ ზაფტ]", ka: "წვენი" },
+            { de: "Der Apfel", ph: "[დერ აპფელ]", ka: "ვაშლი" }, { de: "Die Banane", ph: "[დი ბანანე]", ka: "ბანანი" },
+            { de: "Das Fleisch", ph: "[დას ფლაიშ]", ka: "ხორცი" }, { de: "Der Fisch", ph: "[დერ ფიშ]", ka: "თევზი" },
+            { de: "Der Käse", ph: "[დერ ქეზე]", ka: "ყველი" }, { de: "Die Wurst", ph: "[დი ვურსტ]", ka: "ძეხვი" },
+            { de: "Das Ei", ph: "[დას აი]", ka: "კვერცხი" }, { de: "Das Gemüse", ph: "[დას გემიუზე]", ka: "ბოსტნეული" },
+            { de: "Das Obst", ph: "[დას ობსტ]", ka: "ხილი" }, { de: "Die Kartoffel", ph: "[დი კარტოფელ]", ka: "კარტოფილი" },
+            { de: "Die Tomate", ph: "[დი ტომატე]", ka: "პომიდორი" }, { de: "Die Suppe", ph: "[დი ზუპე]", ka: "წვნიანი" },
+            { de: "Der Zucker", ph: "[დერ ცუკერ]", ka: "შაქარი" }, { de: "Das Salz", ph: "[დას ზალც]", ka: "მარილი" },
+            { de: "Die Schokolade", ph: "[დი შოკოლადე]", ka: "შოკოლადი" }, { de: "Das Bier", ph: "[დას ბირ]", ka: "ლუდი" },
+            { de: "Der Wein", ph: "[დერ ვაინ]", ka: "ღვინო" }, { de: "Das Frühstück", ph: "[დას ფრიუშტიუკ]", ka: "საუზმე" },
+            { de: "Das Abendessen", ph: "[დას აბენდესენ]", ka: "ვახშამი" },
+            // 7. დრო, დღეები და რიცხვები (119-156)
+            { de: "Heute", ph: "[ჰოიტე]", ka: "დღეს" }, { de: "Morgen", ph: "[მორგენ]", ka: "ხვალ" },
+            { de: "Gestern", ph: "[გესტერნ]", ka: "გუშინ" }, { de: "Jetzt", ph: "[იეცტ]", ka: "ახლა" },
+            { de: "Später", ph: "[შპეტერ]", ka: "მოგვიანებით" }, { de: "Immer", ph: "[იმერ]", ka: "ყოველთვის" },
+            { de: "Oft", ph: "[ოფტ]", ka: "ხშირად" }, { de: "Nie", ph: "[ნი]", ka: "არასდროს" },
+            { de: "Die Uhrzeit", ph: "[დი ურცაიტ]", ka: "დრო (საათი)" }, { de: "Die Stunde", ph: "[დი შტუნდე]", ka: "საათი (ხანგრძლივობა)" },
+            { de: "Die Minute", ph: "[დი მინუტე]", ka: "წუთი" }, { de: "Der Tag", ph: "[დერ თაგ]", ka: "დღე" },
+            { de: "Die Woche", ph: "[დი ვოხე]", ka: "კვირა" }, { de: "Der Monat", ph: "[დერ მონატ]", ka: "თვე" },
+            { de: "Das Jahr", ph: "[დას იარ]", ka: "წელი" }, { de: "Montag", ph: "[მონტაგ]", ka: "ორშაბათი" },
+            { de: "Dienstag", ph: "[დინსტაგ]", ka: "სამშაბათი" }, { de: "Mittwoch", ph: "[მიტვოხ]", ka: "ოთხშაბათი" },
+            { de: "Donnerstag", ph: "[დონერსტაგ]", ka: "ხუთშაბათი" }, { de: "Freitag", ph: "[ფრაიტაგ]", ka: "პარასკევი" },
+            { de: "Samstag", ph: "[ზამსტაგ]", ka: "შაბათი" }, { de: "Sonntag", ph: "[ზონტაგ]", ka: "კვირა" },
+            { de: "Eins", ph: "[აინს]", ka: "ერთი (1)" }, { de: "Zwei", ph: "[ცვაი]", ka: "ორი (2)" },
+            { de: "Drei", ph: "[დრაი]", ka: "სამი (3)" }, { de: "Vier", ph: "[ფირ]", ka: "ოთხი (4)" },
+            { de: "Fünf", ph: "[ფიუნფ]", ka: "ხუთი (5)" }, { de: "Sechs", ph: "[ზექს]", ka: "ექვსი (6)" },
+            { de: "Sieben", ph: "[ზიბენ]", ka: "შვიდი (7)" }, { de: "Acht", ph: "[ახტ]", ka: "რვა (8)" },
+            { de: "Neun", ph: "[ნოინ]", ka: "ცხრა (9)" }, { de: "Zehn", ph: "[ცენ]", ka: "ათი (10)" },
+            { de: "Elf", ph: "[ელფ]", ka: "თერთმეტი (11)" }, { de: "Zwölf", ph: "[ცვოლფ]", ka: "თორმეტი (12)" },
+            { de: "Zwanzig", ph: "[ცვანციგ]", ka: "ოცი (20)" }, { de: "Hundert", ph: "[ჰუნდერტ]", ka: "ასი (100)" },
+            { de: "Tausend", ph: "[თაუზენდ]", ka: "ათასი (1000)" },
+            // 8. ზედსართავი სახელები და ფერები (157-179)
+            { de: "Gut", ph: "[გუტ]", ka: "კარგი" }, { de: "Schlecht", ph: "[შლეხტ]", ka: "ცუდი" },
+            { de: "Groß", ph: "[გროს]", ka: "დიდი" }, { de: "Klein", ph: "[კლაინ]", ka: "პატარა" },
+            { de: "Neu", ph: "[ნოი]", ka: "ახალი" }, { de: "Alt", ph: "[ალტ]", ka: "ძველი / მოხუცი" },
+            { de: "Schön", ph: "[შონ]", ka: "ლამაზი" }, { de: "Hässlich", ph: "[ჰესლიხ]", ka: "მახინჯი" },
+            { de: "Kalt", ph: "[კალტ]", ka: "ცივი" }, { de: "Warm", ph: "[ვარმ]", ka: "თბილი" },
+            { de: "Heiß", ph: "[ჰაის]", ka: "ცხელი" }, { de: "Teuer", ph: "[ტოიერ]", ka: "ძვირი" },
+            { de: "Billig", ph: "[ბილიგ]", ka: "იაფი" }, { de: "Schnell", ph: "[შნელ]", ka: "სწრაფი" },
+            { de: "Langsam", ph: "[ლანგზამ]", ka: "ნელი" }, { de: "Richtig", ph: "[რიხტიგ]", ka: "სწორი" },
+            { de: "Falsch", ph: "[ფალშ]", ka: "არასწორი" }, { de: "Müde", ph: "[მიუდე]", ka: "დაღლილი" },
+            { de: "Rot", ph: "[როტ]", ka: "წითელი" }, { de: "Blau", ph: "[ბლაუ]", ka: "ლურჯი" },
+            { de: "Grün", ph: "[გრიუნ]", ka: "მწვანე" }, { de: "Schwarz", ph: "[შვარც]", ka: "შავი" },
+            { de: "Weiß", ph: "[ვაის]", ka: "თეთრი" },
+            // 9. ოჯახი, სახლი, ამინდი და სხვა (180-200)
+            { de: "Die Familie", ph: "[დი ფამილიე]", ka: "ოჯახი" }, { de: "Die Mutter", ph: "[დი მუტერ]", ka: "დედა" },
+            { de: "Der Vater", ph: "[დერ ფატერ]", ka: "მამა" }, { de: "Das Kind", ph: "[დას კინდ]", ka: "ბავშვი" },
+            { de: "Der Freund", ph: "[დერ ფროინდ]", ka: "მეგობარი" }, { de: "Das Haus", ph: "[დას ჰაუს]", ka: "სახლი" },
+            { de: "Das Zimmer", ph: "[დას ციმერ]", ka: "ოთახი" }, { de: "Das Bett", ph: "[დას ბეტ]", ka: "საწოლი" },
+            { de: "Der Tisch", ph: "[დერ ტიშ]", ka: "მაგიდა" }, { de: "Der Stuhl", ph: "[დერ შტულ]", ka: "სკამი" },
+            { de: "Die Tür", ph: "[დი ტიურ]", ka: "კარი" }, { de: "Das Fenster", ph: "[დას ფენსტერ]", ka: "ფანჯარა" },
+            { de: "Das Handy", ph: "[დას ჰენდი]", ka: "მობილური ტელეფონი" }, { d
