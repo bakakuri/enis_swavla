@@ -30,12 +30,22 @@
             <button id="close-sidebar" class="btn-secondary" style="margin-top: 20px;">X დახურვა</button>
         </div>
     </div>
-
     <main class="main-content">
         <header>
             <button id="menu-btn">☰</button>
             <h1 id="user-greeting">გამარჯობა!</h1>
         </header>
+        <section id="dictionary-area" class="hidden" style="padding: 0 15px 30px 15px;">
+            <div style="display: flex; align-items: center; margin-bottom: 20px;">
+                <button id="back-from-dict-btn" class="btn-secondary" style="padding: 8px 15px; margin: 0; margin-right: 15px; width: auto; font-size: 20px; border-radius: 10px;">🔙</button>
+                <h2 style="margin: 0; font-size: 24px; color: var(--text-main);">📚 ლექსიკონი</h2>
+            </div>
+            
+            <input type="text" id="dict-search" placeholder="🔍 მოძებნე სიტყვა..." style="width: 100%; padding: 14px 20px; border: 2px solid #e1e8ed; border-radius: var(--border-radius-md); font-size: 16px; margin-bottom: 20px; outline: none; background: var(--card-bg); color: var(--text-main); transition: 0.3s;">
+            
+            <div id="dict-words-list" class="words-list">
+                </div>
+        </section>
 
         <section class="progress-section">
             <p>დღევანდელი: <span id="daily-progress">0/20</span></p>
