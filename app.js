@@ -1,13 +1,11 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // ვაინიციალიზებთ Telegram Web App API-ს
     const tg = window.Telegram.WebApp;
-    tg.expand(); // აპლიკაციას შლის მთელ ეკრანზე
+    tg.expand(); 
 
     let username = localStorage.getItem("app_nickname");
     const modal = document.getElementById("nickname-modal");
     const greeting = document.getElementById("user-greeting");
     
-    // 1. ავტომატური სახელის წამოღება ტელეგრამიდან
     if (tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.first_name) {
         username = tg.initDataUnsafe.user.first_name;
         localStorage.setItem("app_nickname", username);
@@ -17,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
         modal.style.display = "flex";
     } else {
         greeting.innerText = `გამარჯობა, ${username}!`;
-        modal.style.display = "none"; // მოდალს აღარ ვაჩვენებთ
+        modal.style.display = "none"; 
     }
 
     document.getElementById("save-nickname-btn").addEventListener("click", () => {
@@ -282,13 +280,23 @@ document.addEventListener("DOMContentLoaded", () => {
         optionBtns.forEach(btn => btn.onclick = null); 
 
         if (selectedBtn.isCorrectOption) {
-            if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success'); // სწორი პასუხის ვიბრაცია
+            if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success'); 
+            
+            // სტატისტიკისთვის სწორი პასუხის დამახსოვრება
+            let c = parseInt(localStorage.getItem("total_correct")) || 0;
+            localStorage.setItem("total_correct", c + 1);
+
             selectedBtn.classList.add("correct");
             feedback.innerText = "✅ სწორია!";
             feedback.className = "feedback-text text-success";
             correctAnswersCount++;
         } else {
-            if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error'); // შეცდომის ვიბრაცია
+            if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error'); 
+            
+            // სტატისტიკისთვის შეცდომის დამახსოვრება
+            let w = parseInt(localStorage.getItem("total_wrong")) || 0;
+            localStorage.setItem("total_wrong", w + 1);
+
             selectedBtn.classList.add("wrong");
             feedback.innerText = `❌ შეცდომაა. სწორია: ${correctText}`;
             feedback.className = "feedback-text text-danger";
@@ -304,10 +312,18 @@ document.addEventListener("DOMContentLoaded", () => {
         
         if (userSentence.trim() === correctSentence.trim()) {
             if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            
+            let c = parseInt(localStorage.getItem("total_correct")) || 0;
+            localStorage.setItem("total_correct", c + 1);
+
             feedback.innerText = "✅ ზუსტია!";
             feedback.className = "feedback-text text-success";
         } else {
             if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
+            
+            let w = parseInt(localStorage.getItem("total_wrong")) || 0;
+            localStorage.setItem("total_wrong", w + 1);
+
             feedback.innerText = `❌ შეცდომაა. სწორია: ${correctSentence}`;
             feedback.className = "feedback-text text-danger";
             let currentWordObj = exerciseWords[currentExIndex];
@@ -371,20 +387,16 @@ document.addEventListener("DOMContentLoaded", () => {
         location.reload(); 
     });
 
+    // ==========================================
+    // ლექსიკონი
+    // ==========================================
     const dictArea = document.getElementById("dictionary-area");
     const dictSearch = document.getElementById("dict-search");
     const dictList = document.getElementById("dict-words-list");
 
     document.getElementById("menu-dict").addEventListener("click", () => {
         document.getElementById("sidebar").classList.remove("active");
-        
-        document.getElementById("learning-area").classList.add("hidden");
-        document.getElementById("completion-message").classList.add("hidden");
-        document.getElementById("exercise-area").classList.add("hidden");
-        document.getElementById("exercise-results").classList.add("hidden");
-        document.getElementById("passed-words-section").style.display = "none";
-        document.querySelector(".progress-section").classList.add("hidden");
-        
+        hideAllSections();
         dictArea.classList.remove("hidden");
         dictSearch.value = ""; 
         renderDictionary(allWords); 
@@ -392,22 +404,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.getElementById("back-from-dict-btn").addEventListener("click", () => {
         dictArea.classList.add("hidden");
-        document.querySelector(".progress-section").classList.remove("hidden");
-        
-        if (currentIndex >= 20 || currentIndex >= dailyWords.length) {
-            if (exerciseWords && exerciseWords.length > 0) {
-                if (currentExIndex >= exerciseWords.length) {
-                    document.getElementById("exercise-results").classList.remove("hidden");
-                } else {
-                    document.getElementById("exercise-area").classList.remove("hidden");
-                }
-            } else {
-                document.getElementById("completion-message").classList.remove("hidden");
-            }
-        } else {
-            document.getElementById("learning-area").classList.remove("hidden");
-            if (currentIndex > 0) document.getElementById("passed-words-section").style.display = "block";
-        }
+        restorePreviousSection();
     });
 
     function renderDictionary(words) {
@@ -425,12 +422,77 @@ document.addEventListener("DOMContentLoaded", () => {
 
     dictSearch.addEventListener("input", (e) => {
         const term = e.target.value.toLowerCase().trim();
-        const filtered = allWords.filter(w => 
-            w.de.toLowerCase().includes(term) || 
-            w.ka.toLowerCase().includes(term)
-        );
+        const filtered = allWords.filter(w => w.de.toLowerCase().includes(term) || w.ka.toLowerCase().includes(term));
         renderDictionary(filtered);
     });
+
+    // ==========================================
+    // პროფილი და სტატისტიკა (ახალი)
+    // ==========================================
+    const profileArea = document.getElementById("profile-area");
+
+    document.getElementById("menu-profile").addEventListener("click", () => {
+        document.getElementById("sidebar").classList.remove("active");
+        hideAllSections();
+        profileArea.classList.remove("hidden");
+        
+        // სტატისტიკის დათვლა
+        let learned = JSON.parse(localStorage.getItem("learned_words")) || [];
+        let reviewQ = JSON.parse(localStorage.getItem("review_queue")) || [];
+        let tCorrect = parseInt(localStorage.getItem("total_correct")) || 0;
+        let tWrong = parseInt(localStorage.getItem("total_wrong")) || 0;
+        
+        let totalAnswers = tCorrect + tWrong;
+        let accuracy = totalAnswers === 0 ? 0 : Math.round((tCorrect / totalAnswers) * 100);
+        let progressPercent = allWords.length === 0 ? 0 : Math.round((learned.length / allWords.length) * 100);
+        
+        document.getElementById("profile-name").innerText = localStorage.getItem("app_nickname") || "მომხმარებელი";
+        document.getElementById("stat-learned").innerText = learned.length;
+        document.getElementById("stat-review").innerText = reviewQ.length;
+        document.getElementById("stat-accuracy").innerText = `${accuracy}%`;
+        document.getElementById("stat-left").innerText = allWords.length - learned.length;
+        
+        document.getElementById("stat-progress-text").innerText = `${progressPercent}%`;
+        document.getElementById("stat-progress-bar").style.width = `${progressPercent}%`;
+    });
+
+    document.getElementById("back-from-profile-btn").addEventListener("click", () => {
+        profileArea.classList.add("hidden");
+        restorePreviousSection();
+    });
+
+    // ==========================================
+    // საერთო ფუნქციები ეკრანების ცვლისთვის
+    // ==========================================
+    function hideAllSections() {
+        document.getElementById("chat-area").classList.add("hidden");
+        document.getElementById("learning-area").classList.add("hidden");
+        document.getElementById("completion-message").classList.add("hidden");
+        document.getElementById("exercise-area").classList.add("hidden");
+        document.getElementById("exercise-results").classList.add("hidden");
+        document.getElementById("passed-words-section").style.display = "none";
+        document.querySelector(".progress-section").classList.add("hidden");
+        dictArea.classList.add("hidden");
+        profileArea.classList.add("hidden");
+    }
+
+    function restorePreviousSection() {
+        document.querySelector(".progress-section").classList.remove("hidden");
+        if (currentIndex >= 20 || currentIndex >= dailyWords.length) {
+            if (exerciseWords && exerciseWords.length > 0) {
+                if (currentExIndex >= exerciseWords.length) {
+                    document.getElementById("exercise-results").classList.remove("hidden");
+                } else {
+                    document.getElementById("exercise-area").classList.remove("hidden");
+                }
+            } else {
+                document.getElementById("completion-message").classList.remove("hidden");
+            }
+        } else {
+            document.getElementById("learning-area").classList.remove("hidden");
+            if (currentIndex > 0) document.getElementById("passed-words-section").style.display = "block";
+        }
+    }
 
     document.getElementById("menu-reset").addEventListener("click", () => {
         if(confirm("ნამდვილად გსურთ მთლიანი პროგრესის განულება? წაიშლება თქვენი გავლილი სიტყვები.")) {
@@ -466,4 +528,151 @@ document.addEventListener("DOMContentLoaded", () => {
             section.style.display = "none";
         }
     }
+    // ==========================================
+    // დიალოგების სიმულაცია (Chat Mode)
+    // ==========================================
+    const chatArea = document.getElementById("chat-area");
+    const scenariosList = document.getElementById("chat-scenarios-list");
+    const chatWindow = document.getElementById("chat-window");
+    const chatMessages = document.getElementById("chat-messages");
+    const chatChoices = document.getElementById("chat-choices");
+
+    // წინასწარ გამზადებული დიალოგები
+    const scenarios = [
+        {
+            title: "👋 გაცნობა",
+            steps: [
+                { bot: "Hallo! Wie geht es dir? (გამარჯობა! როგორ ხარ?)", choices: [{text: "Mir geht es gut, danke. Und dir?", correct: true}, {text: "Ich komme aus Georgien.", correct: false}] },
+                { bot: "Auch gut! Woher kommst du? (მეც კარგად! საიდან ხარ?)", choices: [{text: "Ich bin 20 Jahre alt.", correct: false}, {text: "Ich komme aus Georgien.", correct: true}] },
+                { bot: "Schön! Sprichst du Deutsch? (კარგია! გერმანულად საუბრობ?)", choices: [{text: "Ja, ein bisschen.", correct: true}, {text: "Ich esse Pizza.", correct: false}] },
+                { bot: "Super! Viel Erfolg noch! Tschüss! (სუპერ! წარმატებები! ნახვამდის!)", choices: [{text: "Danke! Tschüss!", correct: true}, {text: "Bitte sehr.", correct: false}], end: true }
+            ]
+        },
+        {
+            title: "☕ კაფეში",
+            steps: [
+                { bot: "Guten Tag! Was möchten Sie trinken? (გამარჯობა! რის დალევას ისურვებდით?)", choices: [{text: "Einen Kaffee, bitte.", correct: true}, {text: "Ich heiße Anna.", correct: false}] },
+                { bot: "Mit Milch und Zucker? (რძით და შაქრით?)", choices: [{text: "Ich wohne hier.", correct: false}, {text: "Nur mit Milch, danke.", correct: true}] },
+                { bot: "Gerne. Das macht 3 Euro, bitte. (სიამოვნებით. 3 ევრო იქნება.)", choices: [{text: "Hier, bitte schön.", correct: true}, {text: "Mir geht es gut.", correct: false}] },
+                { bot: "Danke! Einen schönen Tag noch! (მადლობა! სასიამოვნო დღეს გისურვებთ!)", choices: [{text: "Danke, gleichfalls!", correct: true}, {text: "Nein, danke.", correct: false}], end: true }
+            ]
+        }
+    ];
+
+    let currentScenario = null;
+    let currentChatStep = 0;
+
+    // მენიუდან ჩატის გამოძახება
+    document.getElementById("menu-chat").addEventListener("click", () => {
+        document.getElementById("sidebar").classList.remove("active");
+        hideAllSections();
+        chatArea.classList.remove("hidden");
+        scenariosList.style.display = "flex";
+        chatWindow.classList.add("hidden");
+        renderScenarios();
+    });
+
+    // ეკრანიდან უკან გამოსვლა
+    document.getElementById("back-from-chat-btn").addEventListener("click", () => {
+        if (!chatWindow.classList.contains("hidden")) {
+            // თუ ჩატშია, დაბრუნდეს სიტუაციების სიაში
+            chatWindow.classList.add("hidden");
+            scenariosList.style.display = "flex";
+        } else {
+            // თუ სიაშია, გამოვიდეს საერთოდ
+            chatArea.classList.add("hidden");
+            restorePreviousSection();
+        }
+    });
+
+    function renderScenarios() {
+        scenariosList.innerHTML = "";
+        scenarios.forEach((scenario, index) => {
+            let btn = document.createElement("button");
+            btn.className = "chat-choice-btn";
+            btn.style.textAlign = "center";
+            btn.innerText = scenario.title;
+            btn.onclick = () => startChat(index);
+            scenariosList.appendChild(btn);
+        });
+    }
+
+    function startChat(index) {
+        currentScenario = scenarios[index];
+        currentChatStep = 0;
+        scenariosList.style.display = "none";
+        chatWindow.classList.remove("hidden");
+        chatMessages.innerHTML = "";
+        playNextChatStep();
+    }
+
+    function playNextChatStep() {
+        if (currentChatStep >= currentScenario.steps.length) return;
+        
+        let step = currentScenario.steps[currentChatStep];
+        
+        // ბოტის მესიჯის დახატვა
+        setTimeout(() => {
+            if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+            let msgDiv = document.createElement("div");
+            msgDiv.className = "chat-msg chat-bot";
+            msgDiv.innerText = step.bot;
+            chatMessages.appendChild(msgDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight; // სქროლი სულ ქვემოთ
+            
+            renderChatChoices(step);
+        }, 600); // 0.6 წამიანი დაყოვნება რეალისტურობისთვის
+    }
+
+    function renderChatChoices(step) {
+        chatChoices.innerHTML = "";
+        
+        // ვურევთ პასუხებს, რომ ყოველთვის ერთ ადგილას არ იყოს სწორი პასუხი
+        let shuffledChoices = [...step.choices].sort(() => Math.random() - 0.5);
+
+        shuffledChoices.forEach(choice => {
+            let btn = document.createElement("button");
+            btn.className = "chat-choice-btn";
+            btn.innerText = choice.text;
+            btn.onclick = () => {
+                if (choice.correct) {
+                    // სწორი პასუხი
+                    if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                    chatChoices.innerHTML = "";
+                    
+                    let userMsg = document.createElement("div");
+                    userMsg.className = "chat-msg chat-user";
+                    userMsg.innerText = choice.text;
+                    chatMessages.appendChild(userMsg);
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+
+                    if (step.end) {
+                        setTimeout(() => {
+                            let endMsg = document.createElement("div");
+                            endMsg.className = "chat-msg chat-bot";
+                            endMsg.style.background = "var(--success-bg)";
+                            endMsg.style.color = "var(--success)";
+                            endMsg.style.textAlign = "center";
+                            endMsg.style.alignSelf = "center";
+                            endMsg.innerText = "🎉 დიალოგი წარმატებით დასრულდა!";
+                            chatMessages.appendChild(endMsg);
+                            chatMessages.scrollTop = chatMessages.scrollHeight;
+                        }, 800);
+                    } else {
+                        currentChatStep++;
+                        playNextChatStep();
+                    }
+                } else {
+                    // არასწორი პასუხი
+                    if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
+                    btn.classList.add("wrong-choice");
+                    setTimeout(() => btn.classList.remove("wrong-choice"), 400);
+                }
+            };
+            chatChoices.appendChild(btn);
+        });
+    }
+
+    // ეს ხაზი უნდა დავამატოთ `hideAllSections` ფუნქციაშიც (მოძებნე ეგ ფუნქცია და შიგნით ჩაუწერე):
+    // document.getElementById("chat-area").classList.add("hidden");
 });
