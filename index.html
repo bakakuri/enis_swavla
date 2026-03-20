@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LinguaPro</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header>
+<h1>LinguaPro</h1>
+<button onclick="toggleTheme()">🌙</button>
+</header>
+
+<div class="container">
+
+<div class="card">
+<h2 id="word"></h2>
+<p id="translation"></p>
+<button onclick="speak()">🔊</button>
+<button onclick="next()">Next</button>
+</div>
+
+<div class="card">
+<h2>Quiz</h2>
+<p id="question"></p>
+<div id="answers"></div>
+</div>
+
+<div class="card">
+<h2>Progress</h2>
+<div class="bar"><div id="barFill"></div></div>
+<p id="percent">0%</p>
+</div>
+
+</div>
+
+<script src="js/app.js"></script>
+</body>
+</html>
