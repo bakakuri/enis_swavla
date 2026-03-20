@@ -13,7 +13,9 @@
             <h2>მოგესალმებით! 👋</h2>
             <p>შეიყვანეთ თქვენი ნიკნეიმი დასაწყებად:</p>
             <input type="text" id="nickname-input" placeholder="მაგ. გიორგი">
-            <button id="save-nickname-btn" class="btn-primary">შენახვა</button>
+            <div class="action-buttons" style="margin-top: 10px;">
+                <button id="save-nickname-btn" class="btn-primary">შენახვა</button>
+            </div>
         </div>
     </div>
 
@@ -24,7 +26,9 @@
             <li id="menu-settings">⚙️ პარამეტრები</li>
             <li id="menu-reset">🔄 პროგრესის განულება</li>
         </ul>
-        <button id="close-sidebar" class="btn-secondary" style="width: 100%; margin-top: 20px; padding: 12px; border-radius: 12px; cursor: pointer;">X დახურვა</button>
+        <div class="action-buttons">
+            <button id="close-sidebar" class="btn-secondary" style="margin-top: 20px;">X დახურვა</button>
+        </div>
     </div>
 
     <main class="main-content">
@@ -56,9 +60,11 @@
         </section>
         
         <section id="completion-message" class="hidden" style="text-align:center; padding: 20px;">
-            <h2 style="font-size: 28px; margin-bottom: 10px;">🎉 გილოცავ!</h2>
-            <p style="font-size: 16px; margin-bottom: 25px;">დღევანდელი 20 სიტყვა წარმატებით გაიარე.</p>
-            <button id="exercise-btn" class="btn-primary">🧠 სავარჯიშოს დაწყება</button>
+            <h2 style="font-size: 32px; margin-bottom: 10px;">🎉 გილოცავ!</h2>
+            <p style="font-size: 16px; margin-bottom: 30px; color: var(--text-muted);">დღევანდელი 20 სიტყვა წარმატებით გაიარე.</p>
+            <div class="action-buttons">
+                <button id="exercise-btn" class="btn-primary">🧠 სავარჯიშოს დაწყება</button>
+            </div>
         </section>
 
         <section id="exercise-area" class="hidden" style="padding: 0 20px 30px 20px;">
@@ -79,7 +85,9 @@
 
                 <div id="typing-container" class="hidden">
                     <input type="text" id="typing-input" placeholder="ჩაწერე გერმანულად..." autocomplete="off">
-                    <button id="check-typing-btn" class="btn-primary" style="margin-top: 15px;">შემოწმება</button>
+                    <div class="action-buttons" style="margin-top: 15px;">
+                        <button id="check-typing-btn" class="btn-primary">შემოწმება</button>
+                    </div>
                 </div>
                 
                 <p id="exercise-feedback" class="feedback-text"></p>
@@ -90,8 +98,8 @@
             </div>
         </section>
 
-        <section id="passed-words-section" class="hidden" style="padding: 0 20px 30px 20px;">
-            <h3 style="margin-bottom: 15px; color: var(--text-main); font-size: 18px;">დღეს გავლილი სიტყვები:</h3>
+        <section id="passed-words-section" style="display: none; padding: 0 20px 30px 20px;">
+            <h3 style="margin-bottom: 15px; color: var(--text-main); font-size: 18px; border-bottom: 2px solid #e1e8ed; padding-bottom: 8px;">დღეს გავლილი სიტყვები:</h3>
             <div id="passed-words-list" class="words-list">
                 </div>
         </section>
