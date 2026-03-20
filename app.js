@@ -270,5 +270,57 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("check-typing-btn").classList.remove("hidden");
         loadExercise();
     });
+            // ==========================================
+    // სიდებარის ღილაკების ფუნქციები
+    // ==========================================
+    
+    // პროგრესის განულება
+    document.getElementById("menu-reset").addEventListener("click", () => {
+        if(confirm("ნამდვილად გსურთ მთლიანი პროგრესის განულება? შეიშლება თქვენი გავლილი სიტყვები.")) {
+            localStorage.clear();
+            location.reload(); // აპლიკაციის თავიდან ჩატვირთვა
+        }
+    });
+
+    // ლექსიკონი (დროებით შეტყობინებას გამოიტანს)
+    document.getElementById("menu-dict").addEventListener("click", () => {
+        alert("ლექსიკონის სრული ბაზა მალე დაემატება!");
+        document.getElementById("sidebar").classList.remove("active");
+    });
+
+    // პარამეტრები (დროებით შეტყობინებას გამოიტანს)
+    document.getElementById("menu-settings").addEventListener("click", () => {
+        alert("პარამეტრების განყოფილება მალე დაემატება!");
+        document.getElementById("sidebar").classList.remove("active");
+    });
+
+    // ==========================================
+    // გავლილი სიტყვების სიის გამოჩენა
+    // ==========================================
+    
+    function renderPassedWords() {
+        const listContainer = document.getElementById("passed-words-list");
+        const section = document.getElementById("passed-words-section");
         
+        listContainer.innerHTML = ""; // ვასუფთავებთ სიას ახლის დასახატად
+        
+        if (currentIndex > 0) {
+            section.style.display = "block"; // ვაჩენთ სექციას თუ 1 სიტყვა მაინც გაიარა
+            
+            for (let i = 0; i < currentIndex; i++) {
+                let word = dailyWords[i];
+                let wordHTML = `
+                    <div class="passed-word-item">
+                        <span class="passed-word-de">${word.de}</span>
+                        <span class="passed-word-ph">${word.phonetics}</span>
+                        <span class="passed-word-ka">${word.ka}</span>
+                    </div>
+                `;
+                listContainer.innerHTML += wordHTML;
+            }
+        } else {
+            section.style.display = "none";
+        }
+    }
+    
 });
