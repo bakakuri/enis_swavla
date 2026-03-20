@@ -3,35 +3,36 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LinguaPro</title>
+<title>Lingua Ultra</title>
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
+<div class="app">
 <header>
-<h1>LinguaPro</h1>
+<h1>Lingua Ultra</h1>
 <button onclick="toggleTheme()">🌙</button>
 </header>
 
-<div class="container">
-
-<div class="card">
+<div class="card main">
 <h2 id="word"></h2>
 <p id="translation"></p>
+<div class="actions">
 <button onclick="speak()">🔊</button>
 <button onclick="next()">Next</button>
 </div>
-
-<div class="card">
-<h2>Quiz</h2>
-<p id="question"></p>
-<div id="answers"></div>
 </div>
 
 <div class="card">
-<h2>Progress</h2>
-<div class="bar"><div id="barFill"></div></div>
-<p id="percent">0%</p>
+<h3>Quiz</h3>
+<p id="question"></p>
+<div id="answers" class="grid"></div>
+</div>
+
+<div class="card">
+<h3>Progress</h3>
+<div class="progress"><div id="fill"></div></div>
+<span id="percent">0%</span>
 </div>
 
 </div>
