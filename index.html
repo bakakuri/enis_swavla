@@ -2,89 +2,65 @@
 <html lang="ka">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Deutsch Lernen App</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deutsch Lernen</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
+    <div id="nickname-modal" class="modal">
+        <div class="modal-content">
+            <h2>მოგესალმებით! 👋</h2>
+            <p>შეიყვანეთ თქვენი ნიკნეიმი დასაწყებად:</p>
+            <input type="text" id="nickname-input" placeholder="მაგ. გიორგი">
+            <button id="save-nickname-btn" class="btn-primary">შენახვა</button>
+        </div>
+    </div>
 
-    <div id="overlay" class="overlay"></div>
     <div id="sidebar" class="sidebar">
-        <h2 style="margin-top:0; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">კატეგორიები</h2>
-        <div id="catList" style="overflow-y: auto; flex-grow: 1;"></div>
-        <button id="sidebarResetBtn" class="btn" style="background:var(--danger); box-shadow:0 6px 0 #c53030;">წაშლა</button>
+        <h3>მენიუ</h3>
+        <ul id="category-list">
+            <li>📚 ლექსიკონი</li>
+            <li>⚙️ პარამეტრები</li>
+            <li>🔄 პროგრესის განულება</li>
+        </ul>
+        <button id="close-sidebar" class="btn-secondary" style="margin-top:20px;">X დახურვა</button>
     </div>
 
-    <div id="dashboard" class="screen active">
-        <div class="header">
-            <button id="menuBtn" style="background:none; border:none; font-size:28px; cursor:pointer; color:var(--tg-theme-text-color, #1f2937);">☰</button>
-            <div class="stats-badge">
-                <span style="color: var(--danger);">❤️ <span id="lives">5</span></span>
-                <span style="color: var(--warning);">🔥 <span id="streak">0</span></span>
-            </div>
-        </div>
+    <main class="main-content">
+        <header>
+            <button id="menu-btn">☰</button>
+            <h1 id="user-greeting">გამარჯობა!</h1>
+        </header>
 
-        <div class="card">
-            <p style="color:#718096; font-size: 14px; font-weight:700; text-transform:uppercase;">არჩეული კატეგორია:</p>
-            <h2 id="activeCatName" style="margin: 5px 0 15px 0;">საბაზისო</h2>
+        <section class="progress-section">
+            <p>დღევანდელი: <span id="daily-progress">0/20</span></p>
+            <div class="progress-bar"><div id="daily-bar" class="fill"></div></div>
+            <p>სრული კურსი: <span id="total-progress">0/200</span></p>
+            <div class="progress-bar"><div id="total-bar" class="fill"></div></div>
+        </section>
+
+        <section class="learning-area" id="learning-area">
+            <div class="word-card">
+                <h2 id="german-word">იტვირთება...</h2>
+                <p class="phonetics" id="phonetics"></p>
+                <button class="reveal-btn" id="reveal-btn">თარგმანის ნახვა</button>
+                <div class="translation hidden" id="translation">
+                    <h3 id="georgian-word"></h3>
+                </div>
+            </div>
             
-            <div style="display: flex; justify-content: space-between; font-size: 14px; font-weight: 600;">
-                <span>ნასწავლია:</span>
-                <span id="catProgressText">0 / 0</span>
+            <div class="action-buttons">
+                <button id="next-word-btn" class="btn-primary">შემდეგი სიტყვა</button>
+                <button id="exercise-btn" class="btn-secondary hidden">სავარჯიშო</button>
             </div>
-            <div class="progress-wrap">
-                <div class="progress-fill" id="catProgressBar"></div>
-            </div>
-        </div>
-
-        <div class="card">
-            <h3>საერთო დონე: <span id="level" style="color:var(--primary);">1</span></h3>
-            <p style="margin-top: 5px; font-weight:600;"><span id="totalXp">0</span> XP</p>
-        </div>
-
-        <button id="startLessonBtn" class="btn">📚 დღევანდელი 20 სიტყვა</button>
-    </div>
-
-    <div id="learningScreen" class="screen">
-        <div class="header">
-            <h2 style="font-size: 18px; color: var(--tg-theme-text-color, #1f2937);">ნაბიჯი 1: სიტყვები</h2>
-            <button id="closeLearnBtn" style="background:none; border:none; font-size:24px; cursor:pointer; color:var(--tg-theme-text-color, #1f2937);">✕</button>
-        </div>
-
-        <div class="flashcard" id="flashcard">
-            <div class="fc-german" id="fcDe">Wort</div>
-            <div class="fc-phonetic" id="fcPh">[ვორტ]</div>
-            
-            <div style="font-size: 14px; opacity: 0.8; margin-top: 10px;" id="tapHint">დააჭირე თარგმანის სანახავად</div>
-            
-            <div class="fc-details" id="fcDetails">
-                <div class="fc-georgian" id="fcKa">სიტყვა</div>
-            </div>
-        </div>
-
-        <p style="text-align: center; font-weight: 700; color:var(--tg-theme-text-color, #1f2937);" id="learnProgressText">1 / 20</p>
+        </section>
         
-        <button class="btn" id="nextWordBtn" style="display: none;">შემდეგი ➔</button>
-        <button class="btn btn-success" id="startPracticeBtn" style="display: none;">✍️ სავარჯიშო</button>
-    </div>
-
-    <div id="practiceScreen" class="screen">
-        <div class="header">
-            <h2 style="font-size: 18px; color: var(--tg-theme-text-color, #1f2937);">ნაბიჯი 2: პრაქტიკა</h2>
-            <div class="stats-badge">❤️ <span id="practiceLives">5</span></div>
-        </div>
-
-        <div class="card" style="text-align: center;">
-            <p style="color: #718096; font-weight: 700; text-transform: uppercase; font-size: 14px;" id="quizInstruction">რას ნიშნავს?</p>
-            <h2 style="font-size: 26px; margin: 10px 0 20px 0;" id="quizQuestion">Frage</h2>
-            
-            <div class="options-grid" id="quizOptions"></div>
-        </div>
-
-        <button class="btn btn-success" id="nextQuizBtn" style="display: none;">შემდეგი ➔</button>
-    </div>
+        <section id="completion-message" class="hidden" style="text-align:center; padding: 20px;">
+            <h2>🎉 გილოცავ!</h2>
+            <p>დღევანდელი 20 სიტყვა წარმატებით გაიარე.</p>
+        </section>
+    </main>
 
     <script src="app.js"></script>
 </body>
