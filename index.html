@@ -59,63 +59,75 @@
         </section>
         
         <section id="completion-message" class="hidden" style="text-align:center; padding: 20px;">
-            <h2 style="font-size: 32px; margin-bottom: 10px;">🎉 გილოცავ!</h2>
-            <p style="font-size: 16px; margin-bottom: 30px; color: var(--text-muted);">დღევანდელი 20 სიტყვა წარმატებით გაიარე.</p>
+            <h2 style="font-size: 32px; margin-bottom: 10px;">🎉 ყოჩაღ!</h2>
+            <p style="font-size: 16px; margin-bottom: 30px; color: var(--text-muted);">20 სიტყვა გაიარე. ახლა დროა შევამოწმოთ ცოდნა.</p>
             <div class="action-buttons">
                 <button id="exercise-btn" class="btn-primary">🧠 სავარჯიშოს დაწყება</button>
             </div>
         </section>
 
-        <section id="exercise-area" class="hidden" style="padding: 0 20px 30px 20px;">
+        <section id="exercise-area" class="hidden" style="padding: 0 15px 30px 15px;">
             <div class="progress-section" style="padding: 0 0 15px 0;">
                 <p>სავარჯიშოს პროგრესი: <span id="exercise-progress">0/20</span></p>
                 <div class="progress-bar"><div id="exercise-bar" class="fill"></div></div>
             </div>
-            <div class="word-card">
+
+            <div class="word-card" style="padding: 20px 15px;">
                 <h2 id="exercise-question">კითხვა</h2>
+                
                 <div id="multiple-choice-container" class="options-grid">
                     <button class="option-btn"></button>
                     <button class="option-btn"></button>
                     <button class="option-btn"></button>
                     <button class="option-btn"></button>
                 </div>
+
+                <div id="sentence-builder-container" class="hidden" style="text-align: left;">
+                    <h3 id="sentence-ka" style="margin-bottom: 15px; color: var(--primary); font-size: 18px; text-align: center;"></h3>
+                    <div id="sentence-answer-area" class="sentence-area"></div>
+                    <div id="sentence-word-pool" class="sentence-pool"></div>
+                    <div class="action-buttons" style="margin-top: 15px;">
+                        <button id="check-sentence-btn" class="btn-primary">შემოწმება</button>
+                    </div>
+                </div>
+                
                 <p id="exercise-feedback" class="feedback-text"></p>
             </div>
+            
             <div class="action-buttons">
                  <button id="next-exercise-btn" class="btn-primary hidden">შემდეგი</button>
             </div>
         </section>
 
-        <section id="exercise-results" class="hidden" style="padding: 0 20px 30px 20px; text-align: center;">
-            <h2 style="font-size: 32px; margin-bottom: 20px;">📊 რეზულტატი</h2>
-            <div style="display: flex; justify-content: space-between; gap: 15px; margin-bottom: 25px;">
-                <div style="background: var(--success-bg); border: 2px solid var(--success); color: #2e7d32; padding: 20px; border-radius: var(--border-radius-md); flex: 1;">
-                    <h3 id="correct-count" style="font-size: 28px; margin-bottom: 5px;">0</h3>
-                    <p style="font-weight: 600;">სწორი</p>
+        <section id="exercise-results" class="hidden" style="padding: 0 15px 30px 15px; text-align: center;">
+            <h2 style="font-size: 28px; margin-bottom: 20px;">📊 რეზულტატი</h2>
+            <div style="display: flex; justify-content: space-between; gap: 10px; margin-bottom: 20px;">
+                <div style="background: var(--success-bg); border: 2px solid var(--success); color: #2e7d32; padding: 15px; border-radius: var(--border-radius-md); flex: 1;">
+                    <h3 id="correct-count" style="font-size: 24px; margin-bottom: 5px;">0</h3>
+                    <p style="font-weight: 600; font-size: 14px;">სწორი</p>
                 </div>
-                <div style="background: var(--danger-bg); border: 2px solid var(--danger); color: #c62828; padding: 20px; border-radius: var(--border-radius-md); flex: 1;">
-                    <h3 id="incorrect-count" style="font-size: 28px; margin-bottom: 5px;">0</h3>
-                    <p style="font-weight: 600;">შეცდომა</p>
+                <div style="background: var(--danger-bg); border: 2px solid var(--danger); color: #c62828; padding: 15px; border-radius: var(--border-radius-md); flex: 1;">
+                    <h3 id="incorrect-count" style="font-size: 24px; margin-bottom: 5px;">0</h3>
+                    <p style="font-weight: 600; font-size: 14px;">შეცდომა</p>
                 </div>
             </div>
             
             <div id="mistakes-container" class="hidden" style="text-align: left;">
-                <h4 style="margin-bottom: 15px; color: var(--text-main); font-size: 18px; border-bottom: 2px solid #e1e8ed; padding-bottom: 8px;">ეს სიტყვები ხვალ ისევ შეგხვდებათ:</h4>
-                <div id="mistakes-list" class="words-list" style="margin-bottom: 25px;">
-                    </div>
+                <h4 style="margin-bottom: 12px; color: var(--text-main); font-size: 16px; border-bottom: 2px solid #e1e8ed; padding-bottom: 6px;">დასამახსოვრებელი:</h4>
+                <div id="mistakes-list" class="words-list" style="margin-bottom: 20px;"></div>
             </div>
             
             <div class="action-buttons">
-                <button id="finish-daily-btn" class="btn-primary">დასრულება 🚀</button>
+                <button id="finish-daily-btn" class="btn-primary">შემდეგი 20 სიტყვა 🚀</button>
             </div>
         </section>
 
-        <section id="passed-words-section" style="display: none; padding: 0 20px 30px 20px;">
-            <h3 style="margin-bottom: 15px; color: var(--text-main); font-size: 18px; border-bottom: 2px solid #e1e8ed; padding-bottom: 8px;">დღეს გავლილი სიტყვები:</h3>
+        <section id="passed-words-section" style="display: none; padding: 0 15px 30px 15px;">
+            <h3 style="margin-bottom: 12px; color: var(--text-main); font-size: 16px; border-bottom: 2px solid #e1e8ed; padding-bottom: 6px;">გავლილი სიტყვები:</h3>
             <div id="passed-words-list" class="words-list"></div>
         </section>
 
     </main>
-    <script src="app.js"></script>
+    <script src="app.js?v=final"></script>
 </body>
 </html>
