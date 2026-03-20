@@ -28,8 +28,6 @@ document.addEventListener("DOMContentLoaded", () => {
     let allWords = [];
     let dailyWords = [];
     let currentIndex = 0;
-    
-    // ლოქალსთორიჯიდან ვიღებთ გავლილ სიტყვებს
     let learnedWords = JSON.parse(localStorage.getItem("learned_words")) || [];
 
     fetch('data.json')
@@ -46,11 +44,9 @@ document.addEventListener("DOMContentLoaded", () => {
         let today = new Date().toDateString();
 
         if (lastDate === today && savedDaily && savedDaily.length > 0) {
-            // თუ დღეს უკვე შემოვიდა, ვაგრძელებთ საიდანაც გაჩერდა
             dailyWords = savedDaily;
             currentIndex = parseInt(localStorage.getItem("current_index")) || 0;
         } else {
-            // ახალი დღე: ვარჩევთ 20 სიტყვას (2-3 ძველი, 17-18 ახალი)
             dailyWords = generateDailyList();
             currentIndex = 0;
             localStorage.setItem("daily_words", JSON.stringify(dailyWords));
@@ -58,7 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
             localStorage.setItem("current_index", 0);
         }
         updateUI();
-        renderPassedWords(); // ჩამატებულია: სიის განახლება აპლიკაციის ჩართვისას
+        renderPassedWords(); 
     }
 
     function generateDailyList() {
@@ -66,30 +62,25 @@ document.addEventListener("DOMContentLoaded", () => {
         let oldWordsCount = learnedWords.length >= 3 ? Math.floor(Math.random() * 2) + 2 : learnedWords.length;
         let newWordsCount = 20 - oldWordsCount;
 
-        // ვფილტრავთ ახალ და გავლილ სიტყვებს
         let availableOld = allWords.filter(w => learnedWords.includes(w.id));
         let availableNew = allWords.filter(w => !learnedWords.includes(w.id));
 
-        // ვირჩევთ შემთხვევით ძველ სიტყვებს გამეორებისთვის
         for(let i=0; i < oldWordsCount && availableOld.length > 0; i++) {
             let rand = Math.floor(Math.random() * availableOld.length);
             list.push(availableOld.splice(rand, 1)[0]);
         }
 
-        // ვირჩევთ შემთხვევით ახალ სიტყვებს
         for(let i=0; i < newWordsCount && availableNew.length > 0; i++) {
             let rand = Math.floor(Math.random() * availableNew.length);
             list.push(availableNew.splice(rand, 1)[0]);
         }
         
-        // ვურევთ სიას (Shuffle)
         return list.sort(() => Math.random() - 0.5);
     }
 
     function updateUI() {
         if (currentIndex >= dailyWords.length || currentIndex >= 20) {
-            document.getElementById("exercise-btn").classList.remove("hidden");
-            document.getElementById("learning-area").style.display = "none";
+            document.getElementById("learning-area").classList.add("hidden");
             document.getElementById("completion-message").classList.remove("hidden");
             document.getElementById("daily-progress").innerText = `20/20`;
             document.getElementById("daily-bar").style.width = `100%`;
@@ -104,7 +95,6 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("translation").classList.add("hidden");
         document.getElementById("reveal-btn").style.display = "inline-block";
 
-        // პროგრესის განახლება
         document.getElementById("daily-progress").innerText = `${currentIndex}/20`;
         document.getElementById("daily-bar").style.width = `${(currentIndex / 20) * 100}%`;
         
@@ -113,7 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("total-bar").style.width = `${(totalLearned / allWords.length) * 100}%`;
     }
 
-    // 4. ღილაკების ივენთები
+    // ღილაკების ივენთები
     document.getElementById("reveal-btn").addEventListener("click", (e) => {
         document.getElementById("translation").classList.remove("hidden");
         e.target.style.display = "none";
@@ -129,7 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
         currentIndex++;
         localStorage.setItem("current_index", currentIndex);
         updateUI();
-        renderPassedWords(); // ჩამატებულია: სიის განახლება შემდეგ სიტყვაზე გადასვლისას
+        renderPassedWords(); 
     });
 
     // ==========================================
@@ -140,16 +130,15 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentCorrectAnswer = "";
 
     const exerciseBtn = document.getElementById("exercise-btn");
-    const learningArea = document.getElementById("learning-area");
     const exerciseArea = document.getElementById("exercise-area");
     
-    // სავარჯიშოებზე გადასვლის ღილაკი (გამოჩნდება, როცა 20-ვე სიტყვას გაივლის)
     exerciseBtn.addEventListener("click", () => {
-        learningArea.classList.add("hidden");
+        document.getElementById("learning-area").classList.add("hidden");
         document.getElementById("completion-message").classList.add("hidden");
+        document.getElementById("passed-words-section").classList.add("hidden"); // ვმალავთ სიას სავარჯიშოს დროს
+        
         exerciseArea.classList.remove("hidden");
         
-        // ვიღებთ დღევანდელ სიტყვებს და ვურევთ
         exerciseWords = [...dailyWords].sort(() => Math.random() - 0.5);
         currentExIndex = 0;
         loadExercise();
@@ -171,27 +160,23 @@ document.addEventListener("DOMContentLoaded", () => {
         const nextBtn = document.getElementById("next-exercise-btn");
         const typingInput = document.getElementById("typing-input");
 
-        // გასუფთავება ძველი მონაცემებისგან
         feedback.innerText = "";
         nextBtn.classList.add("hidden");
         typingInput.value = "";
         typingInput.style.borderColor = "#e0e0e0";
 
-        // პროგრესის განახლება
         document.getElementById("exercise-progress").innerText = `${currentExIndex}/20`;
         document.getElementById("exercise-bar").style.width = `${(currentExIndex / 20) * 100}%`;
 
-        // შემთხვევითად ვირჩევთ სავარჯიშოს ტიპს (0 ან 1)
         let exerciseType = Math.random() > 0.5 ? "multipleChoice" : "typing";
 
         if (exerciseType === "multipleChoice") {
             mcContainer.classList.remove("hidden");
             typeContainer.classList.add("hidden");
             
-            questionEl.innerText = word.ka; // ვკითხულობთ ქართულად
+            questionEl.innerText = word.ka; 
             currentCorrectAnswer = word.de;
 
-            // ვქმნით 4 სავარაუდო პასუხს
             let options = [word.de];
             while (options.length < 4) {
                 let randomWord = allWords[Math.floor(Math.random() * allWords.length)].de;
@@ -199,17 +184,15 @@ document.addEventListener("DOMContentLoaded", () => {
                     options.push(randomWord);
                 }
             }
-            options.sort(() => Math.random() - 0.5); // ვურევთ ვარიანტებს
+            options.sort(() => Math.random() - 0.5); 
 
-            // ღილაკებზე ვარიანტების მიბმა
             const optionBtns = document.querySelectorAll(".option-btn");
             optionBtns.forEach((btn, index) => {
                 btn.innerText = options[index];
-                btn.className = "option-btn"; // კლასების განულება
+                btn.className = "option-btn"; 
                 btn.onclick = () => checkMultipleChoice(btn, currentCorrectAnswer);
             });
         } else {
-            // ხელით ჩასაწერი
             mcContainer.classList.add("hidden");
             typeContainer.classList.remove("hidden");
             
@@ -218,12 +201,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // არჩევითი პასუხის შემოწმება
     function checkMultipleChoice(selectedBtn, correctText) {
         const optionBtns = document.querySelectorAll(".option-btn");
         const feedback = document.getElementById("exercise-feedback");
         
-        // ღილაკების გათიშვა, რომ ორჯერ არ დააჭიროს
         optionBtns.forEach(btn => btn.onclick = null);
 
         if (selectedBtn.innerText === correctText) {
@@ -235,7 +216,6 @@ document.addEventListener("DOMContentLoaded", () => {
             feedback.innerText = `❌ შეცდომაა. სწორი პასუხია: ${correctText}`;
             feedback.className = "feedback-text text-danger";
             
-            // სწორი პასუხის გამწვანება
             optionBtns.forEach(btn => {
                 if (btn.innerText === correctText) btn.classList.add("correct");
             });
@@ -243,7 +223,6 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("next-exercise-btn").classList.remove("hidden");
     }
 
-    // ჩასაწერი პასუხის შემოწმება
     document.getElementById("check-typing-btn").addEventListener("click", () => {
         const typingInput = document.getElementById("typing-input");
         const feedback = document.getElementById("exercise-feedback");
@@ -264,7 +243,6 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("next-exercise-btn").classList.remove("hidden");
     });
 
-    // შემდეგ სავარჯიშოზე გადასვლა
     document.getElementById("next-exercise-btn").addEventListener("click", () => {
         currentExIndex++;
         document.getElementById("check-typing-btn").classList.remove("hidden");
@@ -275,21 +253,18 @@ document.addEventListener("DOMContentLoaded", () => {
     // სიდებარის ღილაკების ფუნქციები
     // ==========================================
     
-    // პროგრესის განულება
     document.getElementById("menu-reset").addEventListener("click", () => {
         if(confirm("ნამდვილად გსურთ მთლიანი პროგრესის განულება? წაიშლება თქვენი გავლილი სიტყვები.")) {
             localStorage.clear();
-            location.reload(); // აპლიკაციის თავიდან ჩატვირთვა
+            location.reload(); 
         }
     });
 
-    // ლექსიკონი (დროებით შეტყობინებას გამოიტანს)
     document.getElementById("menu-dict").addEventListener("click", () => {
         alert("ლექსიკონის სრული ბაზა მალე დაემატება!");
         document.getElementById("sidebar").classList.remove("active");
     });
 
-    // პარამეტრები (დროებით შეტყობინებას გამოიტანს)
     document.getElementById("menu-settings").addEventListener("click", () => {
         alert("პარამეტრების განყოფილება მალე დაემატება!");
         document.getElementById("sidebar").classList.remove("active");
@@ -303,15 +278,18 @@ document.addEventListener("DOMContentLoaded", () => {
         const listContainer = document.getElementById("passed-words-list");
         const section = document.getElementById("passed-words-section");
         
-        if (!listContainer || !section) return; // უსაფრთხოებისთვის, თუ HTML არ ჩაიტვირთა
+        if (!listContainer || !section) return; 
         
-        listContainer.innerHTML = ""; // ვასუფთავებთ სიას ახლის დასახატად
+        listContainer.innerHTML = ""; 
         
         if (currentIndex > 0) {
-            section.style.display = "block"; // ვაჩენთ სექციას თუ 1 სიტყვა მაინც გაიარა
+            section.classList.remove("hidden"); 
+            section.style.display = "block";
             
-            for (let i = 0; i < currentIndex; i++) {
+            let limit = Math.min(currentIndex, dailyWords.length);
+            for (let i = 0; i < limit; i++) {
                 let word = dailyWords[i];
+                if(!word) continue;
                 let wordHTML = `
                     <div class="passed-word-item">
                         <span class="passed-word-de">${word.de}</span>
@@ -322,9 +300,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 listContainer.innerHTML += wordHTML;
             }
         } else {
+            section.classList.add("hidden");
             section.style.display = "none";
         }
     }
-    
 });
-    
+            
