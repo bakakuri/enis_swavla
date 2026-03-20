@@ -11,151 +11,65 @@
     --danger-bg: #ffebee;
     --border-radius-lg: 20px;
     --border-radius-md: 12px;
-    --transition: 0.2s ease-in-out;
 }
 
-* { 
-    box-sizing: border-box; 
-    margin: 0; 
-    padding: 0; 
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
-    -webkit-tap-highlight-color: transparent; 
-}
-
-body { 
-    background-color: var(--bg-color); 
-    color: var(--text-main); 
-    line-height: 1.5; 
-    overflow-x: hidden; 
-}
-
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
+body { background-color: var(--bg-color); color: var(--text-main); line-height: 1.5; overflow-x: hidden; }
 .hidden { display: none !important; }
-
 h1, h2, h3 { font-weight: 700; margin-bottom: 8px; }
 
-/* კომპაქტური ჰედერი */
-header { 
-    display: flex; 
-    align-items: center; 
-    padding: 12px 20px; 
-    background: var(--card-bg); 
-    box-shadow: 0 2px 10px rgba(0,0,0,0.04); 
-    border-bottom-left-radius: var(--border-radius-lg); 
-    border-bottom-right-radius: var(--border-radius-lg); 
-    margin-bottom: 15px; 
-}
-
+header { display: flex; align-items: center; padding: 12px 20px; background: var(--card-bg); box-shadow: 0 2px 10px rgba(0,0,0,0.04); border-bottom-left-radius: var(--border-radius-lg); border-bottom-right-radius: var(--border-radius-lg); margin-bottom: 15px; }
 #user-greeting { font-size: 20px; color: var(--primary); margin: 0; }
 #menu-btn { font-size: 24px; background: none; border: none; color: var(--text-main); margin-right: 15px; cursor: pointer; }
 
-/* მოდალი და სიდებარი */
-.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(5px); justify-content: center; align-items: center; z-index: 1000; }
+.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(5px); justify-content: center; align-items: center; z-index: 1000; }
 .modal-content { background: var(--card-bg); padding: 25px 20px; border-radius: var(--border-radius-lg); text-align: center; width: 90%; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
 .modal-content input { width: 100%; padding: 14px; margin: 15px 0; border: 2px solid #e1e8ed; border-radius: var(--border-radius-md); font-size: 16px; text-align: center; outline: none; transition: 0.3s; }
 .modal-content input:focus { border-color: var(--primary); }
 
-.sidebar { position: fixed; top: 0; left: -280px; width: 280px; height: 100%; background: var(--card-bg); box-shadow: 4px 0 25px rgba(0,0,0,0.1); transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1); padding: 25px 20px; z-index: 500; }
+.sidebar { position: fixed; top: 0; left: -280px; width: 280px; height: 100%; background: var(--card-bg); box-shadow: 4px 0 25px rgba(0,0,0,0.1); transition: left 0.3s ease; padding: 25px 20px; z-index: 500; }
 .sidebar.active { left: 0; }
 .sidebar h3 { color: var(--primary); font-size: 22px; margin-bottom: 20px; }
 #category-list { list-style: none; margin-bottom: 25px; }
 #category-list li { padding: 14px 0; border-bottom: 1px solid #f0f2f5; font-size: 16px; cursor: pointer; }
 
-/* კომპაქტური პროგრეს ბარი */
 .progress-section { padding: 0 15px 10px 15px; }
 .progress-section p { font-size: 14px; color: var(--text-muted); font-weight: 600; display: flex; justify-content: space-between; margin-bottom: 6px; }
 .progress-bar { width: 100%; height: 10px; background: #e1e8ed; border-radius: 10px; margin-bottom: 15px; overflow: hidden; }
 .fill { height: 100%; background: var(--primary-gradient); border-radius: 10px; width: 0%; transition: width 0.4s ease; }
 
-/* კომპაქტური ბარათები */
 .learning-area, #exercise-area { padding: 0 15px 15px 15px; }
-.word-card { 
-    background: var(--card-bg); 
-    padding: 25px 15px; 
-    border-radius: var(--border-radius-lg); 
-    text-align: center; 
-    box-shadow: 0 6px 20px rgba(0,0,0,0.05); 
-    margin-bottom: 15px; 
-}
+.word-card { background: var(--card-bg); padding: 25px 15px; border-radius: var(--border-radius-lg); text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.04); margin-bottom: 15px; }
 #german-word { font-size: 28px; color: var(--primary); margin-bottom: 2px; }
-.phonetics { color: var(--text-muted); font-size: 16px; margin-bottom: 15px; letter-spacing: 0.5px; }
+.phonetics { color: var(--text-muted); font-size: 16px; margin-bottom: 15px; }
 .translation { margin-top: 15px; padding-top: 15px; border-top: 2px dashed #f0f2f5; }
 #georgian-word { font-size: 24px; color: var(--text-main); }
 
-/* კომპაქტური ღილაკები */
-.action-buttons button { 
-    width: 100%; 
-    padding: 14px; 
-    border: none; 
-    border-radius: var(--border-radius-md); 
-    font-size: 16px; 
-    font-weight: 700; 
-    cursor: pointer; 
-    transition: all 0.2s ease; 
-    margin-bottom: 10px; 
-}
-.btn-primary { background: var(--primary-gradient); color: white; box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3); }
-.btn-primary:active { transform: translateY(2px) scale(0.98); box-shadow: 0 2px 8px rgba(0, 136, 204, 0.2); }
+.action-buttons button { width: 100%; padding: 14px; border: none; border-radius: var(--border-radius-md); font-size: 16px; font-weight: 700; cursor: pointer; transition: 0.2s; margin-bottom: 10px; }
+.btn-primary { background: var(--primary-gradient); color: white; box-shadow: 0 4px 12px rgba(0,136,204,0.3); }
+.btn-primary:active { transform: scale(0.98); box-shadow: 0 2px 6px rgba(0,136,204,0.2); }
 .btn-secondary { background: #f4f7f6; color: var(--text-main); border: 2px solid #dfe6e9; }
 .btn-secondary:active { background: #e1e8ed; transform: scale(0.98); }
 .reveal-btn { background: #f0f4f8; color: var(--primary); border: 2px solid #e1e8ed; padding: 12px 25px; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; }
 
-/* სავარჯიშოების კომპაქტური ბადე */
 #exercise-question { font-size: 20px; color: var(--text-main); margin-bottom: 15px; }
-.options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-.option-btn { 
-    padding: 14px 8px; 
-    border: 2px solid #e1e8ed; 
-    background: var(--card-bg); 
-    border-radius: var(--border-radius-md); 
-    cursor: pointer; 
-    font-size: 15px; 
-    font-weight: 600; 
-    color: var(--text-main); 
-    box-shadow: 0 2px 5px rgba(0,0,0,0.02); 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    text-align: center; 
-    line-height: 1.2;
-}
+.options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+.option-btn { padding: 12px 6px; border: 2px solid #e1e8ed; background: var(--card-bg); border-radius: var(--border-radius-md); cursor: pointer; font-size: 15px; font-weight: 600; color: var(--text-main); box-shadow: 0 2px 5px rgba(0,0,0,0.02); line-height: 1.2; }
 .option-btn.correct { background: var(--success-bg); border-color: var(--success); color: #2e7d32; }
 .option-btn.wrong { background: var(--danger-bg); border-color: var(--danger); color: #c62828; }
-.feedback-text { margin-top: 15px; font-weight: 700; font-size: 18px; min-height: 25px; }
+.feedback-text { margin-top: 12px; font-weight: 700; font-size: 16px; min-height: 24px; }
 .text-success { color: var(--success); }
 .text-danger { color: var(--danger); }
 
-/* ულტრა-კომპაქტური გავლილი სიტყვების სია ერთ ხაზზე */
+/* წინადადების ასაწყობი */
+.sentence-area { min-height: 50px; border: 2px dashed #b2bec3; border-radius: var(--border-radius-md); padding: 8px; margin-bottom: 12px; display: flex; flex-wrap: wrap; gap: 6px; background: #fafbfc; align-items: center; }
+.sentence-pool { display: flex; flex-wrap: wrap; gap: 6px; min-height: 50px; justify-content: center; }
+.sentence-word-btn { padding: 8px 12px; background: var(--card-bg); border: 2px solid #dfe6e9; border-radius: 10px; font-size: 15px; font-weight: 600; color: var(--text-main); cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.03); transition: 0.2s; }
+.sentence-word-btn:active { transform: scale(0.95); background: #e1e8ed; }
+
+/* ულტრა-კომპაქტური გავლილი სიტყვები ერთ ხაზზე */
 .words-list { display: flex; flex-direction: column; gap: 6px; }
-
-.passed-word-item { 
-    background: var(--card-bg); 
-    padding: 8px 12px; 
-    border-radius: 8px; 
-    box-shadow: 0 1px 4px rgba(0,0,0,0.05); 
-    border-left: 4px solid var(--primary); 
-    display: flex; 
-    align-items: center; 
-    justify-content: flex-start;
-}
-
-.compact-de { 
-    font-size: 15px; 
-    font-weight: 700; 
-    color: var(--text-main); 
-    margin-right: 8px; 
-}
-
-.compact-ph { 
-    font-size: 12px; 
-    color: var(--text-muted); 
-    font-style: italic; 
-}
-
-.compact-ka { 
-    font-size: 14px; 
-    font-weight: 600; 
-    color: var(--primary); 
-    margin-left: auto; /* ეს ქართულ თარგმანს სულ მარჯვნივ გაწევს */
-    text-align: right; 
-}
-
+.passed-word-item { background: var(--card-bg); padding: 8px 12px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); border-left: 4px solid var(--primary); display: flex; align-items: center; justify-content: flex-start; }
+.compact-de { font-size: 15px; font-weight: 700; color: var(--text-main); margin-right: 8px; }
+.compact-ph { font-size: 12px; color: var(--text-muted); font-style: italic; }
+.compact-ka { font-size: 14px; font-weight: 600; color: var(--primary); margin-left: auto; text-align: right; }
