@@ -246,12 +246,12 @@ document.addEventListener("DOMContentLoaded", () => {
             mistakesContainer.classList.remove("hidden");
             
             incorrectWordsList.forEach(word => {
+                // აქაც შევცვალეთ კომპაქტურ დიზაინზე რეზულტატების ეკრანისთვის
                 mistakesList.innerHTML += `
                     <div class="passed-word-item" style="border-left-color: var(--danger);">
-                        <div class="word-row">
-                            <span class="passed-word-de">${word.de}</span>
-                            <span class="passed-word-ka">${word.ka}</span>
-                        </div>
+                        <span class="compact-de">${word.de}</span>
+                        <span class="compact-ph">${word.phonetics}</span>
+                        <span class="compact-ka">${word.ka}</span>
                     </div>
                 `;
             });
@@ -266,11 +266,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // ეს არის შეცვლილი ფუნქცია (დასრულების ღილაკის ლოგიკა)
     document.getElementById("finish-daily-btn").addEventListener("click", () => {
         let learned = JSON.parse(localStorage.getItem("learned_words")) || [];
         
-        // 1. ვამოწმებთ, სრული კურსი ხომ არ დაასრულა (200 სიტყვა)
         if (learned.length >= allWords.length) {
             alert("🏆 გილოცავთ! თქვენ წარმატებით დაასრულეთ სრული კურსი (" + allWords.length + " სიტყვა). პროგრესი ახლა განულდება და შეგიძლიათ დაიწყოთ თავიდან.");
             localStorage.clear();
@@ -278,7 +276,6 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        // 2. თუ ჯერ არ დაუსრულებია, ვშლით მიმდინარე გაკვეთილის მეხსიერებას, რომ მაშინვე ახალი მოგვცეს
         localStorage.removeItem("daily_words");
         localStorage.removeItem("current_index");
         localStorage.removeItem("last_date"); 
@@ -318,13 +315,12 @@ document.addEventListener("DOMContentLoaded", () => {
             for (let i = 0; i < limit; i++) {
                 let word = dailyWords[i];
                 if(!word) continue;
+                // კომპაქტური დიზაინის გენერაცია
                 let wordHTML = `
                     <div class="passed-word-item">
-                        <div class="word-row">
-                            <span class="passed-word-de">${word.de}</span>
-                            <span class="passed-word-ka">${word.ka}</span>
-                        </div>
-                        <span class="passed-word-ph">${word.phonetics}</span>
+                        <span class="compact-de">${word.de}</span>
+                        <span class="compact-ph">${word.phonetics}</span>
+                        <span class="compact-ka">${word.ka}</span>
                     </div>
                 `;
                 listContainer.innerHTML += wordHTML;
@@ -334,4 +330,4 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 });
-            
+        
