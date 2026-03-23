@@ -1,312 +1,252 @@
-/* --- ცვლადები და ფერების პალიტრა --- */
+/* --- ცვლადები (ორიგინალი სახელებით, განახლებული ფერებით) --- */
 :root {
-    --primary-gradient: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%);
-    --secondary-gradient: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-    --bg-color: #f0f4f8;
-    --card-bg: rgba(255, 255, 255, 0.85);
-    --text-main: #102a43;
-    --text-muted: #486581;
-    --success: #00e676;
-    --danger: #ff1744;
+    --bg-color: #0f172a; /* მუქი, ღამისფერი ლურჯი */
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --primary: #38bdf8;
+    --primary-gradient: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
+    --card-bg: rgba(30, 41, 59, 0.7); /* შუშის ეფექტი მუქ ფონზე */
+    --success: #22c55e;
+    --danger: #ef4444;
+    --success-bg: rgba(34, 197, 94, 0.1);
+    --danger-bg: rgba(239, 68, 68, 0.1);
     --border-radius-lg: 24px;
     --border-radius-md: 16px;
     --glass-blur: blur(12px);
-    --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.08);
 }
 
-/* --- ბაზისური პარამეტრები --- */
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    -webkit-tap-highlight-color: transparent;
+/* --- ბაზისური სტილი --- */
+* { 
+    box-sizing: border-box; 
+    margin: 0; 
+    padding: 0; 
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+    -webkit-tap-highlight-color: transparent; 
 }
 
-body {
-    background-color: var(--bg-color);
-    background-image: radial-gradient(circle at top right, #e0eafc, #cfdef3);
-    color: var(--text-main);
-    line-height: 1.6;
+body { 
+    background-color: var(--bg-color); 
+    background-image: radial-gradient(circle at 50% 0%, #1e293b 0%, #0f172a 100%);
+    color: var(--text-main); 
+    line-height: 1.6; 
+    overflow-x: hidden; 
     min-height: 100vh;
-    padding-bottom: 40px;
 }
 
-.container {
-    max-width: 500px;
-    margin: 0 auto;
-    padding: 20px;
-}
+.hidden { display: none !important; }
 
-/* --- ჰედერი --- */
-header {
-    display: flex;
+/* --- ჰედერი (Header) --- */
+header { 
+    display: flex; 
+    align-items: center; 
     justify-content: space-between;
-    align-items: center;
-    padding: 15px 5px;
-    margin-bottom: 10px;
+    padding: 20px; 
+    background: rgba(15, 23, 42, 0.8);
+    backdrop-filter: var(--glass-blur);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-header h1 {
-    font-size: 22px;
-    font-weight: 800;
+header h1 { 
+    font-size: 20px; 
     background: var(--primary-gradient);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    font-weight: 800;
 }
 
 #menu-btn {
-    background: var(--card-bg);
-    border: 1px solid rgba(255,255,255,0.4);
-    backdrop-filter: var(--glass-blur);
-    padding: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--primary);
+    padding: 8px 12px;
     border-radius: 12px;
     cursor: pointer;
-    box-shadow: var(--shadow-soft);
     font-size: 20px;
 }
 
-/* --- ბარათების სტილი (Glassmorphism) --- */
-.card, .word-card, .profile-stats, #game-zone, .modal-content, .words-list-item {
-    background: var(--card-bg);
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    border-radius: var(--border-radius-lg);
-    padding: 25px;
-    box-shadow: var(--shadow-soft);
-    margin-bottom: 20px;
-    animation: fadeIn 0.5s ease;
+/* --- კონტეინერი --- */
+.container { 
+    max-width: 500px; 
+    margin: 0 auto; 
+    padding: 20px; 
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
+/* --- სიტყვის ბარათი (Word Card) --- */
+.word-card { 
+    background: var(--card-bg); 
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 40px 20px; 
+    border-radius: var(--border-radius-lg); 
+    text-align: center; 
+    margin-bottom: 25px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    animation: slideUp 0.4s ease-out;
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* --- სიტყვის ბარათი --- */
-.word-card {
+.word-de { font-size: 42px; font-weight: 800; color: var(--text-main); margin-bottom: 5px; }
+.word-phonetics { font-size: 18px; color: var(--primary); margin-bottom: 15px; opacity: 0.8; }
+.word-ka { font-size: 24px; color: var(--text-muted); font-weight: 500; }
+
+/* --- ღილაკები (Buttons) --- */
+.btn-primary, .btn-secondary { 
+    width: 100%; 
+    padding: 18px; 
+    border: none; 
+    border-radius: var(--border-radius-md); 
+    font-size: 16px; 
+    font-weight: 700; 
+    cursor: pointer; 
+    transition: all 0.2s ease;
+    margin-bottom: 12px;
+    display: block;
     text-align: center;
-    min-height: 250px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+    text-decoration: none;
 }
 
-.word-de {
-    font-size: 38px;
-    font-weight: 800;
-    margin-bottom: 5px;
+.btn-primary { 
+    background: var(--primary-gradient); 
+    color: white;
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+}
+
+.btn-secondary { 
+    background: rgba(255, 255, 255, 0.05); 
     color: var(--text-main);
-    letter-spacing: -1px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.word-phonetics {
-    font-size: 16px;
-    color: #0072ff;
-    font-style: italic;
-    margin-bottom: 15px;
-}
+.btn-primary:active, .btn-secondary:active { transform: scale(0.96); }
 
-.word-ka {
-    font-size: 22px;
-    color: var(--text-muted);
-    font-weight: 500;
-}
-
-/* --- სავარჯიშოები და ღილაკები --- */
-.options-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-top: 20px;
-}
-
-.btn-option {
-    background: white;
-    border: 2px solid transparent;
-    padding: 15px 10px;
+/* --- ტესტის ოფციები (Options) --- */
+.option-btn {
+    width: 100%;
+    padding: 16px;
+    margin-bottom: 10px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: var(--border-radius-md);
-    font-size: 15px;
+    color: var(--text-main);
+    font-size: 16px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
-    text-align: center;
 }
 
-.btn-option:active { transform: scale(0.96); }
+.option-btn:hover { background: rgba(255, 255, 255, 0.07); }
 
-.btn-option.correct {
-    background: var(--success) !important;
-    color: white;
-    box-shadow: 0 8px 20px rgba(0, 230, 118, 0.3);
-}
-
-.btn-option.wrong-choice {
-    background: var(--danger) !important;
-    color: white;
-    animation: shake 0.4s;
-}
+.option-btn.correct { background: var(--success) !important; color: white; border: none; }
+.option-btn.wrong-choice { background: var(--danger) !important; color: white; border: none; animation: shake 0.3s; }
 
 @keyframes shake {
     0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-5px); }
-    75% { transform: translateX(5px); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
 }
 
-/* --- მთავარი მოქმედების ღილაკები --- */
-.btn-primary, .btn-secondary {
-    width: 100%;
-    padding: 16px;
-    border: none;
-    border-radius: var(--border-radius-md);
-    font-size: 16px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.3s;
-    color: white;
-    box-shadow: 0 10px 20px rgba(0, 114, 255, 0.2);
-}
-
-.btn-primary { background: var(--primary-gradient); }
-.btn-secondary { background: var(--secondary-gradient); }
-
-.btn-primary:active, .btn-secondary:active { transform: scale(0.98); opacity: 0.9; }
-
-/* --- პროგრესის ბარი --- */
-.progress-container {
-    background: rgba(0,0,0,0.05);
-    height: 10px;
-    border-radius: 10px;
-    margin: 20px 0;
-    overflow: hidden;
-}
-
-.progress-fill {
-    height: 100%;
-    background: var(--primary-gradient);
-    width: 0%;
-    transition: width 0.4s ease;
-}
-
-/* --- გვერდითა მენიუ (Sidebar) --- */
-.sidebar {
-    position: fixed;
-    top: 0;
-    left: -100%;
-    width: 80%;
-    max-width: 300px;
-    height: 100%;
-    background: white;
-    z-index: 1000;
-    box-shadow: 20px 0 50px rgba(0,0,0,0.1);
-    transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    padding: 30px 20px;
+/* --- საიდბარი (Sidebar) --- */
+.sidebar { 
+    position: fixed; 
+    top: 0; 
+    left: -100%; 
+    width: 85%; 
+    max-width: 320px; 
+    height: 100%; 
+    background: #1e293b; 
+    z-index: 1000; 
+    transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+    padding: 40px 20px;
+    box-shadow: 20px 0 60px rgba(0,0,0,0.5);
 }
 
 .sidebar.active { left: 0; }
 
-.sidebar h3 { margin-bottom: 25px; font-size: 22px; color: var(--text-main); }
+.sidebar h3 { color: var(--primary); margin-bottom: 30px; font-size: 24px; }
 
 .sidebar ul { list-style: none; }
 
-.sidebar li {
-    padding: 15px;
-    margin-bottom: 10px;
-    border-radius: 12px;
-    font-weight: 600;
+.sidebar li { 
+    padding: 18px; 
+    margin-bottom: 10px; 
+    border-radius: 12px; 
+    background: rgba(255,255,255,0.03);
+    color: var(--text-main);
+    font-weight: 600; 
     cursor: pointer;
-    transition: background 0.2s;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 15px;
 }
 
-.sidebar li:hover { background: #f0f7ff; color: #0072ff; }
+.sidebar li:active { background: var(--primary-gradient); }
 
-/* --- დიალოგების ჩატის სტილი --- */
-#chat-messages {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-bottom: 20px;
-    max-height: 400px;
-    overflow-y: auto;
-    padding-right: 5px;
+/* --- პროგრეს ბარი --- */
+.progress-bar { 
+    background: rgba(255,255,255,0.1); 
+    height: 12px; 
+    border-radius: 10px; 
+    margin-bottom: 20px; 
+    overflow: hidden; 
+}
+.fill { 
+    height: 100%; 
+    background: var(--primary-gradient); 
+    width: 0%; 
+    transition: width 0.5s ease; 
 }
 
-.chat-msg {
-    max-width: 80%;
-    padding: 12px 16px;
-    border-radius: 18px;
+/* --- დიალოგები (Chat) --- */
+.chat-msg { 
+    max-width: 85%; 
+    padding: 14px 18px; 
+    border-radius: 20px; 
+    margin-bottom: 12px;
     font-size: 15px;
-    position: relative;
+    animation: pop 0.3s ease;
 }
 
-.chat-bot {
-    background: #e1e8ed;
-    align-self: flex-start;
-    border-bottom-left-radius: 4px;
-}
+@keyframes pop { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
 
-.chat-user {
-    background: var(--primary-gradient);
-    color: white;
-    align-self: flex-end;
-    border-bottom-right-radius: 4px;
-}
+.chat-bot { background: rgba(255,255,255,0.1); color: var(--text-main); align-self: flex-start; border-bottom-left-radius: 4px; }
+.chat-user { background: var(--primary-gradient); color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
 
-/* --- მოდალური ფანჯარა (ნიკნეიმი) --- */
-.modal {
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.6);
-    display: none;
-    justify-content: center;
-    align-items: center;
+/* --- მოდალი --- */
+.modal { 
+    position: fixed; 
+    top: 0; left: 0; width: 100%; height: 100%; 
+    background: rgba(15, 23, 42, 0.9); 
+    display: none; 
+    justify-content: center; 
+    align-items: center; 
     z-index: 2000;
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(8px);
 }
 
-.modal-content {
-    width: 90%;
-    max-width: 350px;
+.modal-content { 
+    background: #1e293b; 
+    padding: 30px; 
+    border-radius: var(--border-radius-lg); 
+    width: 90%; 
+    max-width: 400px; 
     text-align: center;
+    border: 1px solid rgba(255,255,255,0.1);
 }
 
-#nickname-input {
+input[type="text"] {
     width: 100%;
     padding: 15px;
+    margin: 20px 0;
     border-radius: 12px;
-    border: 2px solid #ddd;
-    margin: 15px 0;
-    font-size: 16px;
-    outline: none;
-}
-
-#nickname-input:focus { border-color: #0072ff; }
-
-/* --- შეტყობინებები --- */
-.notification {
-    position: fixed;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--text-main);
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(0,0,0,0.2);
     color: white;
-    padding: 12px 24px;
-    border-radius: 50px;
-    font-size: 14px;
-    z-index: 3000;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-}
-
-/* --- დამალვა --- */
-.hidden { display: none !important; }
-
-/* --- მცირე ეკრანებისთვის --- */
-@media (max-width: 400px) {
-    .word-de { font-size: 32px; }
-    .options-container { grid-template-columns: 1fr; }
-                     }
+    outline: none;
+    }
