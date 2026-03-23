@@ -556,7 +556,44 @@ document.addEventListener("DOMContentLoaded", () => {
                 { bot: "Gerne. Das macht 3 Euro, bitte. (სიამოვნებით. 3 ევრო იქნება.)", choices: [{text: "Hier, bitte schön.", correct: true}, {text: "Mir geht es gut.", correct: false}] },
                 { bot: "Danke! Einen schönen Tag noch! (მადლობა! სასიამოვნო დღეს გისურვებთ!)", choices: [{text: "Danke, gleichfalls!", correct: true}, {text: "Nein, danke.", correct: false}], end: true }
             ]
-        }
+        },
+        {
+    title: "🛍️ მაღაზიაში",
+    steps: [
+        { bot: "Brauchen Sie eine Tüte? (პარკი გჭირდებათ?)", choices: [{text: "Ja, bitte. Eine kleine.", correct: true}, {text: "Ich bin müde.", correct: false}] },
+        { bot: "Haben Sie eine Kundenkarte? (კლიენტის ბარათი გაქვთ?)", choices: [{text: "Nein, leider nicht.", correct: true}, {text: "Das Wetter ist gut.", correct: false}] },
+        { bot: "Das macht 15 Euro, bitte. (15 ევრო იქნება, თუ შეიძლება.)", choices: [{text: "Kann ich mit Karte bezahlen?", correct: true}, {text: "Ich heiße Giorgi.", correct: false}] },
+        { bot: "Ja, natürlich. Halten Sie die Karte hier. (დიახ, რა თქმა უნდა. ბარათი აქ მიადეთ.)", choices: [{text: "Danke, schönen Feierabend!", correct: true}, {text: "Ich komme aus Georgien.", correct: false}], end: true }
+    ]
+},
+{
+    title: "🚇 ტრანსპორტში",
+    steps: [
+        { bot: "Entschuldigung, fährt dieser Bus zum Hauptbahnhof? (უკაცრავად, ეს ავტობუსი ცენტრალურ სადგურამდე მიდის?)", choices: [{text: "Ja, in zehn Minuten.", correct: true}, {text: "Ich esse Brot.", correct: false}] },
+        { bot: "Ist dieser Platz noch frei? (ეს ადგილი თავისუფალია?)", choices: [{text: "Ja, bitte setzen Sie sich.", correct: true}, {text: "Nein, ich lerne Deutsch.", correct: false}] },
+        { bot: "Ihren Fahrschein, bitte! (თქვენი ბილეთი, თუ შეიძლება!)", choices: [{text: "Hier ist mein Ticket.", correct: true}, {text: "Das ist teuer.", correct: false}] },
+        { bot: "Vielen Dank, alles in Ordnung. (დიდი მადლობა, ყველაფერი რიგზეა.)", choices: [{text: "Einen schönen Tag noch!", correct: true}, {text: "Gute Nacht.", correct: false}], end: true }
+    ]
+},
+{
+    title: "🏥 ექიმთან",
+    steps: [
+        { bot: "Guten Tag, haben Sie einen Termin? (გამარჯობა, ჩაწერილი ხართ?)", choices: [{text: "Ja, um zehn Uhr.", correct: true}, {text: "Ich bin groß.", correct: false}] },
+        { bot: "Was fehlt Ihnen? (რა გაწუხებთ?)", choices: [{text: "Ich habe Kopfschmerzen.", correct: true}, {text: "Ich wohne in Hamburg.", correct: false}] },
+        { bot: "Haben Sie Ihre Versicherungskarte dabei? (სადაზღვევო ბარათი თან გაქვთ?)", choices: [{text: "Ja, hier bitte schön.", correct: true}, {text: "Nein, ich trinke Tee.", correct: false}] },
+        { bot: "Bitte nehmen Sie im Wartezimmer Platz. (გთხოვთ, მისაღებში დაიკავოთ ადგილი.)", choices: [{text: "Vielen Dank.", correct: true}, {text: "Gleichfalls.", correct: false}], end: true }
+    ]
+},
+{
+    title: "🏦 ბანკში",
+    steps: [
+        { bot: "Guten Tag! Wie kann ich Ihnen helfen? (გამარჯობა! რით შემიძლია დაგეხმაროთ?)", choices: [{text: "Ich möchte ein Konto eröffnen.", correct: true}, {text: "Ich suche den Bahnhof.", correct: false}] },
+        { bot: "Haben Sie Ihren Ausweis dabei? (პირადობის მოწმობა თან გაქვთ?)", choices: [{text: "Ja, hier ist mein Reisepass.", correct: true}, {text: "Nein, das ist billig.", correct: false}] },
+        { bot: "Füllen Sie bitte dieses Formular aus. (გთხოვთ, ეს ფორმულარი შეავსოთ.)", choices: [{text: "Brauche ich einen Kuli?", correct: true}, {text: "Ich bin glücklich.", correct: false}] },
+        { bot: "Hier ist ein Stift. (ინებეთ კალამი.)", choices: [{text: "Danke, ich bin fertig.", correct: true}, {text: "Bitte sehr.", correct: false}], end: true }
+    ]
+},
+        
     ];
 
     let currentScenario = null;
