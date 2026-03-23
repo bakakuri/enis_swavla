@@ -549,6 +549,54 @@ document.addEventListener("DOMContentLoaded", () => {
             ]
         },
         {
+    title: "🤝 გაცნობა (ვრცელი)",
+    steps: [
+        { 
+            bot: "Hallo! Ich bin Lukas. Wie heißt du? (გამარჯობა! მე ლუკასი ვარ. შენ რა გქვია?)", 
+            choices: [
+                {text: "Ich heiße Giorgi. Freut mich!", correct: true}, 
+                {text: "Ich bin aus Georgien.", correct: false}
+            ] 
+        },
+        { 
+            bot: "Freut mich auch, Giorgi! Wie alt bist du? (მეც მიხარია, გიორგი! რამდენი წლის ხარ?)", 
+            choices: [
+                {text: "Ich komme aus Tiflis.", correct: false}, 
+                {text: "Ich bin 25 Jahre alt. Und du?", correct: true}
+            ] 
+        },
+        { 
+            bot: "Ich bin 28. Wo wohnst du zurzeit? (მე 28-ის. ამჟამად სად ცხოვრობ?)", 
+            choices: [
+                {text: "Ich wohne jetzt in Hamburg.", correct: true}, 
+                {text: "Ich schlafe viel.", correct: false}
+            ] 
+        },
+        { 
+            bot: "Hamburg ist toll! Was machst du beruflich? (ჰამბურგი მაგარია! პროფესიით რას საქმიანობ?)", 
+            choices: [
+                {text: "Ich bin Webentwickler.", correct: true}, 
+                {text: "Ich esse gern Pizza.", correct: false}
+            ] 
+        },
+        { 
+            bot: "Interessant! Lernst du schon lange Deutsch? (საინტერესოა! დიდი ხანია გერმანულს სწავლობ?)", 
+            choices: [
+                {text: "Nein, erst seit zwei Monaten.", correct: true}, 
+                {text: "Ja, ich habe ein Auto.", correct: false}
+            ] 
+        },
+        { 
+            bot: "Du sprichst schon sehr gut! Viel Erfolg noch. (უკვე ძალიან კარგად საუბრობ! წარმატებები.)", 
+            choices: [
+                {text: "Vielen Dank! Bis bald!", correct: true}, 
+                {text: "Guten Appetit.", correct: false}
+            ], 
+            end: true 
+        }
+    ]
+        },
+        {
             title: "☕ კაფეში",
             steps: [
                 { bot: "Guten Tag! Was möchten Sie trinken? (გამარჯობა! რის დალევას ისურვებდით?)", choices: [{text: "Einen Kaffee, bitte.", correct: true}, {text: "Ich heiße Anna.", correct: false}] },
