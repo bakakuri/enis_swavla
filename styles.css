@@ -1,0 +1,20 @@
+
+body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #1e1e2f, #3a3a6a);
+  color: white;
+}
+
+.word-card {
+  background: rgba(255,255,255,0.1);
+  padding: 10px;
+  margin: 5px;
+  border-radius: 10px;
+}
+
+input {
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  width: 100%;
+}
