@@ -2,7 +2,7 @@
 <html lang="ka">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Deutsch Lernen</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -11,191 +11,60 @@
     <div id="nickname-modal" class="modal">
         <div class="modal-content">
             <h2>მოგესალმებით! 👋</h2>
-            <p>შეიყვანეთ თქვენი ნიკნეიმი დასაწყებად:</p>
+            <p>შეიყვანეთ სახელი დასაწყებად:</p>
             <input type="text" id="nickname-input" placeholder="მაგ. გიორგი">
-            <div class="action-buttons" style="margin-top: 10px;">
-                <button id="save-nickname-btn" class="btn-primary">შენახვა</button>
-            </div>
+            <button id="save-nickname-btn" class="btn-primary">შენახვა</button>
         </div>
     </div>
 
     <div id="sidebar" class="sidebar">
-        <h3>მენიუ</h3>
-        
-        <ul id="category-list">
-            <li id="menu-profile">👤 პროფილი და სტატისტიკა</li>
-            <li id="menu-dict">📚 ლექსიკონი</li>
-            <li id="menu-chat">💬 დიალოგები (ახალი)</li>
-            <li id="menu-settings">⚙️ პარამეტრები</li>
-            <li id="menu-reset">🔄 პროგრესის განულება</li>
-        </ul>
-
-
-        <div class="action-buttons">
-            <button id="close-sidebar" class="btn-secondary" style="margin-top: 20px;">X დახურვა</button>
+        <div class="sidebar-header">
+            <h3>მენიუ</h3>
+            <button id="close-sidebar">✕</button>
         </div>
+        <ul>
+            <li id="menu-profile">👤 პროფილი</li>
+            <li id="menu-dict">📚 ლექსიკონი</li>
+            <li id="menu-chat">💬 დიალოგები</li>
+            <li id="menu-reset">🔄 განულება</li>
+        </ul>
     </div>
-    <main class="main-content">
-        <header>
-            <button id="menu-btn">☰</button>
-            <h1 id="user-greeting">გამარჯობა!</h1>
-        </header>
-        <section id="dictionary-area" class="hidden" style="padding: 0 15px 30px 15px;">
-            <div style="display: flex; align-items: center; margin-bottom: 20px;">
-                <button id="back-from-dict-btn" class="btn-secondary" style="padding: 8px 15px; margin: 0; margin-right: 15px; width: auto; font-size: 20px; border-radius: 10px;">🔙</button>
-                <h2 style="margin: 0; font-size: 24px; color: var(--text-main);">📚 ლექსიკონი</h2>
-            </div>
-            
-            <input type="text" id="dict-search" placeholder="🔍 მოძებნე სიტყვა..." style="width: 100%; padding: 14px 20px; border: 2px solid #e1e8ed; border-radius: var(--border-radius-md); font-size: 16px; margin-bottom: 20px; outline: none; background: var(--card-bg); color: var(--text-main); transition: 0.3s;">
-            
-            <div id="dict-words-list" class="words-list">
-                </div>
-        </section>
 
-        <section class="progress-section">
-            <p>დღევანდელი: <span id="daily-progress">0/20</span></p>
-            <div class="progress-bar"><div id="daily-bar" class="fill"></div></div>
-            <p>სრული კურსი: <span id="total-progress">0/200</span></p>
-            <div class="progress-bar"><div id="total-bar" class="fill"></div></div>
-        </section>
+    <header>
+        <button id="menu-btn">☰</button>
+        <h1>Deutsch Lernen</h1>
+        <div id="user-greeting"></div>
+    </header>
 
-        <section class="learning-area" id="learning-area">
+    <div class="container">
+        <section id="learning-section">
             <div class="word-card">
-                <h2 id="german-word">იტვირთება...</h2>
-                <p class="phonetics" id="phonetics"></p>
-                <button class="reveal-btn" id="reveal-btn">თარგმანის ნახვა</button>
-                <div class="translation hidden" id="translation">
-                    <h3 id="georgian-word"></h3>
-                </div>
+                <div id="word-de" class="word-de">---</div>
+                <div id="word-phonetics" class="word-phonetics">---</div>
+                <div id="word-ka" class="word-ka">---</div>
             </div>
+
+            <div id="game-zone" class="hidden">
+                <h2 id="question-text">აირჩიე სწორი პასუხი:</h2>
+                <div id="options-container" class="options-container"></div>
+            </div>
+
             <div class="action-buttons">
-                <button id="next-word-btn" class="btn-primary">შემდეგი სიტყვა</button>
-            </div>
-        </section>
-        
-        <section id="completion-message" class="hidden" style="text-align:center; padding: 20px;">
-            <h2 style="font-size: 32px; margin-bottom: 10px;">🎉 ყოჩაღ!</h2>
-            <p style="font-size: 16px; margin-bottom: 30px; color: var(--text-muted);">20 სიტყვა გაიარე. ახლა დროა შევამოწმოთ ცოდნა.</p>
-            <div class="action-buttons">
-                <button id="exercise-btn" class="btn-primary">🧠 სავარჯიშოს დაწყება</button>
+                <button id="start-learning-btn" class="btn-primary">დაწყება</button>
+                <button id="next-word-btn" class="btn-secondary hidden">შემდეგი</button>
             </div>
         </section>
 
-        <section id="exercise-area" class="hidden" style="padding: 0 15px 30px 15px;">
-            <div class="progress-section" style="padding: 0 0 15px 0;">
-                <p>სავარჯიშოს პროგრესი: <span id="exercise-progress">0/20</span></p>
-                <div class="progress-bar"><div id="exercise-bar" class="fill"></div></div>
+        <section id="dict-area" class="hidden">
+            <div class="section-header">
+                <button id="back-from-dict-btn" class="btn-back">🔙</button>
+                <h2>ლექსიკონი</h2>
             </div>
-
-            <div class="word-card" style="padding: 20px 15px;">
-                <h2 id="exercise-question">კითხვა</h2>
-                
-                <div id="multiple-choice-container" class="options-grid">
-                    <button class="option-btn"></button>
-                    <button class="option-btn"></button>
-                    <button class="option-btn"></button>
-                    <button class="option-btn"></button>
-                </div>
-
-                <div id="sentence-builder-container" class="hidden" style="text-align: left;">
-                    <h3 id="sentence-ka" style="margin-bottom: 15px; color: var(--primary); font-size: 18px; text-align: center;"></h3>
-                    <div id="sentence-answer-area" class="sentence-area"></div>
-                    <div id="sentence-word-pool" class="sentence-pool"></div>
-                    <div class="action-buttons" style="margin-top: 15px;">
-                        <button id="check-sentence-btn" class="btn-primary">შემოწმება</button>
-                    </div>
-                </div>
-                
-                <p id="exercise-feedback" class="feedback-text"></p>
-            </div>
-            
-            <div class="action-buttons">
-                 <button id="next-exercise-btn" class="btn-primary hidden">შემდეგი</button>
-            </div>
+            <input type="text" id="dict-search" placeholder="ძებნა...">
+            <div id="dict-list" class="words-list"></div>
         </section>
+    </div>
 
-        <section id="exercise-results" class="hidden" style="padding: 0 15px 30px 15px; text-align: center;">
-            <h2 style="font-size: 28px; margin-bottom: 20px;">📊 რეზულტატი</h2>
-            <div style="display: flex; justify-content: space-between; gap: 10px; margin-bottom: 20px;">
-                <div style="background: var(--success-bg); border: 2px solid var(--success); color: #2e7d32; padding: 15px; border-radius: var(--border-radius-md); flex: 1;">
-                    <h3 id="correct-count" style="font-size: 24px; margin-bottom: 5px;">0</h3>
-                    <p style="font-weight: 600; font-size: 14px;">სწორი</p>
-                </div>
-                <div style="background: var(--danger-bg); border: 2px solid var(--danger); color: #c62828; padding: 15px; border-radius: var(--border-radius-md); flex: 1;">
-                    <h3 id="incorrect-count" style="font-size: 24px; margin-bottom: 5px;">0</h3>
-                    <p style="font-weight: 600; font-size: 14px;">შეცდომა</p>
-                </div>
-            </div>
-            
-            <div id="mistakes-container" class="hidden" style="text-align: left;">
-                <h4 style="margin-bottom: 12px; color: var(--text-main); font-size: 16px; border-bottom: 2px solid #e1e8ed; padding-bottom: 6px;">დასამახსოვრებელი:</h4>
-                <div id="mistakes-list" class="words-list" style="margin-bottom: 20px;"></div>
-            </div>
-            
-            <div class="action-buttons">
-                <button id="finish-daily-btn" class="btn-primary">შემდეგი 20 სიტყვა 🚀</button>
-            </div>
-        </section>
-
-        <section id="passed-words-section" style="display: none; padding: 0 15px 30px 15px;">
-            <h3 style="margin-bottom: 12px; color: var(--text-main); font-size: 16px; border-bottom: 2px solid #e1e8ed; padding-bottom: 6px;">გავლილი სიტყვები:</h3>
-            <div id="passed-words-list" class="words-list"></div>
-        </section>
-        <section id="profile-area" class="hidden" style="padding: 0 15px 30px 15px;">
-            <div style="display: flex; align-items: center; margin-bottom: 20px;">
-                <button id="back-from-profile-btn" class="btn-secondary" style="padding: 8px 15px; margin: 0; margin-right: 15px; width: auto; font-size: 20px; border-radius: 10px;">🔙</button>
-                <h2 style="margin: 0; font-size: 24px; color: var(--text-main);">👤 პროფილი</h2>
-            </div>
-            
-            <div class="word-card" style="padding: 25px 15px; margin-bottom: 20px;">
-                <div style="font-size: 55px; margin-bottom: 10px;">🎓</div>
-                <h2 id="profile-name" style="color: var(--primary); margin-bottom: 5px; font-size: 26px;">სახელი</h2>
-                <p style="color: var(--text-muted); font-size: 15px;">გერმანული ენის შემსწავლელი</p>
-            </div>
-
-            <h3 style="margin-bottom: 15px; font-size: 18px; color: var(--text-main);">📊 შენი სტატისტიკა</h3>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
-                <div style="background: var(--card-bg); padding: 15px; border-radius: var(--border-radius-md); box-shadow: 0 4px 10px rgba(0,0,0,0.03); text-align: center;">
-                    <h3 id="stat-learned" style="font-size: 26px; color: var(--primary); margin-bottom: 5px;">0</h3>
-                    <p style="font-size: 14px; color: var(--text-muted); font-weight: 600;">ნასწავლი სიტყვა</p>
-                </div>
-                <div style="background: var(--card-bg); padding: 15px; border-radius: var(--border-radius-md); box-shadow: 0 4px 10px rgba(0,0,0,0.03); text-align: center;">
-                    <h3 id="stat-review" style="font-size: 26px; color: #f39c12; margin-bottom: 5px;">0</h3>
-                    <p style="font-size: 14px; color: var(--text-muted); font-weight: 600;">გასამეორებელი</p>
-                </div>
-                <div style="background: var(--card-bg); padding: 15px; border-radius: var(--border-radius-md); box-shadow: 0 4px 10px rgba(0,0,0,0.03); text-align: center;">
-                    <h3 id="stat-accuracy" style="font-size: 26px; color: var(--success); margin-bottom: 5px;">0%</h3>
-                    <p style="font-size: 14px; color: var(--text-muted); font-weight: 600;">სიზუსტე</p>
-                </div>
-                <div style="background: var(--card-bg); padding: 15px; border-radius: var(--border-radius-md); box-shadow: 0 4px 10px rgba(0,0,0,0.03); text-align: center;">
-                    <h3 id="stat-left" style="font-size: 26px; color: var(--text-main); margin-bottom: 5px;">200</h3>
-                    <p style="font-size: 14px; color: var(--text-muted); font-weight: 600;">დარჩენილი</p>
-                </div>
-            </div>
-            
-            <div style="background: var(--card-bg); padding: 20px 15px; border-radius: var(--border-radius-md); box-shadow: 0 4px 10px rgba(0,0,0,0.03);">
-                <p style="font-size: 15px; color: var(--text-muted); font-weight: 600; display: flex; justify-content: space-between; margin-bottom: 10px;">სრული კურსი: <span id="stat-progress-text">0%</span></p>
-                <div class="progress-bar" style="margin-bottom: 0; height: 12px;"><div id="stat-progress-bar" class="fill"></div></div>
-            </div>
-        </section>
-        <section id="chat-area" class="hidden" style="padding: 0 15px 30px 15px;">
-            <div style="display: flex; align-items: center; margin-bottom: 20px;">
-                <button id="back-from-chat-btn" class="btn-secondary" style="padding: 8px 15px; margin: 0; margin-right: 15px; width: auto; font-size: 20px; border-radius: 10px;">🔙</button>
-                <h2 style="margin: 0; font-size: 24px; color: var(--text-main);">💬 დიალოგები</h2>
-            </div>
-            
-            <div id="chat-scenarios-list" class="words-list">
-                </div>
-
-            <div id="chat-window" class="hidden">
-                <div id="chat-messages" style="background: var(--card-bg); border-radius: var(--border-radius-md); padding: 15px; height: 320px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.03);">
-                    </div>
-
-                <div id="chat-choices" style="display: flex; flex-direction: column; gap: 10px;">
-                    </div>
-            </div>
-        </section>
-    </main>
-    <script src="app.js?v=final"></script>
+    <script src="app.js"></script>
 </body>
 </html>
