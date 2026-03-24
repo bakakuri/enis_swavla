@@ -1,3 +1,29 @@
+// ================= ტელეგრამის ინიციალიზაცია =================
+const tg = window.Telegram.WebApp;
+tg.expand(); // აპლიკაცია გაიშლება სრულ ეკრანზე
+tg.ready();
+
+// ვიბრაციის (Haptic Feedback) დამხმარე ფუნქცია
+function triggerVibration(type = 'success') {
+    if (tg.HapticFeedback) {
+        if (type === 'success') tg.HapticFeedback.notificationOccurred('success');
+        else if (type === 'error') tg.HapticFeedback.notificationOccurred('error');
+        else if (type === 'light') tg.HapticFeedback.impactOccurred('light');
+    } else if (navigator.vibrate) {
+        // Fallback თუ ბრაუზერიდან შემოვა
+        navigator.vibrate(type === 'success' ? [100] : [200, 100, 200]); 
+    }
+}
+
+// ტელეგრამიდან სახელის წამოღება
+function getUserName() {
+    if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+        return tg.initDataUnsafe.user.first_name;
+    }
+    return "გიორგი"; // თუ ტელეგრამის გარეთ გაიხსნა
+}
+// ==========================================================
+
 let allWords = [];
 let learnedHistory = JSON.parse(localStorage.getItem("p_hist") || "[]");
 let mistakes = JSON.parse(localStorage.getItem("p_mistakes") || "[]");
@@ -13,8 +39,7 @@ let current = null, selectedMistakeId = null;
 let currentSentenceObj = null;
 let currentPracticeWord = null;
 
-let barChartInstance = null;
-let pieChartInstance = null;
+let barChartInstance = null, pieChartInstance = null;
 
 document.addEventListener("DOMContentLoaded", async () => {
     try {
@@ -34,7 +59,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     } catch(e) { console.error("Error loading JSON data"); }
 });
 
-function toggleSidebar() { document.getElementById("sidebar").classList.toggle("active"); }
+function toggleSidebar() { document.getElementById("sidebar").classList.toggle("active"); triggerVibration('light'); }
 
 function updateUI() {
     document.getElementById("xp-val").innerText = xp;
@@ -44,9 +69,11 @@ function updateUI() {
     badge.innerText = mistakes.length;
     badge.style.display = mistakes.length > 0 ? "inline-block" : "none";
 
-    const name = localStorage.getItem("app_nickname") || "გიორგი";
-    document.getElementById("sidebar-user-name").innerText = name;
-    document.getElementById("avatar").innerText = name.charAt(0).toUpperCase();
+    // სახელის ჩასმა UI-ში ტელეგრამიდან
+    const userName = getUserName();
+    document.getElementById("sidebar-user-name").innerText = userName;
+    document.getElementById("prof-name").innerText = userName;
+    document.getElementById("avatar").innerText = userName.charAt(0).toUpperCase();
 }
 
 // ================= სწავლა =================
@@ -68,6 +95,8 @@ function renderWord() {
 
 function handleWin() {
     xp += 10;
+    triggerVibration('success'); // ვიბრაცია სწავლაზე
+    
     if(!learnedHistory.find(x => x.id === current.id)) {
         learnedHistory.unshift(current);
         const todayStr = new Date().toLocaleDateString('ka-GE').substring(0, 5);
@@ -85,6 +114,7 @@ function handleWin() {
 }
 
 function handleMistake() {
+    triggerVibration('light');
     if(!mistakes.find(x => x.id === current.id)) mistakes.push(current);
     saveData();
     updateUI();
@@ -108,7 +138,7 @@ function saveData() {
     localStorage.setItem("p_achievs", JSON.stringify(achievements));
 }
 
-// ================= პაგინაცია სწავლაში და ლექსიკონში =================
+// ================= პაგინაცია =================
 function renderLearnedList() {
     const cont = document.getElementById("learned-list");
     const pag = document.getElementById("learned-pagination");
@@ -119,7 +149,7 @@ function renderLearnedList() {
     cont.innerHTML = learnedHistory.slice(start, start + perPage).map(w => `<div class="dict-item"><div class="dict-left"><span class="dict-de">${w.de}</span><span class="dict-ph">${w.phonetics}</span></div><span class="dict-ka">${w.ka}</span></div>`).join('');
     pag.innerHTML = total > 1 ? `<button class="page-btn" onclick="lPageChange(-1)" ${learnedPage === 1 ? 'disabled' : ''}>← უკან</button><span>${learnedPage} / ${total}</span><button class="page-btn" onclick="lPageChange(1)" ${learnedPage >= total ? 'disabled' : ''}>წინ →</button>` : "";
 }
-window.lPageChange = (v) => { learnedPage += v; renderLearnedList(); };
+window.lPageChange = (v) => { learnedPage += v; renderLearnedList(); triggerVibration('light'); };
 
 function updateDict(q = "") {
     const resDiv = document.getElementById("dict-results");
@@ -131,9 +161,9 @@ function updateDict(q = "") {
     resDiv.innerHTML = filtered.slice(start, start + perPage).map(w => `<div class="dict-item"><div class="dict-left"><span class="dict-de">${w.de}</span><span class="dict-ph">${w.phonetics}</span></div><span class="dict-ka">${w.ka}</span></div>`).join('');
     pag.innerHTML = total > 1 ? `<button class="page-btn" onclick="dPageChange(-1, '${q}')" ${dictPage === 1 ? 'disabled' : ''}>← უკან</button><span>${dictPage} / ${total}</span><button class="page-btn" onclick="dPageChange(1, '${q}')" ${dictPage >= total ? 'disabled' : ''}>წინ →</button>` : "";
 }
-window.dPageChange = (v, q) => { dictPage += v; updateDict(q); };
+window.dPageChange = (v, q) => { dictPage += v; updateDict(q); triggerVibration('light'); };
 
-// ================= შეცდომების ბანკი (მოდალი) =================
+// ================= შეცდომების ბანკი =================
 function renderMistakesBank() {
     const list = document.getElementById("mistakes-list");
     if(mistakes.length === 0) { list.innerHTML = "<p style='text-align:center; color:var(--text-dim); margin-top:20px;'>ბანკი ცარიელია. ყოჩაღ!</p>"; return; }
@@ -144,16 +174,18 @@ window.openModal = (id) => {
     if(word) {
         selectedMistakeId = id; document.getElementById("modal-word-de").innerText = word.de; document.getElementById("modal-word-ph").innerText = word.phonetics;
         document.getElementById("mistake-modal").classList.remove("hidden");
+        triggerVibration('light');
     }
 };
 window.closeModal = () => { document.getElementById("mistake-modal").classList.add("hidden"); selectedMistakeId = null; };
 window.removeMistake = () => {
     if(selectedMistakeId !== null) {
         mistakes = mistakes.filter(m => m.id !== selectedMistakeId); saveData(); updateUI(); renderMistakesBank(); closeModal();
+        triggerVibration('success');
     }
 };
 
-// ================= ᲐᲮᲐᲚᲘ: სიტყვებში ვარჯიში =================
+// ================= სიტყვებში ვარჯიში =================
 function startWordPractice() {
     if (learnedHistory.length < 4) {
         document.getElementById("wp-msg").classList.remove("hidden");
@@ -166,12 +198,11 @@ function startWordPractice() {
     currentPracticeWord = learnedHistory[Math.floor(Math.random() * learnedHistory.length)];
     let options = [currentPracticeWord];
     
-    // ვამატებთ 3 შემთხვევით სიტყვას შეცდომაში შესაყვანად
     while(options.length < 4) {
         let rand = allWords[Math.floor(Math.random() * allWords.length)];
         if(!options.some(o => o.id === rand.id)) options.push(rand);
     }
-    options.sort(() => Math.random() - 0.5); // ვურევთ ვარიანტებს
+    options.sort(() => Math.random() - 0.5); 
     
     document.getElementById("wp-word-de").innerText = currentPracticeWord.de;
     document.getElementById("wp-word-ph").innerText = currentPracticeWord.phonetics;
@@ -187,16 +218,16 @@ window.checkWordAnswer = (btn, selectedId) => {
     
     if (selectedId === currentPracticeWord.id) {
         btn.classList.add("correct");
-        xp += 5; // სწორი პასუხის ბონუსი
+        xp += 5; 
+        triggerVibration('success'); // 🟢 ვიბრაცია სწორ პასუხზე
         saveData();
         updateUI();
     } else {
         btn.classList.add("wrong");
-        // სწორის გაფერადება
+        triggerVibration('error'); // 🔴 ვიბრაცია არასწორ პასუხზე
         document.querySelectorAll(".quiz-btn").forEach(b => {
             if (b.innerText === currentPracticeWord.ka) b.classList.add("correct");
         });
-        // ვამატებთ შეცდომების ბანკში
         if (!mistakes.some(m => m.id === currentPracticeWord.id)) {
             mistakes.push(currentPracticeWord);
             saveData();
@@ -222,6 +253,7 @@ function startSentenceBuilder() {
 }
 
 window.moveWord = (el) => {
+    triggerVibration('light'); // 🟡 ვიბრაცია სიტყვის გადატანისას
     const zone = document.getElementById("drop-zone");
     const pool = document.getElementById("word-pool");
     if(el.parentElement.id === "word-pool") zone.appendChild(el); else pool.appendChild(el);
@@ -233,13 +265,18 @@ window.checkSentence = () => {
     const correctSentence = currentSentenceObj.example_de.replace(/[.,!?]/g, "").toLowerCase();
     
     if(userSentence === correctSentence) {
-        alert("🎉 ყოჩაღ! წინადადება სწორია (+15 XP)"); xp += 15; saveData(); updateUI(); startSentenceBuilder();
-    } else { alert("❌ შეცდომაა. სცადე თავიდან."); }
+        triggerVibration('success'); // 🟢 ვიბრაცია სწორ წინადადებაზე
+        alert("🎉 ყოჩაღ! წინადადება სწორია (+15 XP)"); 
+        xp += 15; saveData(); updateUI(); startSentenceBuilder();
+    } else { 
+        triggerVibration('error'); // 🔴 ვიბრაცია შეცდომაზე
+        alert("❌ შეცდომაა. სცადე თავიდან."); 
+    }
 };
 
-// ================= პროფილის რენდერი (გრაფიკები და მედლები) =================
+// ================= პროფილის რენდერი =================
 function renderProfile() {
-    const name = localStorage.getItem("app_nickname") || "გიორგი";
+    const name = getUserName();
     document.getElementById("prof-name").innerText = name;
     document.getElementById("prof-xp-val").innerText = xp;
     
@@ -295,5 +332,9 @@ function checkStreak() {
         else if (!last) streak = 1; else streak = 0;
         localStorage.setItem("p_date", today); localStorage.setItem("p_streak", streak);
     }
-        }
-                            
+}
+
+// ბარათის დატრიალებაზე მსუბუქი ვიბრაციის დამატება
+document.getElementById('main-card').addEventListener('click', function() {
+    triggerVibration('light');
+});
