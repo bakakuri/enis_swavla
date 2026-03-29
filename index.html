@@ -1,149 +1,230 @@
 <!DOCTYPE html>
 <html lang="ka">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ქართულ გერმანული</title>
-    <link rel="stylesheet" href="style.css">
-    
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#0b0f19">
+  <title>- გერმანულის სწავლა -</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
-    
 <body>
-    <nav class="sidebar" id="sidebar">
-        <button class="close-sidebar-btn" onclick="toggleSidebar()">×</button>
-        <div style="text-align:center; margin: 30px 0 20px;">
-            <div id="avatar" class="profile-avatar">👤</div>
-            <h3 id="sidebar-user-name" style="margin:0; font-size: 16px;">....</h3>
-        </div>
-        <div class="nav-links">
-            <div class="nav-item" id="nav-profile" onclick="showSection('profile')">👤 პროფილი და სტატისტიკა</div>
-            <div class="nav-item active" id="nav-learn" onclick="showSection('learn')">📖 სწავლა</div>
-            <div class="nav-item" id="nav-word-practice" onclick="showSection('word-practice')">📝 სიტყვებში ვარჯიში</div>
-            <div class="nav-item" id="nav-sentence" onclick="showSection('sentence')">🧩 წინადადებებში ვარჯიში</div>
-            <div class="nav-item" id="nav-dict" onclick="showSection('dict')">📚 ლექსიკონი</div>
-            <div class="nav-item" id="nav-mistakes" onclick="showSection('mistakes')">⚠️ შეცდომების ბანკი <span id="mistake-badge" class="badge">0</span></div>
-            <div class="nav-item" id="nav-settings" onclick="showSection('settings')">⚙️ პარამეტრები</div>
-            <div class="nav-item reset" onclick="resetProgress()">🔄 პროგრესის განულება</div>
-        </div>
-    </nav>
+  <div id="toast" class="toast glass"></div>
+  <div id="confettiLayer" class="confetti-layer"></div>
 
-    <header style="padding: 15px 20px; display: flex; justify-content: space-between; align-items: center;">
-        <button onclick="toggleSidebar()" style="background:none; border:none; color:var(--text); font-size:26px; cursor:pointer;">☰</button>
-        <div style="display:flex; gap:10px;">
-            <div class="stat-badge" style="color:var(--streak)">🔥 <span id="streak-val">0</span></div>
-            <div class="stat-badge" style="color:var(--xp)">✨ <span id="xp-val">0</span> XP</div>
-        </div>
+  <div class="sidebar sidebar-left glass" id="sidebarLeft">
+    <div class="sidebar-header">
+      <h3><i class="fas fa-tags"></i> კატეგორიები</h3>
+      <button class="icon-btn" onclick="toggleSidebar('Left')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="sidebar-scroll-area">
+      <ul class="sidebar-list" id="categoryList"></ul>
+    </div>
+  </div>
+
+  <div class="sidebar sidebar-right glass" id="sidebarRight">
+    <div class="sidebar-header">
+      <h3><i class="fas fa-bars"></i> მენიუ</h3>
+      <button class="icon-btn" onclick="toggleSidebar('Right')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="sidebar-scroll-area">
+      <ul class="sidebar-list">
+        <li onclick="openProfile()"><i class="fas fa-user-circle"></i> ჩემი პროფილი</li>
+        <li onclick="openDailyPlan()"><i class="fas fa-calendar-check"></i> დღიური გეგმა</li>
+        <li onclick="openFavorites()"><i class="fas fa-star"></i> ფავორიტები</li>
+        <li onclick="openWordBank()"><i class="fas fa-archive"></i> სიტყვების ბანკი</li>
+        <li onclick="startLearnedWordsTest()"><i class="fas fa-spell-check"></i> ნასწავლის ტესტი</li>
+        <li onclick="startCategoryTest()"><i class="fas fa-list-check"></i> კატეგორიის ტესტი</li>
+        <li onclick="startArticleQuiz()"><i class="fas fa-font"></i> არტიკლების ვიქტორინა</li>
+        <li onclick="startPlacementTest()"><i class="fas fa-location-crosshairs"></i> Placement Test</li>
+        <li onclick="switchView('grammar')"><i class="fas fa-book-open"></i> გრამატიკის მინიშნება</li>
+        <li onclick="startSentenceBuilder()"><i class="fas fa-puzzle-piece"></i> წინადადებების აწყობა</li>
+        <li onclick="toggleTheme()"><i class="fas fa-adjust"></i> თემის შეცვლა</li>
+        <li class="danger-zone" onclick="resetApp()"><i class="fas fa-trash"></i> ყველა მონაცემის წაშლა</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="overlay" id="overlay" onclick="closeSidebars()"></div>
+
+  <div class="app-container">
+    <header class="glass">
+      <button class="icon-btn" onclick="toggleSidebar('Left')"><i class="fas fa-layer-group"></i></button>
+      <h1 id="headerTitle">გერმანულის სასწავლო</h1>
+      <button class="icon-btn" onclick="toggleSidebar('Right')"><i class="fas fa-user"></i></button>
     </header>
 
-    <main>
-        <section id="learn-section">
-            <div class="scene">
-                <div class="card" id="main-card" onclick="this.classList.toggle('is-flipped')">
-                    <div class="card-face card-front">
-                        <button onclick="event.stopPropagation(); speakWord(current.de);" style="position:absolute; top:20px; right:20px; background:none; border:none; font-size:26px; cursor:pointer;">🔊</button>
-                        <h1 id="de-word" style="font-size:42px; margin:0;">...</h1>
-                        <p id="de-ph" style="color:var(--accent); font-family:monospace; margin-top:8px; font-size:16px;">[...]</p>
-                        <p style="color:var(--text-dim); margin-top:20px; font-size:13px; opacity:0.8;">შეეხე სათარგმნად</p>
-                    </div>
-                    <div class="card-face card-back">
-                        <h2 id="ka-word" style="color:var(--accent); font-size:32px; margin:0;">...</h2>
-                        <div style="background:rgba(0,0,0,0.2); padding:15px; border-radius:18px; font-size:13px; width:100%; margin-top:20px;">
-                            <p id="ex-de" style="margin:0; color:var(--accent); font-weight:600;"></p>
-                            <p id="ex-ph" style="margin:6px 0 0; color:var(--text-dim); font-family:monospace; font-size:11px;"></p>
-                            <p id="ex-ka" style="margin:10px 0 0; border-top:1px solid var(--border); padding-top:10px; opacity:0.9;"></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div style="display:flex; gap:12px; padding:0 20px">
-                <button onclick="handleMistake()" style="flex:1; padding:18px; border-radius:18px; border:1px solid var(--border); background:var(--card); color:var(--text); cursor:pointer;">შეცდომების ბანკში</button>
-                <button onclick="handleWin()" style="flex:2; padding:18px; border-radius:18px; border:none; background:var(--accent-grad); color:white; font-weight:700; cursor:pointer;">შემდეგი (+10 XP)</button>
-            </div>
-            
-            <div id="learned-area" style="padding:30px 20px">
-                <h4 style="font-size: 12px; color: var(--text-dim); margin-bottom: 12px; text-transform: uppercase;">გავლილი სიტყვები</h4>
-                <div id="learned-list"></div>
-                <div id="learned-pagination" class="page-controls"></div>
-            </div>
-        </section>
+    <main id="main-content">
+      <section id="view-flashcards" class="view active">
+        <div class="toolbar-row">
+          <span class="badge" id="deckBadge">დღევანდელი ბარათები</span>
+          <span class="badge ghost" id="reviewBadge">SRS მზად</span>
+        </div>
 
-        <section id="word-practice-section" class="hidden" style="padding:20px;">
-            <h3 style="margin-bottom: 5px;">📝 სიტყვებში ვარჯიში</h3>
-            <p id="wp-msg" style="text-align:center; color:var(--text-dim); margin-top:30px; line-height:1.6;">სავარჯიშოს დასაწყებად აუცილებელია მინიმუმ 4 სიტყვის სწავლა.</p>
-            
-            <div id="wp-content" class="hidden">
-                <div style="background:var(--card); border:1px solid var(--border); border-radius:20px; padding:30px 20px; text-align:center; margin-top:15px; margin-bottom:20px; box-shadow:0 10px 30px rgba(0,0,0,0.2);">
-                    <button onclick="speakWord(currentPracticeWord.de);" style="position:absolute; margin-top:-15px; right:40px; background:none; border:none; font-size:22px; cursor:pointer;">🔊</button>
-                    <h1 id="wp-word-de" style="font-size:36px; color:var(--accent); margin:0;">...</h1>
-                    <p id="wp-word-ph" style="font-family:monospace; color:var(--text-dim); margin-top:10px; font-size:14px;">[...]</p>
-                </div>
-                <div id="wp-options">
-                    </div>
+        <div class="card-scene">
+          <div class="card" id="mainCard">
+            <div class="card-face card-front glass">
+              <div class="card-topline">
+                <span class="badge" id="cardLevel">A1</span>
+                <button class="icon-btn soft" onclick="toggleFavoriteCurrent()" title="ფავორიტი"><i id="favIcon" class="far fa-star"></i></button>
+              </div>
+              <h2 class="main-word" id="wordGer">...</h2>
+              <p class="phonetic" id="wordPhonGer">...</p>
+              <p class="hint">შეეხე ბარათს გადმოსაბრუნებლად</p>
             </div>
-        </section>
-
-        <section id="sentence-section" class="hidden" style="padding:20px;">
-            <h3 style="margin-bottom: 5px;">🧩 წინადადებებში ვარჯიში</h3>
-            <p id="sentence-ka" style="color:var(--text-dim); margin-bottom: 20px; font-size:14px;"></p>
-            <div id="drop-zone" class="sentence-area"></div>
-            <div id="word-pool" class="word-pool"></div>
-            <button onclick="checkSentence()" style="width:100%; margin-top:25px; padding:16px; border-radius:15px; border:none; background:var(--accent-grad); color:white; font-weight:bold; font-size:16px; cursor:pointer;">შემოწმება</button>
-        </section>
-
-        <section id="profile-section" class="hidden" style="padding:20px;">
-            <div style="text-align:center; margin-bottom: 20px;">
-                <div class="profile-avatar" style="width:90px; height:90px; font-size:40px;">👤</div>
-                <h2 id="prof-name">გიორგი</h2>
-                <div class="stat-badge" style="margin-top:10px; font-size:14px;">ჯამური XP: <span id="prof-xp-val" style="color:var(--xp)">0</span></div>
+            <div class="card-face card-back glass">
+              <div class="card-topline">
+                <span class="badge" id="cardCat">კატეგორია</span>
+                <button class="icon-btn soft" onclick="showHintForCurrent()" title="მინიშნება"><i class="fas fa-circle-info"></i></button>
+              </div>
+              <h2 class="translation" id="wordGeo">...</h2>
+              <div class="example-box">
+                <p class="ex-ger" id="exGer">...</p>
+                <p class="phonetic-sm" id="exPhon">...</p>
+                <p class="ex-geo" id="exGeo">...</p>
+              </div>
             </div>
-            <h4 style="margin-top: 30px; margin-bottom: 10px; color:var(--text-dim); font-size:13px;">📊 აქტივობა (ბოლო 7 დღე)</h4>
-            <div class="chart-container"><canvas id="activityChart"></canvas></div>
-            <h4 style="margin-top: 20px; margin-bottom: 10px; color:var(--text-dim); font-size:13px;">📈 ცოდნა კატეგორიების მიხედვით</h4>
-            <div class="chart-container"><canvas id="categoryChart"></canvas></div>
-            <h4 style="margin-top: 30px; margin-bottom: 5px; color:var(--text-dim); font-size:13px;">🏅 მინი-მიღწევების დაფა</h4>
-            <div class="achievements-grid">
-                <div class="achievement" id="achiev-early"><span class="achiev-icon">🥉</span><span class="achiev-title">Early Bird</span></div>
-                <div class="achievement" id="achiev-polyglot"><span class="achiev-icon">🥈</span><span class="achiev-title">Polyglot</span></div>
-                <div class="achievement" id="achiev-unstoppable"><span class="achiev-icon">🥇</span><span class="achiev-title">Unstoppable</span></div>
-            </div>
-        </section>
+          </div>
+        </div>
 
-        <section id="dict-section" class="hidden" style="padding:20px">
-            <input type="text" id="search" placeholder="ძებნა (DE / KA)..." style="width:100%; padding:18px; border-radius:15px; border:1px solid var(--border); background:var(--card); color:var(--text); outline:none">
-            <div id="dict-results" style="margin-top:20px"></div>
-            <div id="dict-pagination" class="page-controls"></div>
-        </section>
+        <div class="controls">
+          <button class="ctrl-btn glass" onclick="speakCurrentWord()" title="მოსმენა"><i class="fas fa-volume-high"></i></button>
+          <button class="ctrl-btn glass" onclick="addCurrentToBank()" title="ბანკში დამატება"><i class="fas fa-bookmark"></i></button>
+          <button class="ctrl-btn glass" onclick="prevCard()"><i class="fas fa-arrow-left"></i></button>
+          <button class="ctrl-btn primary" onclick="markLearned()" title="ვისწავლე"><i class="fas fa-check"></i></button>
+          <button class="ctrl-btn glass" onclick="nextCard()"><i class="fas fa-arrow-right"></i></button>
+        </div>
 
-        <section id="mistakes-section" class="hidden" style="padding:20px">
-            <h3 style="margin-bottom: 15px;">⚠️ შეცდომების ბანკი</h3>
-            <p style="color:var(--text-dim); font-size:12px; margin-bottom:20px;">დააჭირეთ სიტყვას, თუ უკვე ისწავლეთ.</p>
-            <div id="mistakes-list"></div>
-        </section>
-        
-        <section id="settings-section" class="hidden" style="padding:20px;">
-            <h3 style="margin-bottom:20px;">🎨 აირჩიე თემა</h3>
-            <button class="dict-item" style="width:100%; cursor:pointer;" onclick="changeTheme('dark')">Dark (სტანდარტული)</button>
-            <button class="dict-item" style="width:100%; background:white; color:black; cursor:pointer;" onclick="changeTheme('light')">Light Mode</button>
-            <button class="dict-item" style="width:100%; background:black; color:#bb86fc; border-color:#333; cursor:pointer;" onclick="changeTheme('midnight')">Midnight Mode</button>
-        </section>
+        <div class="mini-stats glass mt-20">
+          <div><strong id="dailyReviewCount">0</strong><span>დღეს შესასწავლი</span></div>
+          <div><strong id="streakCount">0</strong><span>სტრიქონი</span></div>
+          <div><strong id="favoriteCount">0</strong><span>ფავორიტი</span></div>
+        </div>
+
+        <div class="history-section mt-20">
+          <h3 class="text-dim text-center mb-10">ბოლოს ნასწავლი</h3>
+          <div id="mainLearnedList"></div>
+          <div class="pagination flex-center" id="mainLearnedPagination"></div>
+        </div>
+      </section>
+
+      <section id="view-category-list" class="view">
+        <div class="cat-header glass">
+          <div>
+            <h2 id="catListTitle">ყველა სიტყვა</h2>
+            <p class="text-dim" id="catListSubtitle">ძებნა, დათვალიერება და სწრაფი გადახედვა</p>
+          </div>
+          <button class="badge-btn" onclick="startCategoryTest()">ტესტი</button>
+        </div>
+        <div class="search-container mt-10">
+          <div class="search-box glass">
+            <i class="fas fa-search"></i>
+            <input type="text" id="lexiconSearch" placeholder="ძებნა..." oninput="handleSearch()">
+            <button class="clear-btn" onclick="clearSearch()"><i class="fas fa-times"></i></button>
+          </div>
+        </div>
+        <div class="section-note glass mt-10">
+          <i class="fas fa-lightbulb"></i>
+          <span>სწრაფი გადახედვისთვის შეგიძლია სიტყვა ბარათებზე გადახვიდე, ფავორიტებში შეინახო ან პირდაპირ ტესტზე გაუშვა.</span>
+        </div>
+        <div id="catWordsList" class="list-container mt-10"></div>
+        <div class="pagination flex-center mt-10" id="catWordsPagination"></div>
+      </section>
+
+      <section id="view-wordbank" class="view">
+        <div class="cat-header glass">
+          <div><h2>სიტყვების ბანკი</h2><p class="text-dim">არასწორი პასუხები და შენახული სიტყვები</p></div>
+          <button class="badge-btn" onclick="openFavorites()">ფავორიტები</button>
+        </div>
+        <div id="bankWordsList" class="list-container mt-10"></div>
+        <div class="pagination flex-center mt-10" id="bankWordsPagination"></div>
+      </section>
+
+      <section id="view-favorites" class="view">
+        <div class="cat-header glass">
+          <div><h2>ფავორიტები</h2><p class="text-dim">ჩანიშნული სიტყვები სწრაფი გამეორებისთვის</p></div>
+        </div>
+        <div id="favoritesWordsList" class="list-container mt-10"></div>
+        <div class="pagination flex-center mt-10" id="favoritesWordsPagination"></div>
+      </section>
+
+      <section id="view-profile" class="view">
+        <div class="profile-card glass">
+          <div class="profile-header">
+            <div class="avatar-circle"><i class="fas fa-graduation-cap"></i></div>
+            <h2 id="profileRank">დამწყები</h2>
+          </div>
+          <div class="stats-grid">
+            <div class="stat-item glass"><h4 id="profLearned">0</h4><span>ნასწავლი</span></div>
+            <div class="stat-item glass"><h4 id="profBank">0</h4><span>ბანკშია</span></div>
+            <div class="stat-item glass"><h4 id="profFavorite">0</h4><span>ფავორიტი</span></div>
+            <div class="stat-item glass"><h4 id="profStreak">0</h4><span>სტრიქონი</span></div>
+          </div>
+          <div class="progress-section">
+            <div class="progress-info"><span>პროგრესი</span><span id="profProgressText">0%</span></div>
+            <div class="progress-bar-bg"><div class="progress-bar-fill" id="profileProgress"></div></div>
+          </div>
+        </div>
+        <div id="profileProgressByCategory" class="mt-20"></div>
+      </section>
+
+      <section id="view-plan" class="view">
+        <div class="cat-header glass">
+          <div><h2>დღიური გეგმა</h2><p class="text-dim">ავტომატური გეგმა დღევანდელი პროგრესის მიხედვით</p></div>
+          <button class="badge-btn" onclick="openProfile()">პროფილი</button>
+        </div>
+        <div id="dailyPlanBox"></div>
+      </section>
+
+      <section id="view-grammar" class="view">
+        <div class="cat-header glass">
+          <div><h2>გრამატიკის მინიშნება</h2><p class="text-dim">მოკლე წესები სწავლის გასამარტივებლად</p></div>
+        </div>
+        <div id="grammarLessons" class="lesson-grid"></div>
+      </section>
+
+      <section id="view-quiz" class="view">
+        <div class="quiz-container glass">
+          <div class="quiz-header">
+            <span id="quizTitleBadge" class="badge">ვიქტორინა</span>
+            <span id="quizCounter" class="badge">1/10</span>
+            <span id="quizScore" class="badge">ქულა: 0</span>
+          </div>
+          <div class="quiz-sound-row">
+            <button class="icon-btn soft" onclick="speakQuizQuestion()"><i class="fas fa-volume-high"></i></button>
+            <small class="text-dim" id="quizModeHint">აირჩიე სწორი პასუხი</small>
+          </div>
+          <h2 id="quizWord" class="quiz-q">...</h2>
+          <div id="quizOptions" class="quiz-opts"></div>
+          <div id="quizFeedback" class="answer-feedback"></div>
+        </div>
+      </section>
+
+      <section id="view-sentence" class="view">
+        <div class="quiz-container glass">
+          <h3 class="text-center">ააწყვე წინადადება</h3>
+          <p id="sentenceGeoHint" class="text-dim text-center mb-20"></p>
+          <div id="sentenceDropzone" class="dropzone glass"></div>
+          <div id="sentenceWords" class="word-pool"></div>
+          <div id="sentenceFeedback" class="answer-feedback"></div>
+          <div class="flex-center mt-20 gap-10">
+            <button class="primary-btn" onclick="checkSentence()">შემოწმება</button>
+            <button class="ctrl-btn glass" onclick="nextSentence()"><i class="fas fa-forward"></i></button>
+          </div>
+        </div>
+      </section>
     </main>
 
-    <div id="mistake-modal" class="modal-overlay hidden">
-        <div class="modal-box">
-            <h3 style="margin-top:0; color:var(--text);">ისწავლე უკვე?</h3>
-            <p id="modal-word-de" style="font-size:26px; font-weight:900; color:var(--accent); margin:15px 0 5px;"></p>
-            <p id="modal-word-ph" style="color:var(--text-dim); font-family:monospace; margin-bottom:15px; font-size:14px;"></p>
-            <div style="display:flex; gap:12px; margin-top:20px;">
-                <button class="modal-btn modal-btn-no" onclick="closeModal()">არა</button>
-                <button class="modal-btn modal-btn-yes" onclick="removeMistake()">კი</button>
-            </div>
-        </div>
-    </div>
+    <nav class="bottom-nav glass">
+      <button class="nav-item active" onclick="switchView('flashcards', this)"><i class="fas fa-clone"></i><span>სწავლა</span></button>
+      <button class="nav-item" onclick="openCategoryList('all', this)"><i class="fas fa-book"></i><span>ლექსიკონი</span></button>
+      <button class="nav-item" onclick="openDailyPlan(this)"><i class="fas fa-calendar-check"></i><span>გეგმა</span></button>
+      <button class="nav-item" onclick="openProfile(this)"><i class="fas fa-user"></i><span>პროფილი</span></button>
+    </nav>
+  </div>
 
-    <script src="app.js"></script>
+  <script src="data.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
